@@ -55,15 +55,11 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
   }
 
   Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-      // dynamic googleAuth = await googleUser?.authentication;
+    await _googleSignIn.signIn().onError((error, stackTrace) => null);
+    // dynamic googleAuth = await googleUser?.authentication;
 
-      // print(googleUser.toString());
-      // print(googleAuth.toString());
-    } catch (error) {
-      print(error);
-    }
+    // print(googleUser.toString());
+    // print(googleAuth.toString());
   }
 
   Future<void> _handleSignOut() => _googleSignIn.disconnect();
@@ -227,6 +223,12 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                           label: "Email",
                           onChanged: _setEmail,
                           onSubmit: (val) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(
                           height: 20,
@@ -238,6 +240,12 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                           label: "Password",
                           onChanged: _setPassword,
                           onSubmit: (val) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(
                           height: 30,

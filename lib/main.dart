@@ -3,7 +3,8 @@ import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
 import 'package:msafi_mobi/pages/onboarding/main.dart';
 import 'package:msafi_mobi/pages/splash/main.dart';
-import 'package:msafi_mobi/store/mart.dart';
+import 'package:msafi_mobi/providers/map.provider.dart';
+import 'package:msafi_mobi/providers/mart.provider.dart';
 import 'package:msafi_mobi/themes/settings.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MartConfig()),
+        ChangeNotifierProvider(create: (context) => SearchToggle()),
+        ChangeNotifierProvider(create: (context) => PlacesResults()),
       ],
       child: const MyApp(),
     ),

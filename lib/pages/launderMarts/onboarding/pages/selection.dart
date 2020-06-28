@@ -5,7 +5,7 @@ import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/configs/data.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/location.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/pricing.dart';
-import 'package:msafi_mobi/store/mart.dart';
+import 'package:msafi_mobi/providers/mart.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
