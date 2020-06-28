@@ -35,15 +35,21 @@ Widget customTextField({
   required String label,
   required TextInputType inputType,
   required Icon icon,
+  required Function validator,
   required Function onChanged,
   required Function onSubmit,
+  int? minLines,
+  int? maxLines,
 }) {
   return TextFormField(
+    validator: (val) => validator(val),
     onChanged: (val) => onChanged(val),
-    onFieldSubmitted: (val) => onSubmit,
+    onFieldSubmitted: (val) => onSubmit(val),
     cursorColor: kTextColor,
     cursorHeight: 20,
     keyboardType: inputType,
+    minLines: minLines,
+    maxLines: maxLines,
     // ? TextInputType.visiblePassword
     // : TextInputType.emailAddress,
     style: GoogleFonts.poppins(

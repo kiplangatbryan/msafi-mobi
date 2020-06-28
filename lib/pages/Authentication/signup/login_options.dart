@@ -238,6 +238,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           label: "Username",
                           onChanged: _setName,
                           onSubmit: (val) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(
                           height: 15,
@@ -249,6 +255,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           label: "Email",
                           onChanged: _setEmail,
                           onSubmit: (val) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(
                           height: 20,
@@ -260,6 +272,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           label: "Password",
                           onChanged: _setPassword,
                           onSubmit: (val) {},
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
                         ),
                         SizedBox(
                           height: 30,
