@@ -1,7 +1,6 @@
 # msafi_mobi
 
-A new Flutter project.
-
+Laundry booking and management service application that gonna blow your mind. Build on top of [Flutter framework](https://flutter.dev).
 ## Getting Started
 
 This project is a starting point for a Flutter application.
