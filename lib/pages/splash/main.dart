@@ -53,41 +53,39 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: splashColor.withOpacity(.5),
-          ),
-          child: Stack(
-            children: [
-              Center(
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Msafi Mobi\n",
-                        style: GoogleFonts.poppins(
-                          fontSize: 35,
-                          color: kDarkPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: splashColor.withOpacity(.5),
+        ),
+        child: Stack(
+          children: [
+            Center(
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "Msafi Mobi\n",
+                      style: GoogleFonts.poppins(
+                        fontSize: 35,
+                        color: kDarkPrimary,
+                        fontWeight: FontWeight.bold,
                       ),
-                      TextSpan(
-                        text: "Say goobye to dirty laundry Aha",
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          color: kDarkPrimary,
-                        ),
-                      )
-                    ],
-                  ),
+                    ),
+                    TextSpan(
+                      text: "Say goobye to dirty laundry Aha",
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        color: kDarkPrimary,
+                      ),
+                    )
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

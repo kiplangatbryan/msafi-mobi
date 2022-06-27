@@ -65,14 +65,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
               // ignore: prefer_const_literals_to_create_immutables
               children: [
                 const OnBoardingView(
-                  title: "24Hrs Delivery Service",
-                  lotieAsset: 'delivery.json',
+                  title: "We Are Available Full Time",
+                  lotieAsset: 'coffie-sleeping.json',
                   highlight:
-                      'Free delivery for your laundry basket at your doorstep anytime',
+                      'Free delivery for your laundry basket at your available for 24hrs',
                   hasBtn: false,
                 ),
                 const OnBoardingView(
-                  title: "Doing the heavy lifting",
+                  title: "Let Us Worry About Everything",
                   lotieAsset: 'relax.json',
                   highlight:
                       'Take a break from buying shampoo and washing, we\'ve got you',
@@ -82,7 +82,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   title: "What Are\nYou Waiting For",
                   lotieAsset: 'ride.json',
                   highlight:
-                      'Hop on and lets take a look see, promise you gonna enjoy it',
+                      'Hop on and lets take a look see,We promise you gonna enjoy it',
                   hasBtn: true,
                 ),
               ],

@@ -46,7 +46,7 @@ class OnBoardingView extends StatelessWidget {
                 TextSpan(
                   text: "$title\n\n",
                   style: GoogleFonts.poppins(
-                    fontSize: 32,
+                    fontSize: 35,
                     color: kTextColor,
                     fontWeight: FontWeight.bold,
                   ),
@@ -55,8 +55,8 @@ class OnBoardingView extends StatelessWidget {
                   text: "$highlight\n",
                   style: GoogleFonts.poppins(
                     fontSize: 18,
-                    color: kTextMediumColor,
-                    fontWeight: FontWeight.w400,
+                    color: kTextColor.withOpacity(.8),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
