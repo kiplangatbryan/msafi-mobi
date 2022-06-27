@@ -9,7 +9,7 @@ ThemeData lightThemeData(BuildContext context) {
       color: kTextMediumColor,
     ),
     colorScheme: const ColorScheme.light(
-        primary: kPrimaryColor, secondary: kTextMediumColor, error: Colors.red),
+        primary: kPrimaryColor, secondary: kTextMediumColor, error: Colors.red,),
   );
 }
 
