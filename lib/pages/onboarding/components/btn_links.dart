@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
+import 'package:msafi_mobi/pages/onboarding/login_options.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
 class NavButtons extends StatelessWidget {
   final String title;
-  final bool fade;
+  final Icon icon;
   const NavButtons({
     required this.title,
-    required this.fade,
+    required this.icon,
     Key? key,
   }) : super(key: key);
 
@@ -19,40 +20,44 @@ class NavButtons extends StatelessWidget {
     _navigateToLogin() async {
       return Navigator.of(context).push(
         CupertinoPageRoute(
-          builder: (context) => const LoginPageOptions(),
+          builder: (context) => const AuthenticationOptions(),
         ),
       );
     }
 
-    _navigateToSignUp() async {
-      return Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (context) => const SignUpPage(),
-        ),
-      );
-    }
-
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        primary: fade ? kTextColor : splashColor,
-        enableFeedback: true,
-        padding: const EdgeInsets.symmetric(
+    return GestureDetector(
+      onTap: _navigateToLogin,
+      child: Container(
+        padding: EdgeInsets.symmetric(
           vertical: 15,
-          horizontal: 40,
         ),
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: splashColor,
+          border: Border.all(
+            color: splashColor,
+            width: 3,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontSize: 22.0,
+                letterSpacing: 2.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(
+              width: 30,
+            ),
+            icon,
+          ],
         ),
       ),
-      onPressed: fade ? _navigateToSignUp : _navigateToLogin,
-      autofocus: true,
-      child: Text("$title",
-          style: GoogleFonts.poppins(
-            fontSize: 18,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          )),
     );
   }
 }

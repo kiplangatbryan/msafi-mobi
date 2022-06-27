@@ -42,53 +42,51 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _navigateToOnboarding() {
-    return Navigator.of(context).pushAndRemoveUntil(
-        CupertinoPageRoute(
-          builder: (context) => const OnboardingPage(),
-        ),
-        (route) => false);
+    return Navigator.of(context).pushReplacement(
+      CupertinoPageRoute(
+        builder: (context) => const OnboardingPage(),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kSplashBgColor,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Container(
-          height: double.infinity,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/splash.jpg'),
-              fit: BoxFit.cover,
-            ),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: splashColor.withOpacity(.5),
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: splashColor.withOpacity(.8),
-            ),
-            child: Center(
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Msafi Mobi\n",
-                      style: GoogleFonts.poppins(
-                        fontSize: 35,
-                        color: kDarkPrimary,
-                        fontWeight: FontWeight.bold,
+          child: Stack(
+            children: [
+              Center(
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "Msafi Mobi\n",
+                        style: GoogleFonts.poppins(
+                          fontSize: 35,
+                          color: kDarkPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: "Say goobye to dirty laundry",
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: kDarkPrimary,
-                      ),
-                    )
-                  ],
+                      TextSpan(
+                        text: "Say goobye to dirty laundry Aha",
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          color: kDarkPrimary,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

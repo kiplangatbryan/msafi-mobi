@@ -1,4 +1,3 @@
-import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 import 'pages/basic.dart';
@@ -13,6 +12,6 @@ class BoardingRender extends StatefulWidget {
 class _BoardingRenderState extends State<BoardingRender> {
   @override
   Widget build(BuildContext context) {
-    return BasicInformation();
+    return const BasicInformation();
   }
 }

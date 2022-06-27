@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/configs/data.dart';
-import 'package:msafi_mobi/pages/globals-components/components.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/location.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/pricing.dart';
 import 'package:msafi_mobi/store/mart.dart';
@@ -73,71 +73,70 @@ class _ProductSelectionState extends State<ProductSelection> {
             ),
           ),
         ),
-        body: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 25,
-              ),
-              child: Column(
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "\nTime To Pick Your Poison",
-                          style: GoogleFonts.poppins(
-                            fontSize: 27,
-                            fontWeight: FontWeight.bold,
-                            color: kTextColor,
-                          ),
-                        ),
-                        TextSpan(
-                          text: "\n' ✨ 'Tap on clothing items that you wash",
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: kTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    height: 470,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30),
-                      ),
-                    ),
-                    child: clothSelect(),
-                  ),
-                  LimitedBox(
-                    maxHeight: 100,
-                    child: Center(
-                      child: actionButton(
-                          title: "Next ($selectedItems)",
-                          callback: () {
-                            // make selection persist
-                            context
-                                .read<MartConfig>()
-                                .mapSelectedItems(addSelectedClothes());
-
-                            Navigator.of(context).push(
-                              CupertinoPageRoute(
-                                builder: (context) => const SetPricingPage(),
-                              ),
-                            );
-                          }),
-                    ),
-                  ),
-                ],
-              ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              vertical: 20,
+              horizontal: 20,
             ),
-          ],
+            child: Column(
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "\nTime To Pick Your Poison",
+                        style: GoogleFonts.poppins(
+                          fontSize: 27,
+                          fontWeight: FontWeight.bold,
+                          color: kTextColor,
+                        ),
+                      ),
+                      TextSpan(
+                        text: "\n' ✨ 'Tap on clothing items that you wash",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: kTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 470,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(30),
+                    ),
+                  ),
+                  child: clothSelect(),
+                ),
+                LimitedBox(
+                  maxHeight: 150,
+                  child: Center(
+                    child: customButton(
+                        title: "Next ($selectedItems)",
+                        role: "login",
+                        callback: () {
+                          // make selection persist
+                          context
+                              .read<MartConfig>()
+                              .mapSelectedItems(addSelectedClothes());
+
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const SetPricingPage(),
+                            ),
+                          );
+                        }),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
