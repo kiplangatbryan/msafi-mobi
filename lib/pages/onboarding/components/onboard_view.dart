@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
 import 'btn_links.dart';
 
 class OnBoardingView extends StatelessWidget {
   final String title;
-  final String imgUrl;
+  final String lotieAsset;
   final String highlight;
   final bool hasBtn;
 
   const OnBoardingView({
     required this.title,
-    required this.imgUrl,
+    required this.lotieAsset,
     required this.highlight,
     required this.hasBtn,
     Key? key,
@@ -31,53 +32,49 @@ class OnBoardingView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image(
-            image: AssetImage('assets/images/$imgUrl'),
-            height: 300,
+          Lottie.asset(
+            "assets/lottie/$lotieAsset",
+            width: 380,
           ),
           const SizedBox(
             height: 30,
           ),
           RichText(
-            textAlign: TextAlign.left,
+            textAlign: TextAlign.center,
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: "$highlight\n",
+                  text: "$title\n\n",
                   style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    color: splashColor,
+                    fontSize: 32,
+                    color: kTextColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextSpan(
-                  text: title,
+                  text: "$highlight\n",
                   style: GoogleFonts.poppins(
-                    fontSize: 30,
-                    color: kTextColor,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: kTextMediumColor,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(
-            height: 20,
+            height: 15,
           ),
           hasBtn
-              ? Row(
+              ? Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: const [
                     NavButtons(
-                      title: "Login",
-                      fade: false,
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    NavButtons(
-                      title: "Sign up",
-                      fade: true,
+                      title: "Get Started",
+                      icon: Icon(
+                        Icons.arrow_forward_outlined,
+                        color: Colors.white,
+                      ),
                     ),
                   ],
                 )

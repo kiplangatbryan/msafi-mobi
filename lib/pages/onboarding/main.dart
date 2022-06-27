@@ -39,13 +39,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         0,
                       ),
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          print("skipping");
+                        },
                         child: Text(
-                          "Skip",
+                          "SKIP",
                           style: GoogleFonts.poppins(
-                            fontSize: 15,
+                            fontSize: 18,
                             color: splashColor,
                             fontWeight: FontWeight.bold,
+                            letterSpacing: 2.0,
                           ),
                         ),
                       ),
@@ -62,27 +65,30 @@ class _OnboardingPageState extends State<OnboardingPage> {
               // ignore: prefer_const_literals_to_create_immutables
               children: [
                 const OnBoardingView(
-                  title: "Laundry Basket\nDelivery Service",
-                  imgUrl: '091.png',
-                  highlight: 'FREE',
+                  title: "24Hrs Delivery Service",
+                  lotieAsset: 'delivery.json',
+                  highlight:
+                      'Free delivery for your laundry basket at your doorstep anytime',
                   hasBtn: false,
                 ),
                 const OnBoardingView(
-                  title: "Laundry\nService On Hand",
-                  imgUrl: '054.png',
-                  highlight: 'AVAILABLE',
+                  title: "Doing the heavy lifting",
+                  lotieAsset: 'relax.json',
+                  highlight:
+                      'Take a break from buying shampoo and washing, we\'ve got you',
                   hasBtn: false,
                 ),
                 const OnBoardingView(
                   title: "What Are\nYou Waiting For",
-                  imgUrl: '091.png',
-                  highlight: 'Let\'s go',
+                  lotieAsset: 'ride.json',
+                  highlight:
+                      'Hop on and lets take a look see, promise you gonna enjoy it',
                   hasBtn: true,
                 ),
               ],
             ),
             Align(
-              alignment: Alignment.bottomLeft,
+              alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: SmoothPageIndicator(
@@ -90,8 +96,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   effect: const ExpandingDotsEffect(
                     activeDotColor: kSmoothIndicator,
                     dotColor: kTextLightColor,
-                    dotHeight: 12,
-                    dotWidth: 12,
                   ),
                   count: 3,
                 ),
