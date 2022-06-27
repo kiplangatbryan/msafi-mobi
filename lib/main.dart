@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:msafi_mobi/pages/Authentication/components/backup.dart';
-import 'package:msafi_mobi/pages/Authentication/components/form_sign.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
-import 'package:msafi_mobi/pages/regular/home/main.dart';
+import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
+import 'package:msafi_mobi/pages/onboarding/main.dart';
 import 'package:msafi_mobi/pages/splash/main.dart';
 import 'package:msafi_mobi/store/mart.dart';
 import 'package:msafi_mobi/themes/settings.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/launderMarts/onboarding/main.dart';
-import 'pages/launderMarts/onboarding/pages/pricing.dart';
 
 void main() {
   runApp(
@@ -38,9 +36,14 @@ class _MyAppState extends State<MyApp> {
       darkTheme: darkThemeData(context),
       themeMode: ThemeMode.system,
       title: "Msafi-Mobi",
-      home: const BoardingRender(),
-      // home: const HomePage(),
-      routes: {},
+      initialRoute: "/",
+      routes: {
+        "/": (context) => const SplashScreen(),
+        "/user-onboarding": (context) => const OnboardingPage(),
+        "/mart-onboarding": (context) => const BoardingRender(),
+        "/login": (context) => const LoginPageOptions(),
+        "/register": (context) => const SignUpPage(),
+      },
       // home: const SetPricingPage(),
     );
   }
