@@ -124,7 +124,7 @@ GestureDetector customButton(
             ),
           ),
           SizedBox(
-            width: 30,
+            width: 18,
           ),
           role != "login"
               ? Icon(Icons.login)

@@ -5,14 +5,16 @@ const textColor = Colors.red;
 const appBarColor = Colors.grey;
 const kSplashBgColor = Colors.red;
 
-const splashColor = Color(0xFF0484EC);
+const splashColor = Color(0xFF70A9A1);
 const kSelectionActive = Color(0x670484EC);
 
 const kSmoothIndicator = Color(0x9E0484EC);
 
 const kSpecialAc = Color.fromARGB(255, 253, 109, 52);
 
-const kTextColor = Color(0xFF1E2432);
+// light theme colors
+
+const kTextColor = Color(0xFF1F363D);
 const kTextMediumColor = Color(0xFF53627C);
 const kTextLightColor = Color(0xFFACB1C0);
 const kPrimaryColor = Color.fromARGB(224, 23, 119, 197);
