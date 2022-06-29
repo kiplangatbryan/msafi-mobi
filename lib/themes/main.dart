@@ -19,6 +19,7 @@ const kTextMediumColor = Color(0xFF53627C);
 const kTextLightColor = Color(0xFFACB1C0);
 const kPrimaryColor = Color.fromARGB(224, 23, 119, 197);
 const kBackgroundColor = Color(0xFFFCFCFC);
+const kTextLight = Colors.white;
 const kInactiveChartColor = Color(0xFFEAECEF);
 
 const kDarkPrimary = Color(0xFFEAECEF);
