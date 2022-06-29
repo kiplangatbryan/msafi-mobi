@@ -91,9 +91,8 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
   _nextPage(role) {
     // create a user object and check type
     if (role == "merchant") {
-      //
-    } else if (role == "user") {
       Navigator.popAndPushNamed(context, "/mart-onboarding");
+    } else if (role == "user") {
     } else {}
   }
 

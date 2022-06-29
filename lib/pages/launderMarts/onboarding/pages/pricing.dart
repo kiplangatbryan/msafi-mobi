@@ -89,28 +89,34 @@ class _SetPricingPagestate extends State<SetPricingPage> {
                       effect: const ExpandingDotsEffect(
                         activeDotColor: kSmoothIndicator,
                         dotColor: kTextLightColor,
-                        dotHeight: 12,
-                        dotWidth: 12,
+                        dotHeight: 18,
+                        dotWidth: 18,
                       ),
                       count: context.read<MartConfig>().count,
                     ),
                   ),
                 ),
                 Positioned(
-                    top: 40,
+                    top: 20,
                     left: 30,
                     child: Container(
-                      height: 150,
-                      width: 150,
-                      decoration: const BoxDecoration(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
                         color: splashColor,
+                        borderRadius: BorderRadius.circular(80),
+                        border: Border.all(
+                          color: Colors.transparent,
+                          width: 3,
+                        ),
                       ),
                       child: Center(
                         child: Text(
-                          context.read<MartConfig>().count.toString(),
+                          '$page / ${context.read<MartConfig>().count.toString()}',
                           style: GoogleFonts.poppins(
-                            fontSize: 50,
+                            fontSize: 25,
                             fontWeight: FontWeight.bold,
+                            color: kTextLight,
                           ),
                         ),
                       ),
