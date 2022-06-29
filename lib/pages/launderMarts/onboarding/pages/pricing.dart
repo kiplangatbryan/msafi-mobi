@@ -89,8 +89,8 @@ class _SetPricingPagestate extends State<SetPricingPage> {
                       effect: const ExpandingDotsEffect(
                         activeDotColor: kSmoothIndicator,
                         dotColor: kTextLightColor,
-                        dotHeight: 18,
-                        dotWidth: 18,
+                        dotHeight: 13,
+                        dotWidth: 13,
                       ),
                       count: context.read<MartConfig>().count,
                     ),
@@ -172,8 +172,8 @@ class _SetPricingPagestate extends State<SetPricingPage> {
               primary: splashColor,
               enableFeedback: true,
               padding: const EdgeInsets.symmetric(
-                vertical: 8,
-                horizontal: 40,
+                vertical: 12,
+                horizontal: 50,
               ),
               elevation: 1,
               shape: RoundedRectangleBorder(
@@ -181,7 +181,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
               ),
             ),
             child: Text(
-              "Set",
+              "Save",
               style: GoogleFonts.poppins(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
