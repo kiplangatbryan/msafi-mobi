@@ -18,7 +18,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   String errors = "";
-  String status = "Continue";
+  String status = "Continue with Email";
 
   final Map<String, String> user = {
     "email": "",
@@ -189,8 +189,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       children: [
                         TextSpan(
                           text: "\nSign Up!",
-                          style: GoogleFonts.poppins(
-                            fontSize: 40,
+                          style: GoogleFonts.notoSans(
+                            fontSize: 33,
                             fontWeight: FontWeight.bold,
                             color: kTextColor,
                           ),
@@ -198,8 +198,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         TextSpan(
                           text:
                               "\n\nPlease enter your valid data in order to create an account",
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
+                          style: GoogleFonts.notoSans(
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: kTextColor,
                           ),
@@ -214,23 +214,23 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RichText(
-                          textAlign: TextAlign.left,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "$errors\n",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // RichText(
+                        //   textAlign: TextAlign.left,
+                        //   text: TextSpan(
+                        //     children: [
+                        //       TextSpan(
+                        //         text: "$errors\n",
+                        //         style: GoogleFonts.poppins(
+                        //           fontSize: 15,
+                        //           color: Colors.red,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         customTextField(
                           inputType: TextInputType.name,
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.person_outlined,
                             size: 18,
                           ),
@@ -240,33 +240,33 @@ class _SignUpPageState extends State<SignUpPage> {
                           onSubmit: (val) {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
+                              return 'Enter a valid username';
                             }
                             return null;
                           },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         customTextField(
                           inputType: TextInputType.emailAddress,
-                          icon: Icon(Icons.mail_outline, size: 18),
+                          icon: const Icon(Icons.mail_outline, size: 18),
                           hint: "Enter Email Address",
                           label: "Email",
                           onChanged: _setEmail,
                           onSubmit: (val) {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
+                              return 'Enter a valid Email';
                             }
                             return null;
                           },
                         ),
-                        SizedBox(
-                          height: 20,
+                        const SizedBox(
+                          height: 15,
                         ),
-                        customTextField(
-                          icon: Icon(Icons.lock_open_outlined, size: 18),
+                        customPasswordField(
+                          icon: const Icon(Icons.lock_open_outlined, size: 18),
                           inputType: TextInputType.visiblePassword,
                           hint: "Enter Password",
                           label: "Password",
@@ -279,16 +279,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             return null;
                           },
                         ),
-                        SizedBox(
-                          height: 30,
+                        const SizedBox(
+                          height: 15,
                         ),
                         customButton(
                           callback: _onSubmit,
                           role: "register",
                           title: status,
-                        ),
-                        SizedBox(
-                          height: 10,
                         ),
                       ],
                     ),
@@ -296,15 +293,12 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  SizedBox(
-                    height: 30,
-                  ),
                   customButton(
                     callback: _handleSignIn,
                     role: "login",
-                    title: "Proceed with Google",
+                    title: "Continue with Google",
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Center(
@@ -312,15 +306,15 @@ class _SignUpPageState extends State<SignUpPage> {
                       onPressed: () => _NavigateToLogin(context),
                       child: Text(
                         "ALREADY REGISTERED? LOGIN",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.notoSans(
                           fontSize: 15,
-                          letterSpacing: 2,
+                          letterSpacing: 1.3,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                 ],

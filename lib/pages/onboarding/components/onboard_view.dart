@@ -32,12 +32,15 @@ class OnBoardingView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Lottie.asset(
-            "assets/lottie/$lotieAsset",
-            width: 380,
+          LimitedBox(
+            maxHeight: (MediaQuery.of(context).size.height / 2 - 100),
+            child: Lottie.asset(
+              "assets/lottie/$lotieAsset",
+              fit: BoxFit.contain,
+            ),
           ),
           const SizedBox(
-            height: 30,
+            height: 15,
           ),
           RichText(
             textAlign: TextAlign.center,
@@ -45,16 +48,16 @@ class OnBoardingView extends StatelessWidget {
               children: [
                 TextSpan(
                   text: "$title\n\n",
-                  style: GoogleFonts.poppins(
-                    fontSize: 35,
+                  style: GoogleFonts.notoSans(
+                    fontSize: 28,
                     color: kTextColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextSpan(
                   text: "$highlight\n",
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
+                  style: GoogleFonts.notoSans(
+                    fontSize: 17,
                     color: kTextColor.withOpacity(.8),
                     fontWeight: FontWeight.w600,
                   ),

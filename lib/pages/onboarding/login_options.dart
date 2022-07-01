@@ -37,12 +37,15 @@ class _AuthenticationOptionsState extends State<AuthenticationOptions> {
           ),
           child: Column(
             children: [
-              const Image(
-                image: AssetImage('assets/images/155.png'),
-                height: 300,
+              LimitedBox(
+                maxHeight: (MediaQuery.of(context).size.height / 2 - 100),
+                child: const Image(
+                  image: AssetImage('assets/images/155.png'),
+                  fit: BoxFit.cover,
+                ),
               ),
-              SizedBox(
-                height: 50,
+              const SizedBox(
+                height: 50.0,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -55,8 +58,8 @@ class _AuthenticationOptionsState extends State<AuthenticationOptions> {
                     children: [
                       TextSpan(
                           text: "Be part of the Community, Dont be Left Behind",
-                          style: GoogleFonts.poppins(
-                            fontSize: 35,
+                          style: GoogleFonts.notoSans(
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: kTextColor,
                           )),
@@ -64,40 +67,41 @@ class _AuthenticationOptionsState extends State<AuthenticationOptions> {
                   ),
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
-                  child: Column(
-                    children: [
-                      customButton(
-                        title: "Login",
-                        icon: Icon(
-                          Icons.login,
-                          color: kTextColor,
-                        ),
-                        role: "login",
-                        callback: () {
-                          Navigator.of(context).pushNamed("/login");
-                        },
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: Column(
+                  children: [
+                    customButton(
+                      title: "Login",
+                      icon: const Icon(
+                        Icons.login,
+                        color: kTextColor,
                       ),
-                      SizedBox(
-                        height: 15,
+                      role: "login",
+                      callback: () {
+                        Navigator.of(context).pushNamed("/login");
+                      },
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    customButton(
+                      title: "Register",
+                      icon: const Icon(
+                        Icons.app_registration,
+                        color: kTextLight,
                       ),
-                      customButton(
-                        title: "Register",
-                        icon: Icon(
-                          Icons.app_registration,
-                          color: kTextColor,
-                        ),
-                        role: "register",
-                        callback: () {
-                          Navigator.of(context).pushNamed("/register");
-                        },
-                      ),
-                    ],
-                  ))
+                      role: "register",
+                      callback: () {
+                        Navigator.of(context).pushReplacementNamed("/register");
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -114,7 +118,7 @@ class _AuthenticationOptionsState extends State<AuthenticationOptions> {
       onTap: callback,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: 15,
+          vertical: 12,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -130,15 +134,15 @@ class _AuthenticationOptionsState extends State<AuthenticationOptions> {
             Text(
               title,
               style: GoogleFonts.poppins(
-                fontSize: 22.0,
-                letterSpacing: 2.0,
+                fontSize: 18.0,
+                letterSpacing: 1.3,
                 fontWeight: FontWeight.bold,
                 color: role == "login" ? kTextColor : Colors.white,
                 decorationStyle: TextDecorationStyle.wavy,
               ),
             ),
             SizedBox(
-              width: 30,
+              width: 11,
             ),
             icon,
           ],

@@ -28,33 +28,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            page < 2
-                ? Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                        0,
-                        20,
-                        10,
-                        0,
-                      ),
-                      child: TextButton(
-                        onPressed: () {
-                          print("skipping");
-                        },
-                        child: Text(
-                          "SKIP",
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
-                            color: splashColor,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Container(),
             PageView(
               controller: _pageController,
               onPageChanged: (index) {
@@ -66,7 +39,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               children: [
                 const OnBoardingView(
                   title: "We Are Available Full Time",
-                  lotieAsset: 'coffie-sleeping.json',
+                  lotieAsset: 'delivery.json',
                   highlight:
                       'Free delivery for your laundry basket at your available for 24hrs',
                   hasBtn: false,
@@ -87,6 +60,34 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ],
             ),
+            page < 2
+                ? Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        0,
+                        20,
+                        10,
+                        0,
+                      ),
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _pageController.jumpToPage(2);
+                          });
+                        },
+                        child: Text(
+                          "SKIP",
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: splashColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(),
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(

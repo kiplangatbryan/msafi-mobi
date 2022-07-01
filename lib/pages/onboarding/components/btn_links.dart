@@ -29,7 +29,7 @@ class NavButtons extends StatelessWidget {
       onTap: _navigateToLogin,
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: 15,
+          vertical: 12,
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
@@ -45,14 +45,14 @@ class NavButtons extends StatelessWidget {
             Text(
               title,
               style: GoogleFonts.poppins(
-                fontSize: 22.0,
-                letterSpacing: 2.0,
+                fontSize: 18.0,
+                letterSpacing: 1.3,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
             SizedBox(
-              width: 30,
+              width: 15,
             ),
             icon,
           ],

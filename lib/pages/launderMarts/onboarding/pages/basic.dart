@@ -109,9 +109,9 @@ class _BasicInformationState extends State<BasicInformation> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "\n\nWelcome Partner\nLet's Build Together!",
+                        text: "\nWelcome Partner Let's Build Together!",
                         style: GoogleFonts.poppins(
-                          fontSize: 33,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: kTextColor,
                         ),
@@ -120,7 +120,7 @@ class _BasicInformationState extends State<BasicInformation> {
                         text:
                             "\n\nPlease fill the infomation correctly to proceed\n",
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
+                          fontSize: 16,
                           color: kTextColor,
                         ),
                       )
@@ -145,7 +145,7 @@ class _BasicInformationState extends State<BasicInformation> {
                   onChanged: (val) => _feedValues(key: "name", value: val),
                 ),
                 const SizedBox(
-                  height: 15,
+                  height: 10,
                 ),
                 customTextField(
                   hint: "Business Address",
@@ -177,7 +177,7 @@ class _BasicInformationState extends State<BasicInformation> {
                   },
                   label: "Tell us about Your Business",
                   inputType: TextInputType.multiline,
-                  minLines: 4,
+                  minLines: 3,
                   maxLines: null,
                   icon: const Icon(
                     Icons.description,
@@ -188,7 +188,7 @@ class _BasicInformationState extends State<BasicInformation> {
                       _feedValues(key: "description", value: val),
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
                 ),
                 customButton(
                   title: "Continue",

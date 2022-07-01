@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:msafi_mobi/providers/map.provider.dart';
 import 'package:msafi_mobi/providers/mart.provider.dart';
 import 'package:msafi_mobi/services/map.services.dart';
+import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
 class PickUpspotsSelection extends StatefulWidget {
@@ -22,6 +23,9 @@ class PickUpspotsSelection extends StatefulWidget {
 
 class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
   Completer<GoogleMapController> _controller = Completer();
+
+// fabe key
+  final fabKey = GlobalKey<FabCircularMenuState>();
 
 // toggle UI components we need
   bool searchToggle = false;
@@ -79,8 +83,8 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
             searchToggle
                 ? Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 25,
-                      vertical: 30,
+                      horizontal: 15,
+                      vertical: 50,
                     ),
                     child: Column(
                       children: [
@@ -91,13 +95,39 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                           ),
                           child: TextFormField(
                             controller: searchController,
+                            style: GoogleFonts.poppins(
+                              color: kTextColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                            cursorColor: kTextColor,
+                            cursorHeight: 20,
                             decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 15,
-                              ),
-                              border: InputBorder.none,
                               hintText: "Search",
+                              hintStyle: GoogleFonts.poppins(
+                                color: kTextMediumColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              floatingLabelBehavior: FloatingLabelBehavior.auto,
+                              contentPadding:
+                                  const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                ),
+                                gapPadding: 10,
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                                borderSide: BorderSide(
+                                  color: kTextMediumColor.withOpacity(.4),
+                                ),
+                                gapPadding: 10,
+                              ),
+                              filled: true,
+                              fillColor: kTextMediumColor.withOpacity(.08),
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -194,31 +224,48 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
           ],
         ),
       ),
-      floatingActionButton: FabCircularMenu(
-        alignment: Alignment.bottomLeft,
-        fabColor: Colors.blue.shade50,
-        fabOpenColor: Colors.red.shade100,
-        ringDiameter: 250.0,
-        ringWidth: 60.0,
-        fabSize: 60.0,
-        ringColor: Colors.blue.shade50,
-        children: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                searchToggle = true;
-                radiusSlider = false;
-                pressedNear = false;
-                cardTapped = false;
-                getDirection = false;
-              });
-            },
-            icon: Icon(
-              Icons.search,
+      floatingActionButton: Builder(builder: (context) {
+        return FabCircularMenu(
+          alignment: Alignment.bottomLeft,
+          fabColor: Colors.blue.shade50,
+          fabOpenColor: Colors.red.shade100,
+          key: fabKey,
+          ringDiameter: 250.0,
+          ringWidth: 60.0,
+          fabSize: 60.0,
+          ringColor: Colors.blue.shade50,
+          children: [
+            RawMaterialButton(
+              onPressed: () {
+                setState(() {
+                  searchToggle = true;
+                  radiusSlider = false;
+                  pressedNear = false;
+                  cardTapped = false;
+                  getDirection = false;
+                });
+              },
+              child: Icon(
+                Icons.search,
+                size: 30,
+                color: kTextColor,
+              ),
             ),
-          )
-        ],
-      ),
+            RawMaterialButton(
+              onPressed: () {
+                _showSnackBar(context, "You pressed 2");
+              },
+              shape: CircleBorder(),
+              padding: const EdgeInsets.all(24.0),
+              child: Icon(
+                Icons.looks_two,
+                color: kTextColor,
+                size: 30,
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 
@@ -253,5 +300,16 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
         ),
       ),
     );
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message,
+          style: GoogleFonts.notoSans(
+            fontSize: 15,
+            color: kTextLight,
+          )),
+      duration: const Duration(milliseconds: 1000),
+    ));
   }
 }

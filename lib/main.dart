@@ -3,6 +3,8 @@ import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
 import 'package:msafi_mobi/pages/onboarding/main.dart';
 import 'package:msafi_mobi/pages/splash/main.dart';
+import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/selection.dart';
+
 import 'package:msafi_mobi/providers/map.provider.dart';
 import 'package:msafi_mobi/providers/mart.provider.dart';
 import 'package:msafi_mobi/themes/settings.dart';
@@ -41,7 +43,7 @@ class _MyAppState extends State<MyApp> {
       title: "Msafi-Mobi",
       initialRoute: "/",
       routes: {
-        "/": (context) => const SplashScreen(),
+        "/": (context) => const ProductSelection(),
         "/user-onboarding": (context) => const OnboardingPage(),
         "/mart-onboarding": (context) => const BoardingRender(),
         "/login": (context) => const LoginPageOptions(),

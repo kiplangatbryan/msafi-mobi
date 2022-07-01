@@ -28,10 +28,10 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
   GoogleSignIn _googleSignIn = GoogleSignIn(
     // Optional clientId
     clientId:
-        '150386591318-81g42mric5rsimtmu1rcakn8eu7avu8s.apps.googleusercontent.com',
-    scopes: <String>[
+        '1040045272468-do114pg48n1p7sund8ds6u8g916f87v6.apps.googleusercontent.com',
+    scopes: [
       'email',
-      'password',
+      'https://www.googleapis.com/auth/contacts.readonly',
     ],
   );
 
@@ -43,23 +43,17 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
       setState(() {
         _currentUser = account;
       });
-      if (_currentUser != null) {
-        _handleGetContact(_currentUser!);
-      }
     });
+    // if already signed in automatically sign in
     _googleSignIn.signInSilently();
   }
 
-  _handleGetContact(GoogleSignInAccount user) {
-    print(user);
-  }
-
   Future<void> _handleSignIn() async {
-    await _googleSignIn.signIn().onError((error, stackTrace) => null);
-    // dynamic googleAuth = await googleUser?.authentication;
-
-    // print(googleUser.toString());
-    // print(googleAuth.toString());
+    try {
+      await _googleSignIn.signIn();
+    } catch (err) {
+      print(err);
+    }
   }
 
   Future<void> _handleSignOut() => _googleSignIn.disconnect();
@@ -98,6 +92,9 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
 
   _onSubmit() async {
     _updateStatus("Loading ...");
+
+    Navigator.of(context).pushNamed('/mart-onboarding');
+
     var url = Uri.parse('http://10.0.2.2:3000/v1/auth/login');
 
     try {
@@ -142,9 +139,20 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
       return Navigator.of(context).pop();
     }
 
+    // void _showSnackBar(String message) {
+    //   Scaffold.of(context).showSnackBar(SnackBar(
+    //     content: Text(message,
+    //         style: GoogleFonts.notoSans(
+    //           fontSize: 15,
+    //           color: kTextLight,
+    //         )),
+    //     duration: const Duration(milliseconds: 1000),
+    //   ));
+    // }
+
     final GoogleSignInAccount? user = _currentUser;
 
-    print(user);
+    // _showSnackBar(user.toString());
 
     return SafeArea(
       child: Scaffold(
@@ -177,16 +185,16 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                         TextSpan(
                           text: "\nSign In!",
                           style: GoogleFonts.poppins(
-                            fontSize: 40,
+                            fontSize: 33,
                             fontWeight: FontWeight.bold,
                             color: kTextColor,
                           ),
                         ),
                         TextSpan(
                           text:
-                              "\n\nPlease enter your valid data in order to create an account",
-                          style: GoogleFonts.poppins(
-                            fontSize: 18,
+                              "\n\nPlease enter your valid data in order to sign in to account",
+                          style: GoogleFonts.notoSans(
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: kTextColor,
                           ),
@@ -201,39 +209,39 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RichText(
-                          textAlign: TextAlign.left,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "$errors\n",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  color: Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // RichText(
+                        //   textAlign: TextAlign.left,
+                        //   text: TextSpan(
+                        //     children: [
+                        //       TextSpan(
+                        //         text: "$errors\n",
+                        //         style: GoogleFonts.poppins(
+                        //           fontSize: 15,
+                        //           color: Colors.red,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         customTextField(
                           inputType: TextInputType.emailAddress,
-                          icon: Icon(Icons.mail_outline, size: 18),
+                          icon: const Icon(Icons.mail_outline, size: 18),
                           hint: "Enter Email Address",
                           label: "Email",
                           onChanged: _setEmail,
                           onSubmit: (val) {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
+                              return 'Enter a valid email address';
                             }
                             return null;
                           },
                         ),
-                        SizedBox(
-                          height: 20,
+                        const SizedBox(
+                          height: 15,
                         ),
-                        customTextField(
-                          icon: Icon(Icons.lock_open_outlined, size: 18),
+                        customPasswordField(
+                          icon: const Icon(Icons.lock_open_outlined, size: 18),
                           inputType: TextInputType.visiblePassword,
                           hint: "Enter Password",
                           label: "Password",
@@ -241,20 +249,25 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                           onSubmit: (val) {},
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
+                              return "password is required";
+                            } else if (RegExp(r'/[a-zA-Z]/')
+                                        .firstMatch(value) !=
+                                    null ||
+                                RegExp(r'/\d/').firstMatch(value) != null) {
+                              return "Password must contain at least one letter and one number";
                             }
                             return null;
                           },
                         ),
-                        SizedBox(
-                          height: 30,
+                        const SizedBox(
+                          height: 15,
                         ),
                         customButton(
                           callback: _onSubmit,
                           role: "register",
                           title: status,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
                         Center(
@@ -262,9 +275,9 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                             onPressed: () {},
                             child: Text(
                               "FORGOT PASSWORD",
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.notoSans(
                                 fontSize: 15,
-                                letterSpacing: 2,
+                                letterSpacing: 1.3,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -274,41 +287,41 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: kTextMediumColor.withOpacity(.3),
+                        color: kTextMediumColor.withOpacity(.1),
                         width: 1,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 40,
+                  const SizedBox(
+                    height: 15,
                   ),
                   customButton(
                     callback: _handleSignIn,
                     role: "login",
                     title: "Login with Google",
                   ),
-                  SizedBox(
-                    height: 10,
+                  const SizedBox(
+                    height: 15,
                   ),
                   Center(
                     child: TextButton(
                       onPressed: () => _NavigateToRegister(context),
                       child: Text(
                         "NOT SIGNED? IN REGISTER",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.notoSans(
                           fontSize: 15,
-                          letterSpacing: 2,
+                          letterSpacing: 1.3,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                 ],

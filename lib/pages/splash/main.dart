@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _loadNavigationData() async {
     await Future.delayed(
-      const Duration(seconds: 5),
+      const Duration(seconds: 4),
     );
     await CustomSharedPreferences().checkOnboarding().then(
       (value) async {
@@ -62,26 +62,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Stack(
           children: [
             Center(
-              child: RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Msafi Mobi\n",
-                      style: GoogleFonts.poppins(
-                        fontSize: 35,
-                        color: kDarkPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: "Say goobye to dirty laundry Aha",
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        color: kDarkPrimary,
-                      ),
-                    )
-                  ],
+              child: LimitedBox(
+                maxWidth: MediaQuery.of(context).size.width,
+                child: const Image(
+                  image: AssetImage(
+                    "assets/logo/msafi-logo-one.png",
+                  ),
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
