@@ -76,7 +76,6 @@ class _ProductSelectionState extends State<ProductSelection> {
         body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.symmetric(
-              vertical: 20,
               horizontal: 20,
             ),
             child: Column(
@@ -87,15 +86,15 @@ class _ProductSelectionState extends State<ProductSelection> {
                       TextSpan(
                         text: "\nTime To Pick Your Poison",
                         style: GoogleFonts.poppins(
-                          fontSize: 27,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: kTextColor,
                         ),
                       ),
                       TextSpan(
-                        text: "\n' ✨ 'Tap on clothing items that you wash",
+                        text: "\n\n' ✨ 'Tap on clothing items that you wash",
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: 15,
                           color: kTextColor,
                         ),
                       ),
@@ -103,36 +102,30 @@ class _ProductSelectionState extends State<ProductSelection> {
                   ),
                 ),
                 const SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  height: 470,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(30),
-                    ),
-                  ),
-                  child: clothSelect(),
+                  height: 15,
                 ),
                 LimitedBox(
-                  maxHeight: 150,
-                  child: Center(
-                    child: customButton(
-                        title: "Next ($selectedItems)",
-                        role: "login",
-                        callback: () {
-                          // make selection persist
-                          context
-                              .read<MartConfig>()
-                              .mapSelectedItems(addSelectedClothes());
+                  maxHeight: 930,
+                  child: clothSelect(),
+                ),
+                customButton(
+                  title: "Next ($selectedItems)",
+                  role: "login",
+                  callback: () {
+                    // make selection persist
+                    context
+                        .read<MartConfig>()
+                        .mapSelectedItems(addSelectedClothes());
 
-                          Navigator.of(context).push(
-                            CupertinoPageRoute(
-                              builder: (context) => const SetPricingPage(),
-                            ),
-                          );
-                        }),
-                  ),
+                    Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => const SetPricingPage(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
               ],
             ),
@@ -149,6 +142,7 @@ class _ProductSelectionState extends State<ProductSelection> {
         mainAxisSpacing: 6.0,
         crossAxisSpacing: 6.0,
       ),
+      physics: const ScrollPhysics(),
       children: List.generate(
         fetchClothes().length,
         (index) {
