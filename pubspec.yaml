@@ -43,7 +43,10 @@ dependencies:
   fab_circular_menu: ^1.0.2
   http: ^0.13.4
   lottie: ^1.3.0
+  flutter_dropdown_alert: ^1.0.4
   google_maps_flutter: ^2.1.8
+  dropdown_button2: ^1.6.2
+  moment_dart: ^0.7.2
 
 dev_dependencies:
   flutter_test:

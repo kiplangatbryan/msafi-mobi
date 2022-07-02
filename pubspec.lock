@@ -64,6 +64,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  dropdown_button2:
+    dependency: "direct main"
+    description:
+      name: dropdown_button2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.6.2"
   fab_circular_menu:
     dependency: "direct main"
     description:
@@ -104,6 +111,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dropdown_alert:
+    dependency: "direct main"
+    description:
+      name: flutter_dropdown_alert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -247,6 +261,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
+  moment_dart:
+    dependency: "direct main"
+    description:
+      name: moment_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.7.2"
   nested:
     dependency: transitive
     description:

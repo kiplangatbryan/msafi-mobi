@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
+import 'package:msafi_mobi/pages/launderMarts/home/main.dart';
 import 'package:msafi_mobi/pages/onboarding/main.dart';
 import 'package:msafi_mobi/pages/splash/main.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/selection.dart';
@@ -43,11 +44,12 @@ class _MyAppState extends State<MyApp> {
       title: "Msafi-Mobi",
       initialRoute: "/",
       routes: {
-        "/": (context) => const ProductSelection(),
+        "/": (context) => const MerchantHomePage(),
         "/user-onboarding": (context) => const OnboardingPage(),
         "/mart-onboarding": (context) => const BoardingRender(),
         "/login": (context) => const LoginPageOptions(),
         "/register": (context) => const SignUpPage(),
+        "/mart-home": (context) => const MerchantHomePage(),
       },
       // home: const SetPricingPage(),
     );

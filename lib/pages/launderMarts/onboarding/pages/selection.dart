@@ -75,7 +75,7 @@ class _ProductSelectionState extends State<ProductSelection> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 20,
             ),
             child: Column(

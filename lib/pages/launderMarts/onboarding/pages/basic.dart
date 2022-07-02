@@ -28,6 +28,7 @@ class _BasicInformationState extends State<BasicInformation> {
   }
 
   _feedValues({required String key, required String value}) {
+    print('called');
     switch (key) {
       case "description":
         setState(() {
@@ -59,7 +60,11 @@ class _BasicInformationState extends State<BasicInformation> {
     _storeInfo() {
       // saves the user info into the Mart providers [localstore]
 
-      if (_formKey.currentState!.validate()) {
+      final form = _formKey.currentState;
+
+      if (form!.validate()) {
+        form.save();
+
         context.read<MartConfig>().setAddress(address);
         context.read<MartConfig>().setDescription(description);
         context.read<MartConfig>().setName(name);
@@ -109,9 +114,9 @@ class _BasicInformationState extends State<BasicInformation> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "\nWelcome Partner Let's Build Together!",
+                        text: "\n\nWelcome Partner Let's Build Together!",
                         style: GoogleFonts.poppins(
-                          fontSize: 28,
+                          fontSize: 33,
                           fontWeight: FontWeight.bold,
                           color: kTextColor,
                         ),
@@ -120,7 +125,7 @@ class _BasicInformationState extends State<BasicInformation> {
                         text:
                             "\n\nPlease fill the infomation correctly to proceed\n",
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: 18,
                           color: kTextColor,
                         ),
                       )
@@ -132,7 +137,7 @@ class _BasicInformationState extends State<BasicInformation> {
                   label: "What's Your business name?",
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return 'Business name is required';
                     }
                     return null;
                   },
@@ -141,8 +146,12 @@ class _BasicInformationState extends State<BasicInformation> {
                     size: 18,
                   ),
                   inputType: TextInputType.name,
-                  onSubmit: (val) {},
-                  onChanged: (val) => _feedValues(key: "name", value: val),
+                  onSubmit: (val) {
+                    setState(() {
+                      name = val;
+                    });
+                  },
+                  onChanged: (val) {},
                 ),
                 const SizedBox(
                   height: 10,
@@ -153,7 +162,7 @@ class _BasicInformationState extends State<BasicInformation> {
                   inputType: TextInputType.streetAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return 'Business address is required';
                     }
                     return null;
                   },
@@ -162,7 +171,11 @@ class _BasicInformationState extends State<BasicInformation> {
                     size: 18,
                   ),
                   onChanged: (val) {},
-                  onSubmit: (val) => _feedValues(key: "address", value: val),
+                  onSubmit: (val) {
+                    setState(() {
+                      address = val;
+                    });
+                  },
                 ),
                 const SizedBox(
                   height: 15,
@@ -171,7 +184,7 @@ class _BasicInformationState extends State<BasicInformation> {
                   hint: "Description",
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return 'Description is required';
                     }
                     return null;
                   },
@@ -184,8 +197,11 @@ class _BasicInformationState extends State<BasicInformation> {
                     size: 18,
                   ),
                   onChanged: (val) {},
-                  onSubmit: (val) =>
-                      _feedValues(key: "description", value: val),
+                  onSubmit: (val) {
+                    setState(() {
+                      description = val;
+                    });
+                  },
                 ),
                 const SizedBox(
                   height: 20,
