@@ -107,7 +107,7 @@ Widget customTextField({
   return TextFormField(
     validator: (val) => validator(val),
     onChanged: (val) => onChanged(val),
-    onFieldSubmitted: (val) => onSubmit(val),
+    onSaved: (val) => onSubmit(val),
     cursorColor: kTextColor,
     cursorHeight: 17,
     keyboardType: inputType,
