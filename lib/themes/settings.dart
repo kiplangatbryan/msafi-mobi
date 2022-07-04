@@ -4,25 +4,27 @@ import 'package:msafi_mobi/themes/main.dart';
 ThemeData lightThemeData(BuildContext context) {
   return ThemeData.light().copyWith(
     primaryColor: kPrimaryColor,
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: kTextLight,
     iconTheme: const IconThemeData(
-      color: kTextMediumColor,
+      color: kTextColor,
     ),
     colorScheme: const ColorScheme.light(
-        primary: kPrimaryColor, secondary: kTextMediumColor, error: Colors.red,),
+      primary: kTextColor,
+      secondary: kTextMediumColor,
+      error: Colors.red,
+      tertiary: kAccentColor,
+    ),
   );
 }
 
 ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
-    primaryColor: kPrimaryColor,
-    scaffoldBackgroundColor: kDarkBackgroundColor,
+    primaryColor: kTextColor,
+    scaffoldBackgroundColor: kTextColor,
     iconTheme: const IconThemeData(
-      color: Colors.white,
+      color: kTextLight,
     ),
-    colorScheme: const ColorScheme.light(
-        primary: kPrimaryColor,
-        secondary: kDarkTextMediumColor,
-        error: Colors.yellow),
+    colorScheme: const ColorScheme.dark(
+        primary: kTextColor, secondary: kSecondaryColor, error: Colors.yellow),
   );
 }
