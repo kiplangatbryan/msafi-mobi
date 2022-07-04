@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/pages/launderMarts/email/main.dart';
+import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
 
 import '../components/util_widgets.dart';
 
-class MerchantSettings extends StatefulWidget {
-  const MerchantSettings({Key? key}) : super(key: key);
+class AccountSettings extends StatefulWidget {
+  const AccountSettings({Key? key}) : super(key: key);
 
   @override
-  State<MerchantSettings> createState() => _MerchantSettingsState();
+  State<AccountSettings> createState() => _AccountSettingsState();
 }
 
-class _MerchantSettingsState extends State<MerchantSettings> {
+class _AccountSettingsState extends State<AccountSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_outlined,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
+        // leading: IconButton(
+        //   onPressed: () {
+        //     Navigator.of(context).pop();
+        //   },
+        //   icon: Icon(
+        //     Icons.arrow_back_ios_outlined,
+        //     color: Theme.of(context).colorScheme.primary,
+        //   ),
+        // ),
         title: Text(
-          "Settings",
+          "Account",
           style: GoogleFonts.notoSans(
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
@@ -48,6 +50,13 @@ class _MerchantSettingsState extends State<MerchantSettings> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    FadButton(
+                      onPressed: () {},
+                      child: NavigateToProfile(),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     Text(
                       'User Account',
                       style: GoogleFonts.notoSans(
@@ -59,15 +68,21 @@ class _MerchantSettingsState extends State<MerchantSettings> {
                       height: 20,
                     ),
                     CustomBtnLink(
-                      callback: () {},
+                      callback: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => const EmailChange()));
+                        print("clicked");
+                      },
                       title: "Email",
                       subtitle: "briankiplangat71@gmail.com",
                     ),
                     const SizedBox(
-                      height: 10,
+                      height: 18,
                     ),
                     CustomBtnLink(
-                      callback: () {},
+                      callback: () {
+                        print("clicked");
+                      },
                       title: "Password",
                       subtitle: "Tap to change password",
                     ),
@@ -114,31 +129,34 @@ class CustomBtnLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.notoSans(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () => callback,
+      child: Container(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.notoSans(
+                fontSize: 16,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          Text(
-            subtitle,
-            style: GoogleFonts.notoSans(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.primary.withOpacity(.6),
-              fontWeight: FontWeight.w700,
+            const SizedBox(
+              height: 4,
             ),
-          ),
-        ],
+            Text(
+              subtitle,
+              style: GoogleFonts.notoSans(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.primary.withOpacity(.6),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -23,14 +23,14 @@ class HomePageView extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: "\nGood Morning, Tom",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.notoSans(
                       fontSize: 14,
                       color: kTextColor,
                     ),
                   ),
                   TextSpan(
                     text: "\n\nFind Your closest",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.notoSans(
                       fontSize: 34,
                       color: kTextColor,
                       fontWeight: FontWeight.bold,
@@ -38,7 +38,7 @@ class HomePageView extends StatelessWidget {
                   ),
                   TextSpan(
                     text: "\ndry cleaners",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.notoSans(
                       fontSize: 34,
                       color: kTextColor,
                       fontWeight: FontWeight.bold,
@@ -94,13 +94,13 @@ class HomePageView extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: "Your Location\n",
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.notoSans(
                                 fontSize: 14,
                               ),
                             ),
                             TextSpan(
                               text: "Royal Ln.Mesa New Jersey\n",
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.notoSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -141,14 +141,14 @@ class HomePageView extends StatelessWidget {
                             children: [
                               TextSpan(
                                 text: "25% OFF\n",
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.notoSans(
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               TextSpan(
                                 text: "First Dry Cleaning",
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.notoSans(
                                   fontSize: 16,
                                 ),
                               ),
@@ -175,7 +175,7 @@ class HomePageView extends StatelessWidget {
                             autofocus: true,
                             child: Text(
                               "USE CODE",
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.notoSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
@@ -226,7 +226,7 @@ class HomePageView extends StatelessWidget {
             ),
             Text(
               "Cleaners",
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.notoSans(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

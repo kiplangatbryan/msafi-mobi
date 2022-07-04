@@ -78,7 +78,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         },
                         child: Text(
                           "SKIP",
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.notoSans(
                             fontSize: 18,
                             color: splashColor,
                             fontWeight: FontWeight.bold,
