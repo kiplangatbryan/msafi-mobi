@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:msafi_mobi/providers/map.provider.dart';
-import 'package:msafi_mobi/providers/mart.provider.dart';
+import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/services/map.services.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
@@ -82,7 +82,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
             ),
             searchToggle
                 ? Padding(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 15,
                       vertical: 50,
                     ),
@@ -95,7 +95,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                           ),
                           child: TextFormField(
                             controller: searchController,
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.notoSans(
                               color: kTextColor,
                               fontWeight: FontWeight.w600,
                               fontSize: 20,
@@ -104,7 +104,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                             cursorHeight: 20,
                             decoration: InputDecoration(
                               hintText: "Search",
-                              hintStyle: GoogleFonts.poppins(
+                              hintStyle: GoogleFonts.notoSans(
                                 color: kTextMediumColor,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -195,7 +195,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                               children: [
                                 Text(
                                   "No results to display",
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.notoSans(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -209,7 +209,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                                     child: Center(
                                       child: Text(
                                         "close this",
-                                        style: GoogleFonts.poppins(
+                                        style: GoogleFonts.notoSans(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w300,
                                         ),

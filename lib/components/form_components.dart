@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
-Container MergeButton({required BuildContext context, required onPressed}) {
-  return Container(
+SizedBox MergeButton({required BuildContext context, required onPressed}) {
+  return SizedBox(
     width: double.infinity,
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -21,7 +21,7 @@ Container MergeButton({required BuildContext context, required onPressed}) {
       onPressed: onPressed,
       autofocus: true,
       child: Text("Login",
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.notoSans(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -51,7 +51,7 @@ Widget customPasswordField({
     obscureText: true,
     // ? TextInputType.visiblePassword
     // : TextInputType.emailAddress,
-    style: GoogleFonts.poppins(
+    style: GoogleFonts.notoSans(
       color: kTextColor,
       fontWeight: FontWeight.w600,
       fontSize: 17,
@@ -59,11 +59,11 @@ Widget customPasswordField({
     decoration: InputDecoration(
       hintText: hint,
       labelText: label,
-      labelStyle: GoogleFonts.poppins(
+      labelStyle: GoogleFonts.notoSans(
         color: kTextMediumColor.withOpacity(.4),
         fontSize: 17,
       ),
-      floatingLabelStyle: GoogleFonts.poppins(
+      floatingLabelStyle: GoogleFonts.notoSans(
         color: kTextMediumColor.withOpacity(.4),
         fontSize: 17,
       ),
@@ -115,7 +115,7 @@ Widget customTextField({
     maxLines: maxLines,
     // ? TextInputType.visiblePassword
     // : TextInputType.emailAddress,
-    style: GoogleFonts.poppins(
+    style: GoogleFonts.notoSans(
       color: kTextColor,
       fontWeight: FontWeight.w600,
       fontSize: 17,
@@ -123,11 +123,11 @@ Widget customTextField({
     decoration: InputDecoration(
       hintText: hint,
       labelText: label,
-      labelStyle: GoogleFonts.poppins(
+      labelStyle: GoogleFonts.notoSans(
         color: kTextMediumColor.withOpacity(.4),
         fontSize: 17,
       ),
-      floatingLabelStyle: GoogleFonts.poppins(
+      floatingLabelStyle: GoogleFonts.notoSans(
         color: kTextMediumColor.withOpacity(.4),
         fontSize: 17,
       ),

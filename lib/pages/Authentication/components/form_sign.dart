@@ -43,7 +43,7 @@ class _SignFormState extends State<SignForm> {
       keyboardType: field_type == "email"
           ? TextInputType.visiblePassword
           : TextInputType.emailAddress,
-      style: GoogleFonts.poppins(
+      style: GoogleFonts.notoSans(
         color: kTextColor,
         fontWeight: FontWeight.w600,
         fontSize: 14,
@@ -51,10 +51,10 @@ class _SignFormState extends State<SignForm> {
       decoration: InputDecoration(
         hintText: hint,
         labelText: label,
-        labelStyle: GoogleFonts.poppins(
+        labelStyle: GoogleFonts.notoSans(
           color: kTextMediumColor.withOpacity(.4),
         ),
-        floatingLabelStyle: GoogleFonts.poppins(
+        floatingLabelStyle: GoogleFonts.notoSans(
           color: kTextMediumColor.withOpacity(.4),
         ),
         filled: true,
@@ -135,7 +135,7 @@ class _SignFormState extends State<SignForm> {
               },
               autofocus: true,
               child: Text("Login",
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.notoSans(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,

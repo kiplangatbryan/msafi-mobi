@@ -220,7 +220,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         //     children: [
                         //       TextSpan(
                         //         text: "$errors\n",
-                        //         style: GoogleFonts.poppins(
+                        //         style: GoogleFonts.notoSans(
                         //           fontSize: 15,
                         //           color: Colors.red,
                         //         ),

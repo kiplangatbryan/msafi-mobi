@@ -5,7 +5,7 @@ import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/configs/data.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/location.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/pricing.dart';
-import 'package:msafi_mobi/providers/mart.provider.dart';
+import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
@@ -85,7 +85,7 @@ class _ProductSelectionState extends State<ProductSelection> {
                     children: [
                       TextSpan(
                         text: "\nTime To Pick Your Poison",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.notoSans(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: kTextColor,
@@ -93,7 +93,7 @@ class _ProductSelectionState extends State<ProductSelection> {
                       ),
                       TextSpan(
                         text: "\n\n' ✨ 'Tap on clothing items that you wash",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.notoSans(
                           fontSize: 15,
                           color: kTextColor,
                         ),
@@ -176,7 +176,7 @@ class _ProductSelectionState extends State<ProductSelection> {
                   ),
                   Text(
                     fetchClothes()[index]['title'].toString(),
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.notoSans(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: kTextMediumColor.withOpacity(.9),

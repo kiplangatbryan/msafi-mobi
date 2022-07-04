@@ -29,7 +29,8 @@ class _SignUpPageState extends State<SignUpPage> {
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   // Optional clientId
-  clientId: '150386591318-81g42mric5rsimtmu1rcakn8eu7avu8s.apps.googleusercontent.com',
+  clientId:
+      '150386591318-81g42mric5rsimtmu1rcakn8eu7avu8s.apps.googleusercontent.com',
   scopes: <String>[
     'email',
     'https://www.googleapis.com/auth/contacts.readonly',

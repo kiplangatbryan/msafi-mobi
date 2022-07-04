@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/selection.dart';
-import 'package:msafi_mobi/providers/mart.provider.dart';
+import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
@@ -115,7 +115,7 @@ class _BasicInformationState extends State<BasicInformation> {
                     children: [
                       TextSpan(
                         text: "\n\nWelcome Partner Let's Build Together!",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.notoSans(
                           fontSize: 33,
                           fontWeight: FontWeight.bold,
                           color: kTextColor,
@@ -124,7 +124,7 @@ class _BasicInformationState extends State<BasicInformation> {
                       TextSpan(
                         text:
                             "\n\nPlease fill the infomation correctly to proceed\n",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.notoSans(
                           fontSize: 18,
                           color: kTextColor,
                         ),

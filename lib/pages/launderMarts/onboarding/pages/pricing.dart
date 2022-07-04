@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/finish_line.dart';
-import 'package:msafi_mobi/providers/mart.provider.dart';
+import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -84,7 +84,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
       ),
       child: Text(
         "Finish",
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.notoSans(
           fontSize: 25,
           fontWeight: FontWeight.bold,
           letterSpacing: 2,
@@ -124,7 +124,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
         ),
         title: Text(
           "Set cloth prices",
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.notoSans(
             fontSize: 20,
             color: kTextMediumColor,
             fontWeight: FontWeight.bold,
@@ -214,7 +214,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
                   ),
                   child: Text(
                     _btnText,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.notoSans(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
@@ -255,7 +255,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
           ),
           Text(
             title,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.notoSans(
               fontSize: 25,
               fontWeight: FontWeight.bold,
               color: kTextColor.withOpacity(.8),
@@ -278,7 +278,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
         cursorColor: kTextColor,
         cursorHeight: 20,
         keyboardType: TextInputType.number,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.notoSans(
           color: kTextColor,
           fontWeight: FontWeight.w600,
           fontSize: 18,
@@ -290,16 +290,16 @@ class _SetPricingPagestate extends State<SetPricingPage> {
         },
         decoration: InputDecoration(
           hintText: "E.g 100",
-          hintStyle: GoogleFonts.poppins(
+          hintStyle: GoogleFonts.notoSans(
             color: kTextMediumColor.withOpacity(.3),
             fontSize: 18,
           ),
           labelText: "KSH",
-          labelStyle: GoogleFonts.poppins(
+          labelStyle: GoogleFonts.notoSans(
             color: kTextMediumColor.withOpacity(.4),
             fontSize: 15,
           ),
-          floatingLabelStyle: GoogleFonts.poppins(
+          floatingLabelStyle: GoogleFonts.notoSans(
             color: kTextMediumColor.withOpacity(.4),
             fontSize: 22,
           ),

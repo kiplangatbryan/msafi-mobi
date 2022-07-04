@@ -10,7 +10,6 @@ class GooglAuth extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        
         style: ElevatedButton.styleFrom(
           primary: splashColor,
           enableFeedback: true,
@@ -28,7 +27,7 @@ class GooglAuth extends StatelessWidget {
         },
         autofocus: true,
         child: Text("Login",
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.notoSans(
               fontSize: 17,
               fontWeight: FontWeight.w600,
               color: Colors.white,

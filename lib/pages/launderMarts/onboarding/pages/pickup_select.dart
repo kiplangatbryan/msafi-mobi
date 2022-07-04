@@ -32,7 +32,7 @@ class _LocationFeedScreenState extends State<LocationFeedScreen> {
                     children: [
                       TextSpan(
                         text: "How many pick up locations do you have",
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.notoSans(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
                         ),

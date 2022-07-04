@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
           // switchInCurve: Curves.easeOut,
           // switchOutCurve: Curves.easeIn,
           duration: const Duration(milliseconds: 100),
-          
+
           child: _child,
         );
       },
