@@ -70,7 +70,7 @@ class _FinishPageState extends State<FinishPage> {
                       children: [
                         TextSpan(
                           text: "Congratulations\n\n",
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.notoSans(
                             color: kTextColor,
                             fontSize: 30,
                             fontWeight: FontWeight.w600,
@@ -79,7 +79,7 @@ class _FinishPageState extends State<FinishPage> {
                         TextSpan(
                           text:
                               "You have successfully finished setting your Launder Mart, Lets get mula!",
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.notoSans(
                             color: kTextColor,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,

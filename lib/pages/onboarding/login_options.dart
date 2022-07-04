@@ -133,7 +133,7 @@ class _AuthenticationOptionsState extends State<AuthenticationOptions> {
           children: [
             Text(
               title,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.notoSans(
                 fontSize: 18.0,
                 letterSpacing: 1.3,
                 fontWeight: FontWeight.bold,
