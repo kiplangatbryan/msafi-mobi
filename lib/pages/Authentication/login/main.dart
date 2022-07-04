@@ -184,7 +184,7 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                       children: [
                         TextSpan(
                           text: "\nSign In!",
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.notoSans(
                             fontSize: 33,
                             fontWeight: FontWeight.bold,
                             color: kTextColor,
@@ -215,7 +215,7 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                         //     children: [
                         //       TextSpan(
                         //         text: "$errors\n",
-                        //         style: GoogleFonts.poppins(
+                        //         style: GoogleFonts.notoSans(
                         //           fontSize: 15,
                         //           color: Colors.red,
                         //         ),
