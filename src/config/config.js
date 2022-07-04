@@ -23,6 +23,12 @@ const envVarsSchema = Joi.object()
     SMTP_USERNAME: Joi.string().description('username for email server'),
     SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
+    TOKEN_URL: Joi.string().description('safaricom access token url'),
+    CONSUMER_KEY: Joi.string().description('safaricom consumer key'),
+    CONSUMER_SECRET: Joi.string().description('safaricom consumer secret'),
+    ONLINE_PROCESS_URL: Joi.string().description('safaricom sandbox url to initiate payment'),
+    passkey: Joi.string().description('safaricom sandbox passkety'),
+    shortcode: Joi.string().description('safaricom sandbox shortcode'),
   })
   .unknown();
 
@@ -60,5 +66,13 @@ module.exports = {
       },
     },
     from: envVars.EMAIL_FROM,
+  },
+  mpesaPay: {
+    accessTokenUri: envVars.TOKEN_URL,
+    consumerKeyUri: envVars.CONSUMER_KEY,
+    consumerSecret: envVars.CONSUMER_SECRET,
+    processUri: envVars.ONLINE_PROCESS_URL,
+    passkey: envVars.passkey,
+    shortcode: envVars.shortcode,
   },
 };

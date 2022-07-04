@@ -8,5 +8,6 @@ const router = express.Router();
 
 router.route('/createStore').post(auth(), validate(launderValidation.createStore), launderController.createStore);
 router.route('/fetchStore').get(auth(), validate(launderValidation.fetchStores), launderController.fetchStores);
+router.route('/stk-push/callback').post(launderController.fetchStores);
 
 module.exports = router;
