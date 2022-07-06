@@ -3,12 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
 SizedBox customExtendButton(
-    {required Widget child, required Function onPressed}) {
+    {required BuildContext ctx, required Widget child, required onPressed}) {
   return SizedBox(
     width: double.infinity,
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: splashColor,
+        primary: Theme.of(ctx).primaryColor,
         enableFeedback: true,
         padding: const EdgeInsets.symmetric(
           vertical: 18,
@@ -19,138 +19,167 @@ SizedBox customExtendButton(
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      onPressed: () => onPressed,
+      onPressed: onPressed,
       autofocus: true,
       child: child,
     ),
   );
 }
 
-Widget customPasswordField({
-  required String hint,
-  required String label,
-  required TextInputType inputType,
-  required Icon icon,
-  required Function validator,
-  required Function onChanged,
-  required Function onSubmit,
-  int? minLines,
-  int? maxLines,
-}) {
-  return TextFormField(
-    validator: (val) => validator(val),
-    onChanged: (val) => onChanged(val),
-    onSaved: (val) => onSubmit(val),
-    cursorColor: kTextColor,
-    cursorHeight: 20,
-    keyboardType: inputType,
-    obscureText: true,
-    // ? TextInputType.visiblePassword
-    // : TextInputType.emailAddress,
-    style: GoogleFonts.notoSans(
-      color: kTextColor,
-      fontWeight: FontWeight.w600,
-      fontSize: 17,
-    ),
-    decoration: InputDecoration(
-      hintText: hint,
-      labelText: label,
-      labelStyle: GoogleFonts.notoSans(
-        color: kTextMediumColor.withOpacity(.4),
-        fontSize: 17,
-      ),
-      floatingLabelStyle: GoogleFonts.notoSans(
-        color: kTextMediumColor.withOpacity(.4),
-        fontSize: 17,
-      ),
-      filled: true,
-      fillColor: kTextMediumColor.withOpacity(.06),
-      prefixIcon: icon,
+class customPasswordField extends StatelessWidget {
+  String hint;
+  String label;
+  TextInputType inputType;
+  Icon icon;
+  Function validator;
+  Function onChanged;
+  Function onSubmit;
+  int? minLines;
+  int? maxLines;
 
-      // ? const Icon(Icons.mail_outline, size: 18)
-      // : const Icon(Icons.lock_open_outlined, size: 18),
-      floatingLabelBehavior: FloatingLabelBehavior.auto,
-      contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(
-          color: Colors.transparent,
-        ),
-        gapPadding: 10,
+  customPasswordField(
+      {required this.hint,
+      required this.label,
+      required this.inputType,
+      required this.icon,
+      required this.validator,
+      required this.onChanged,
+      required this.onSubmit,
+      this.minLines,
+      this.maxLines,
+      Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      validator: (val) => validator(val),
+      onChanged: (val) => onChanged(val),
+      onSaved: (val) => onSubmit(val),
+      cursorColor: kTextColor,
+      cursorHeight: 20,
+      keyboardType: inputType,
+      obscureText: true,
+      // ? TextInputType.visiblePassword
+      // : TextInputType.emailAddress,
+      style: GoogleFonts.notoSans(
+        color: kTextColor,
+        fontWeight: FontWeight.w600,
+        fontSize: 17,
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(
+      decoration: InputDecoration(
+        hintText: hint,
+        labelText: label,
+        labelStyle: GoogleFonts.notoSans(
           color: kTextMediumColor.withOpacity(.4),
+          fontSize: 17,
         ),
-        gapPadding: 10,
+        floatingLabelStyle: GoogleFonts.notoSans(
+          color: kTextMediumColor.withOpacity(.4),
+          fontSize: 17,
+        ),
+        filled: true,
+        fillColor: Theme.of(context).primaryColor.withOpacity(.06),
+        prefixIcon: icon,
+
+        // ? const Icon(Icons.mail_outline, size: 18)
+        // : const Icon(Icons.lock_open_outlined, size: 18),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Colors.transparent,
+          ),
+          gapPadding: 10,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor.withOpacity(.3),
+          ),
+          gapPadding: 10,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
-Widget customTextField({
-  required String hint,
-  required String label,
-  required TextInputType inputType,
-  required Icon icon,
-  required Function validator,
-  required Function onChanged,
-  required Function onSubmit,
-  int? minLines,
-  int? maxLines,
-}) {
-  return TextFormField(
-    validator: (val) => validator(val),
-    onChanged: (val) => onChanged(val),
-    onSaved: (val) => onSubmit(val),
-    cursorColor: kTextColor,
-    cursorHeight: 17,
-    keyboardType: inputType,
-    minLines: minLines,
-    maxLines: maxLines,
-    // ? TextInputType.visiblePassword
-    // : TextInputType.emailAddress,
-    style: GoogleFonts.notoSans(
-      color: kTextColor,
-      fontWeight: FontWeight.w600,
-      fontSize: 17,
-    ),
-    decoration: InputDecoration(
-      hintText: hint,
-      labelText: label,
-      labelStyle: GoogleFonts.notoSans(
-        color: kTextMediumColor.withOpacity(.4),
-        fontSize: 17,
-      ),
-      floatingLabelStyle: GoogleFonts.notoSans(
-        color: kTextMediumColor.withOpacity(.4),
-        fontSize: 17,
-      ),
-      filled: true,
-      fillColor: kTextMediumColor.withOpacity(.06),
-      prefixIcon: icon,
+class customTextField extends StatelessWidget {
+  String hint;
+  String label;
+  TextInputType inputType;
+  Icon icon;
+  Function validator;
+  Function onChanged;
+  Function onSubmit;
+  int? minLines;
+  int? maxLines;
+  customTextField(
+      {required this.hint,
+      required this.label,
+      required this.inputType,
+      required this.icon,
+      required this.validator,
+      required this.onChanged,
+      required this.onSubmit,
+      this.minLines,
+      this.maxLines,
+      Key? key})
+      : super(key: key);
 
-      // ? const Icon(Icons.mail_outline, size: 18)
-      // : const Icon(Icons.lock_open_outlined, size: 18),
-      floatingLabelBehavior: FloatingLabelBehavior.auto,
-      contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(
-          color: Colors.transparent,
-        ),
-        gapPadding: 10,
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      validator: (val) => validator(val),
+      onChanged: (val) => onChanged(val),
+      onSaved: (val) => onSubmit(val),
+      cursorColor: kTextColor,
+      cursorHeight: 17,
+      keyboardType: inputType,
+      minLines: minLines,
+      maxLines: maxLines,
+      style: GoogleFonts.notoSans(
+        color: kTextColor,
+        fontWeight: FontWeight.w600,
+        fontSize: 17,
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(
+      decoration: InputDecoration(
+        hintText: hint,
+        labelText: label,
+        labelStyle: GoogleFonts.notoSans(
           color: kTextMediumColor.withOpacity(.4),
+          fontSize: 17,
         ),
-        gapPadding: 10,
+        floatingLabelStyle: GoogleFonts.notoSans(
+          color: kTextMediumColor.withOpacity(.4),
+          fontSize: 17,
+        ),
+        filled: true,
+        fillColor: Theme.of(context).primaryColor.withOpacity(.06),
+        prefixIcon: icon,
+
+        // ? const Icon(Icons.mail_outline, size: 18)
+        // : const Icon(Icons.lock_open_outlined, size: 18),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Colors.transparent,
+          ),
+          gapPadding: 10,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor.withOpacity(.3),
+          ),
+          gapPadding: 10,
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 GestureDetector customButton(
