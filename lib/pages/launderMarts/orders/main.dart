@@ -33,7 +33,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Theme.of(context).canvasColor,
         elevation: 2,
         leading: IconButton(
           onPressed: () {
@@ -46,7 +46,6 @@ class _MerchantOrdersState extends State<MerchantOrders> {
         ),
         title: searchBar(),
         centerTitle: true,
-        toolbarHeight: 55,
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -61,7 +60,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(30),
                   color:
                       Theme.of(context).colorScheme.secondary.withOpacity(.3),
                 ),
@@ -81,7 +80,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(30),
                             color: active == 0
                                 ? Theme.of(context).colorScheme.background
                                 : null,
@@ -96,7 +95,12 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                             style: GoogleFonts.notoSans(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: active == 0
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(.5),
                             ),
                           ),
                         ),
@@ -124,7 +128,12 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                             style: GoogleFonts.notoSans(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: kTextMediumColor,
+                              color: active == 1
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(.5),
                             ),
                           ),
                         ),
@@ -221,8 +230,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                                             width: maxWidth),
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary,
-                                        fontWeight: FontWeight.w600,
+                                            .primary,
                                       ),
                                     ),
                                     Text(
@@ -237,8 +245,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                                             width: maxWidth),
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary,
-                                        fontWeight: FontWeight.w400,
+                                            .primary,
                                       ),
                                     ),
                                   ],
@@ -261,8 +268,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                                               width: maxWidth),
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondary,
-                                          fontWeight: FontWeight.w600,
+                                              .primary,
                                         ),
                                       ),
                                     ),
@@ -273,8 +279,9 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                                             small: 14,
                                             large: 16,
                                             width: maxWidth),
-                                        color: kTextMediumColor,
-                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                     ),
                                   ],
@@ -301,35 +308,35 @@ class _MerchantOrdersState extends State<MerchantOrders> {
       style: GoogleFonts.notoSans(
         color: kTextColor,
         fontWeight: FontWeight.w600,
-        fontSize: 14,
+        fontSize: 18,
       ),
       cursorColor: kTextColor,
-      cursorHeight: 18,
+      cursorHeight: 22,
       decoration: InputDecoration(
         hintText: "Search",
         hintStyle: GoogleFonts.notoSans(
           color: kTextMediumColor,
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
         floatingLabelBehavior: FloatingLabelBehavior.auto,
-        contentPadding: const EdgeInsets.fromLTRB(20, 7, 7, 10),
+        contentPadding: const EdgeInsets.fromLTRB(20, 4, 10, 4),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(30),
           borderSide: const BorderSide(
             color: Colors.transparent,
           ),
           gapPadding: 10,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(
-            color: Colors.transparent,
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor.withOpacity(.08),
           ),
           gapPadding: 10,
         ),
         filled: true,
-        fillColor: Theme.of(context).colorScheme.secondary.withOpacity(.4),
+        fillColor: Theme.of(context).colorScheme.secondary.withOpacity(.2),
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
