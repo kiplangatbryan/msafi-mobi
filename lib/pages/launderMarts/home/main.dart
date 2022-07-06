@@ -40,7 +40,7 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(
-            top: sizeCompute(small: 80, large: 100, width: maxWidth),
+            top: sizeCompute(small: 60, large: 80, width: maxWidth),
             bottom: sizeCompute(small: 20, large: 20, width: maxWidth),
           ),
           child: Column(
@@ -151,6 +151,8 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
                         child: SmoothPageIndicator(
                           controller: _pageController,
                           effect: const ExpandingDotsEffect(
+                            dotHeight: 11,
+                            dotWidth: 11,
                             activeDotColor: kSmoothIndicator,
                             dotColor: kTextLightColor,
                           ),
@@ -286,7 +288,7 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
-              color: kBackgroundColor,
+              color: Theme.of(context).scaffoldBackgroundColor,
             ),
             margin: const EdgeInsets.only(bottom: 10),
             child: Row(
@@ -301,7 +303,7 @@ class _MerchantHomePageState extends State<MerchantHomePage> {
                   child: Icon(
                     Icons.history_toggle_off,
                     size: 30,
-                    color: Theme.of(context).colorScheme.tertiary,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
                 Expanded(

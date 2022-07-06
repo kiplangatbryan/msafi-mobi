@@ -6,6 +6,8 @@ import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../providers/merchant.provider.dart';
+
 class BasicInformation extends StatefulWidget {
   const BasicInformation({Key? key}) : super(key: key);
 
@@ -23,31 +25,7 @@ class _BasicInformationState extends State<BasicInformation> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-  }
-
-  _feedValues({required String key, required String value}) {
-    print('called');
-    switch (key) {
-      case "description":
-        setState(() {
-          description = value;
-        });
-        break;
-      case "name":
-        setState(() {
-          name = value;
-        });
-        break;
-      case "address":
-        setState(() {
-          address = value;
-        });
-        break;
-      default:
-        break;
-    }
   }
 
   @override
@@ -80,17 +58,19 @@ class _BasicInformationState extends State<BasicInformation> {
     return Scaffold(
       appBar: AppBar(
         bottomOpacity: .3,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+        elevation: 1,
+        backgroundColor: Theme.of(context).canvasColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_outlined, size: 18),
           onPressed: _goback,
           color: kTextMediumColor,
         ),
-        title: const Text(
+        title: Text(
           "Getting Started",
           style: TextStyle(
-            color: kTextMediumColor,
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -114,19 +94,20 @@ class _BasicInformationState extends State<BasicInformation> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "\n\nWelcome Partner Let's Build Together!",
+                        text:
+                            "\n\nWelcome ${context.read<User>().name} Let's Build Together!",
                         style: GoogleFonts.notoSans(
-                          fontSize: 33,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: kTextColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       TextSpan(
                         text:
                             "\n\nPlease fill the infomation correctly to proceed\n",
                         style: GoogleFonts.notoSans(
-                          fontSize: 18,
-                          color: kTextColor,
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       )
                     ],
@@ -206,11 +187,17 @@ class _BasicInformationState extends State<BasicInformation> {
                 const SizedBox(
                   height: 20,
                 ),
-                customButton(
-                  title: "Continue",
-                  role: "register",
-                  callback: _storeInfo,
-                ),
+                customExtendButton(
+                    ctx: context,
+                    child: Text(
+                      "Next",
+                      style: GoogleFonts.notoSans(
+                        fontSize: 20,
+                        color: kTextLight,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: _storeInfo),
               ],
             ),
           ),

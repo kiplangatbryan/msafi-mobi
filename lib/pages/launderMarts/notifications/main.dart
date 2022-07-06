@@ -62,6 +62,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: OverflowBar(
+            overflowDirection: VerticalDirection.down,
             overflowAlignment: OverflowBarAlignment.center,
             children: <Widget>[
               Row(

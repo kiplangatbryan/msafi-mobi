@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/configs/data.dart';
-import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/location.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/pricing.dart';
-import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../providers/merchant.provider.dart';
 
 class ProductSelection extends StatefulWidget {
   const ProductSelection({Key? key}) : super(key: key);
@@ -59,19 +59,22 @@ class _ProductSelectionState extends State<ProductSelection> {
       child: Scaffold(
         appBar: AppBar(
           bottomOpacity: .3,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
+          elevation: 1,
+          backgroundColor: Theme.of(context).canvasColor,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_outlined, size: 18),
             onPressed: _goback,
-            color: kTextMediumColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
-          title: const Text(
+          title: Text(
             "Cloth selection",
             style: TextStyle(
-              color: kTextMediumColor,
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
           ),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -88,14 +91,14 @@ class _ProductSelectionState extends State<ProductSelection> {
                         style: GoogleFonts.notoSans(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: kTextColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       TextSpan(
                         text: "\n\n' ✨ 'Tap on clothing items that you wash",
                         style: GoogleFonts.notoSans(
-                          fontSize: 15,
-                          color: kTextColor,
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -104,26 +107,30 @@ class _ProductSelectionState extends State<ProductSelection> {
                 const SizedBox(
                   height: 15,
                 ),
-                LimitedBox(
-                  maxHeight: 930,
-                  child: clothSelect(),
+                clothSelect(),
+                const SizedBox(
+                  height: 40,
                 ),
-                customButton(
-                  title: "Next ($selectedItems)",
-                  role: "login",
-                  callback: () {
-                    // make selection persist
-                    context
-                        .read<MartConfig>()
-                        .mapSelectedItems(addSelectedClothes());
-
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (context) => const SetPricingPage(),
+                customExtendButton(
+                    ctx: context,
+                    child: Text(
+                      "Next ( $selectedItems )",
+                      style: GoogleFonts.notoSans(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                ),
+                    ),
+                    onPressed: () {
+                      context
+                          .read<MartConfig>()
+                          .mapSelectedItems(addSelectedClothes());
+
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (context) => const SetPricingPage(),
+                        ),
+                      );
+                    }),
                 const SizedBox(
                   height: 30,
                 ),
@@ -137,6 +144,7 @@ class _ProductSelectionState extends State<ProductSelection> {
 
   GridView clothSelect() {
     return GridView(
+      shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 180,
         mainAxisSpacing: 6.0,
@@ -146,7 +154,7 @@ class _ProductSelectionState extends State<ProductSelection> {
       children: List.generate(
         fetchClothes().length,
         (index) {
-          return GestureDetector(
+          return InkWell(
             onTap: () {
               setState(() {
                 selected[index] = selected[index] == null ? true : null;
@@ -156,11 +164,18 @@ class _ProductSelectionState extends State<ProductSelection> {
               height: 100,
               decoration: BoxDecoration(
                 color: selected[index] != null
-                    ? kSelectionActive.withOpacity(.3)
-                    : kTextMediumColor.withOpacity(.1),
+                    ? Theme.of(context).indicatorColor
+                    : kTextLight,
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(10),
+                  Radius.circular(5),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).primaryColor.withOpacity(.2),
+                    blurRadius: 2,
+                    offset: const Offset(2, 6),
+                  )
+                ],
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -177,9 +192,11 @@ class _ProductSelectionState extends State<ProductSelection> {
                   Text(
                     fetchClothes()[index]['title'].toString(),
                     style: GoogleFonts.notoSans(
-                      fontSize: 14,
+                      fontSize: 16,
+                      color: selected[index] != null
+                          ? Theme.of(context).scaffoldBackgroundColor
+                          : Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
-                      color: kTextMediumColor.withOpacity(.9),
                     ),
                   ),
                 ],

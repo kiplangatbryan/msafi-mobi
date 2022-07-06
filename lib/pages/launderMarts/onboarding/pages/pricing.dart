@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/finish_line.dart';
-import 'package:msafi_mobi/providers/user.provider.dart';
+import 'package:msafi_mobi/helpers/http_services.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../../../providers/merchant.provider.dart';
+import '../../../../providers/user.provider.dart';
 
 class SetPricingPage extends StatefulWidget {
   const SetPricingPage({Key? key}) : super(key: key);
@@ -17,11 +19,12 @@ class _SetPricingPagestate extends State<SetPricingPage> {
   final PageController _pageController = PageController(initialPage: 0);
   late int page;
 
+  final _origBtnText = "Save";
+  final String _finishBtnText = "Save and Finish";
+  // variables to keep track of data
   double price = 0;
   String id = "";
-  final _origBtnText = "save";
-  String _btnText = "save";
-  bool _btnPressed = false;
+  String _btnText = "Save";
 
 // form field controller
   final _formKey = GlobalKey<FormState>();
@@ -40,16 +43,12 @@ class _SetPricingPagestate extends State<SetPricingPage> {
     });
   }
 
-  _setPrice() {
-    setState(() {
-      _btnText = "Saved";
-      _btnPressed = true;
-    });
+// update price of item
+  _setPrice() async {
     final form = _formKey.currentState;
 
     if (form!.validate()) {
       form.save();
-
       late String clothid;
       if (id == "") {
         clothid = context.read<MartConfig>().getClothes[0]['title'];
@@ -57,52 +56,42 @@ class _SetPricingPagestate extends State<SetPricingPage> {
       } else {
         clothPrices[page] = {"id": id, "price": price};
       }
+      setState(() {
+        _btnText = "Saved";
+      });
+
+      // save all the to store
+      if (page + 1 == context.read<MartConfig>().count) {
+        await _updateStoreInformation();
+      }
     }
   }
 
-  Widget finishButton() {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const FinishPage(),
-          ),
-        );
-      },
-      // ignore: prefer_const_constructors
-      style: ElevatedButton.styleFrom(
-        primary: kPrimaryColor,
-        enableFeedback: true,
-        padding: const EdgeInsets.symmetric(
-          vertical: 12,
-          horizontal: 50,
-        ),
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      child: Text(
-        "Finish",
-        style: GoogleFonts.notoSans(
-          fontSize: 25,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 2,
-        ),
-      ),
-    );
-  }
-
+  // reset recurrent fields
   _clearAndSetField() {
     _formFieldController.clear();
     // reset button text
     setState(() {
       _btnText = _origBtnText;
-      _btnPressed = false;
     });
 
     if (clothPrices[page] != null) {
       _formFieldController.text = clothPrices[page]["price"].toString();
+    }
+  }
+
+  // persist changes in global provider
+  _updateStoreInformation() async {
+    context.read<MartConfig>().setPricing(clothPrices);
+    final authToken = await checkAndValidateAuthToken();
+    final response =
+        // ignore: use_build_context_synchronously
+        await context.read<MartConfig>().createOrUpdateStore(authToken);
+
+    if (response == 0) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("/mart-home", (route) => false);
     }
   }
 
@@ -115,19 +104,19 @@ class _SetPricingPagestate extends State<SetPricingPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Theme.of(context).canvasColor,
+        elevation: 1,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_outlined, size: 18),
           onPressed: _goback,
-          color: kTextMediumColor,
+          color: Theme.of(context).colorScheme.primary,
         ),
         title: Text(
           "Set cloth prices",
           style: GoogleFonts.notoSans(
-            fontSize: 20,
-            color: kTextMediumColor,
-            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -201,7 +190,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
                   },
                   // ignore: prefer_const_constructors
                   style: ElevatedButton.styleFrom(
-                    primary: splashColor,
+                    primary: Theme.of(context).primaryColor,
                     enableFeedback: true,
                     padding: const EdgeInsets.symmetric(
                       vertical: 12,
@@ -209,11 +198,13 @@ class _SetPricingPagestate extends State<SetPricingPage> {
                     ),
                     elevation: 1,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                   child: Text(
-                    _btnText,
+                    page + 1 == context.read<MartConfig>().count
+                        ? _finishBtnText
+                        : _btnText,
                     style: GoogleFonts.notoSans(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -224,9 +215,6 @@ class _SetPricingPagestate extends State<SetPricingPage> {
                 const SizedBox(
                   height: 30,
                 ),
-                page + 1 == context.read<MartConfig>().count && _btnPressed
-                    ? finishButton()
-                    : Container(),
               ],
             ),
           ],
@@ -291,20 +279,20 @@ class _SetPricingPagestate extends State<SetPricingPage> {
         decoration: InputDecoration(
           hintText: "E.g 100",
           hintStyle: GoogleFonts.notoSans(
-            color: kTextMediumColor.withOpacity(.3),
-            fontSize: 18,
+            color: kTextMediumColor.withOpacity(.5),
+            fontSize: 17,
           ),
-          labelText: "KSH",
+          labelText: "Price Tag",
           labelStyle: GoogleFonts.notoSans(
-            color: kTextMediumColor.withOpacity(.4),
-            fontSize: 15,
+            color: kTextMediumColor.withOpacity(.8),
+            fontSize: 17,
           ),
           floatingLabelStyle: GoogleFonts.notoSans(
-            color: kTextMediumColor.withOpacity(.4),
-            fontSize: 22,
+            color: kTextMediumColor.withOpacity(.8),
+            fontSize: 17,
           ),
           filled: true,
-          fillColor: kTextMediumColor.withOpacity(.06),
+          fillColor: Theme.of(context).primaryColor.withOpacity(.06),
           prefixIcon: const Icon(Icons.account_balance, size: 22),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           contentPadding: const EdgeInsets.fromLTRB(20, 20, 0, 20),
@@ -318,7 +306,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(
-              color: kTextMediumColor.withOpacity(.4),
+              color: Theme.of(context).primaryColor.withOpacity(.3),
             ),
             gapPadding: 10,
           ),
