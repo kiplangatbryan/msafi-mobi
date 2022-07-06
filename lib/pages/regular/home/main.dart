@@ -1,98 +1,115 @@
-import 'package:fluid_bottom_nav_bar/fluid_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
 import 'package:msafi_mobi/pages/regular/processing/home.dart';
 import 'package:msafi_mobi/pages/regular/processing/orders.dart';
 import 'package:msafi_mobi/pages/regular/processing/settings.dart';
 import 'package:msafi_mobi/themes/main.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+import '../../../providers/merchant.provider.dart';
+
+class ClientHomePage extends StatefulWidget {
+  const ClientHomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ClientHomePage> createState() => _ClientHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  Widget? _child;
+class _ClientHomePageState extends State<ClientHomePage> {
+  List<Widget> routes = const [
+    HomePageView(),
+    OrdersView(),
+    SettingsView(),
+    AccountSettings(),
+  ];
+  Widget _currentPage = Container();
+  dynamic merchantRoute;
+  int _count = 0;
 
+  @override
   void initState() {
-    _child = HomePageView();
     super.initState();
+    setState(() {
+      _currentPage = routes[_count];
+    });
+    merchantRoute = context.read<MerchantRoute>();
+    _count = merchantRoute.current;
   }
 
-  void _handleNavigationChange(int index) {
-    setState(
-      () {
-        switch (index) {
-          case 0:
-            _child = const HomePageView();
-            break;
-          case 1:
-            _child = const OrdersView();
-            break;
-          case 2:
-            _child = const SettingsView();
-            break;
-        }
-        _child = AnimatedSwitcher(
-          // switchInCurve: Curves.easeOut,
-          // switchOutCurve: Curves.easeIn,
-          duration: const Duration(milliseconds: 100),
-
-          child: _child,
-        );
-      },
-    );
+  _handleNavigation(index) {
+    // update global  state
+    merchantRoute.setCurrentPage(index);
+    setState(() {
+      // read from global state
+      _count = merchantRoute.current;
+      _currentPage = routes[_count];
+      // set the current index to the index
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    _goback() {
-      return Navigator.of(context).pop();
-    }
-
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          bottomOpacity: .3,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.menu, size: 30),
-            onPressed: () => print('show menu'),
-            color: kTextColor,
-          ),
-          actions: [],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: _currentPage,
+      bottomNavigationBar: BottomNavigationBar(
+        elevation: 50,
+        enableFeedback: true,
+        showUnselectedLabels: true,
+        unselectedLabelStyle: GoogleFonts.notoSans(
+          fontSize: 13,
+          color: Theme.of(context).colorScheme.secondary,
+          height: 1.2,
+          fontWeight: FontWeight.w600,
         ),
-        body: _child,
-        bottomNavigationBar: FluidNavBar(
-          icons: [
-            FluidNavBarIcon(
-                icon: Icons.home,
-                backgroundColor: kSpecialAc,
-                extras: {"label": "home"}),
-            FluidNavBarIcon(
-                icon: Icons.bookmark_border,
-                backgroundColor: kSpecialAc,
-                extras: {"label": "bookmark"}),
-            FluidNavBarIcon(
-                icon: Icons.apps,
-                backgroundColor: kSpecialAc,
-                extras: {"label": "partner"}),
-          ],
-          onChange: _handleNavigationChange,
-          style: const FluidNavBarStyle(
-              barBackgroundColor: kPrimaryColor,
-              iconBackgroundColor: Colors.white,
-              iconSelectedForegroundColor: Colors.white,
-              iconUnselectedForegroundColor: Colors.black),
-          scaleFactor: 1.5,
-          defaultIndex: 0,
-          itemBuilder: (icon, item) => Semantics(
-            label: icon.extras!["label"],
-            child: item,
-          ),
+        unselectedItemColor: Theme.of(context).colorScheme.primary,
+        selectedItemColor: Theme.of(context).primaryColor,
+        showSelectedLabels: true,
+        currentIndex: _count,
+        selectedIconTheme: IconThemeData(color: Theme.of(context).primaryColor),
+        onTap: _handleNavigation,
+        selectedLabelStyle: GoogleFonts.notoSans(
+          fontSize: 16,
+          color: Theme.of(context).primaryColor,
+          height: 1.8,
+          fontWeight: FontWeight.w600,
         ),
+        items: [
+          BottomNavigationBarItem(
+            label: 'Dashboard',
+            icon: Icon(
+              Icons.dashboard_outlined,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 25,
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: 'Orders',
+            icon: Icon(
+              Icons.track_changes,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 25,
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: 'Chats',
+            icon: Icon(
+              Icons.notifications_active,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 25,
+            ),
+          ),
+          BottomNavigationBarItem(
+            label: 'Profile',
+            tooltip: "Profile",
+            icon: Icon(
+              Icons.person_outline_outlined,
+              color: Theme.of(context).colorScheme.secondary,
+              size: 25,
+            ),
+          ),
+        ],
       ),
     );
   }
