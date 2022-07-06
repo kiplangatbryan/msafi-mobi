@@ -19,13 +19,13 @@ const getUserById = async (id) => {
  * @returns {Promise}
  */
 
-const create = async (userId, launderId, locations) => {
+const create = async (userId, storeId, locations) => {
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
   }
   const data = locations.map((pickUp) => {
-    return { ...pickUp, launderId };
+    return { ...pickUp, storeId };
   });
   // eslint-disable-next-line no-console
   console.log(data);

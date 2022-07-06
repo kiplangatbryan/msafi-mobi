@@ -1,7 +1,14 @@
 const nodemailer = require('nodemailer');
+// const mailgunTransport = require('nodemailer-mailgun-transport');
 const config = require('../config/config');
 const logger = require('../config/logger');
 
+// const mailgunAuth = {
+//   auth: {
+//     api_key: '9109d4ebae2ef5e7668ea34ee9f72cd8-1b8ced53-e94bfaca',
+//     domain: 'postmaster@sandboxbdecb4b43b114e15b06e387463bd3a85.mailgun.org',
+//   },
+// };
 const transport = nodemailer.createTransport(config.email.smtp);
 /* istanbul ignore next */
 if (config.env !== 'test') {
@@ -32,11 +39,13 @@ const sendEmail = async (to, subject, text) => {
 const sendResetPasswordEmail = async (to, token) => {
   const subject = 'Reset password';
   // replace this url with the link to the reset password page of your front-end app
-  const resetPasswordUrl = `http://link-to-app/reset-password?token=${token}`;
+  // const resetPasswordUrl = `http://link-to-app/reset-password?token=${token}`;
   const text = `Dear user,
-To reset your password, click on this link: ${resetPasswordUrl}
+To reset your password, Enter the following code to reset your password: ${token}
 If you did not request any password resets, then ignore this email.`;
-  await sendEmail(to, subject, text);
+  const response = await sendEmail(to, subject, text);
+  // eslint-disable-next-line no-console
+  console.log(response);
 };
 
 /**

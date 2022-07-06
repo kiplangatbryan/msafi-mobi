@@ -8,16 +8,16 @@ const stationSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    locationLong: {
+    long: {
       type: String,
       required: true,
     },
-    launderId: {
+    storeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Store',
       required: true,
     },
-    locationLat: {
+    lat: {
       type: String,
       required: true,
     },
