@@ -1,13 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
+import '../../../helpers/http_services.dart';
+import '../../../providers/user.provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -18,61 +22,24 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   String errors = "";
-  String status = "Continue with Email";
+  String status = "Login";
+  String snackBarMessage = "";
+  bool showSnack = false;
+  bool loading = false;
 
+  // form key
+  final _formKey = GlobalKey<FormState>();
+
+  // user information
   final Map<String, String> user = {
     "email": "",
     "password": "",
     "name": "",
   };
 
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    // Optional clientId
-    clientId:
-        '150386591318-81g42mric5rsimtmu1rcakn8eu7avu8s.apps.googleusercontent.com',
-    scopes: <String>[
-      'email',
-      'password',
-    ],
-  );
-
-  GoogleSignInAccount? _currentUser;
   @override
   void initState() {
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
-      setState(() {
-        _currentUser = account;
-      });
-      if (_currentUser != null) {
-        _handleGetContact(_currentUser!);
-      }
-    });
-    _googleSignIn.signInSilently();
-  }
-
-  _handleGetContact(GoogleSignInAccount user) {
-    print(user);
-  }
-
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-      // dynamic googleAuth = await googleUser?.authentication;
-
-      // print(googleUser.toString());
-      // print(googleAuth.toString());
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  Future<void> _handleSignOut() => _googleSignIn.disconnect();
-
-  _setEmail(val) {
-    setState(() {
-      user['email'] = val;
-    });
   }
 
   _setName(val) {
@@ -81,7 +48,13 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  _postErrorMessage(message) {
+  _setEmail(val) {
+    setState(() {
+      user['email'] = val;
+    });
+  }
+
+  _postErrors(message) {
     setState(() {
       errors = message;
     });
@@ -93,59 +66,98 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  _updateStatus(msg) {
+  _nextPage() {
+    Navigator.popAndPushNamed(context, "/default-home");
+  }
+
+  // snack bar
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> customSnackBar(
+      String message) {
     setState(() {
-      status = msg;
+      snackBarMessage = message;
     });
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarMessage),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      ),
+    );
   }
 
-  _nextPage(role) {
-    print(role);
-    // create a user object and check type
-    if (role == "merchant") {
-      //
-    } else if (role == "user") {
-      Navigator.popAndPushNamed(context, "/mart-onboarding");
-    } else {}
+  // perform clean up
+  _disposeData() {
+    // set errors to blank
+    _postErrors("");
   }
 
+  // called when form is submitted
   _onSubmit() async {
-    _updateStatus("Loading ...");
-    var url = Uri.parse('http://10.0.2.2:3000/v1/auth/register');
+    _disposeData();
+    // get current state of Form
+    final form = _formKey.currentState;
+    // Navigator.of(context).pushNamed('/mart-onboarding');
+    if (form!.validate()) {
+      // call saved event on every textfield on the form
+      form.save();
+      // show loading
+      setState(() {
+        loading = true;
+      });
+      var url = Uri.parse('${baseUrl()}/auth/register');
 
-    try {
-      var response = await http.post(
-        url,
-        body: user,
-      );
+      try {
+        // send data to server
+        final response = await http
+            .post(
+              url,
+              body: user,
+            )
+            .timeout(
+              const Duration(seconds: 10),
+            );
 
-      final data = json.decode(response.body);
+        final data = json.decode(response.body);
 
-      if (response.statusCode == 201) {
-        _updateStatus("Success");
-        final uToken = json.encode(data["user"]["tokens"]);
-        final result = await CustomSharedPreferences().createdFootPrint(uToken);
-
-        if (!result) {
-          _updateStatus("Promise with system");
+        if (response.statusCode == 201) {
+          return await _handleUserSignIn(data);
         } else {
-          _updateStatus("saved");
-
-          _nextPage(data['user']['role']);
+          _postErrors(data['message']);
         }
-
-        return;
+      } on SocketException {
+        customSnackBar('Could not connect to server');
+      } on TimeoutException catch (e) {
+        customSnackBar("Connection Timeout ${e.toString()}");
+      } on Error catch (e) {
+        customSnackBar("An error ocurred ${e.toString()}");
       }
-      _updateStatus("Failed!");
-
-      _postErrorMessage(data['message']);
-    } catch (err) {
-      print(err);
-      _updateStatus("Err! Try Again");
+      setState(() {
+        loading = false;
+      });
     }
   }
 
-  _NavigateToLogin(BuildContext ctx) {
+  // handleErrors() {}
+  _handleUserSignIn(dynamic data) async {
+    // call to User<> provider
+    final res = await context.read<User>().createUser(data);
+    if (res) {
+      customSnackBar("Success");
+      _nextPage();
+    } else {
+      customSnackBar("Error occurred whilst saving");
+    }
+
+    setState(() {
+      loading = false;
+    });
+  }
+
+  _navigateToLogin() {
     return Navigator.of(context).pushNamed('/login');
   }
 
@@ -154,10 +166,6 @@ class _SignUpPageState extends State<SignUpPage> {
     _goback() {
       return Navigator.of(context).pop();
     }
-
-    final GoogleSignInAccount? user = _currentUser;
-
-    print(user);
 
     return SafeArea(
       child: Scaffold(
@@ -170,7 +178,6 @@ class _SignUpPageState extends State<SignUpPage> {
             onPressed: _goback,
             color: kTextColor,
           ),
-          actions: [],
         ),
         body: SingleChildScrollView(
           child: SizedBox(
@@ -188,20 +195,19 @@ class _SignUpPageState extends State<SignUpPage> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: "\nSign Up!",
+                          text: "\nCreate an account",
                           style: GoogleFonts.notoSans(
-                            fontSize: 33,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: kTextColor,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         TextSpan(
                           text:
-                              "\n\nPlease enter your valid data in order to create an account",
+                              "\n\nPlease enter your valid data in order to create an account\n\n",
                           style: GoogleFonts.notoSans(
                             fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: kTextColor,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         )
                       ],
@@ -211,23 +217,25 @@ class _SignUpPageState extends State<SignUpPage> {
                     height: 10,
                   ),
                   Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // RichText(
-                        //   textAlign: TextAlign.left,
-                        //   text: TextSpan(
-                        //     children: [
-                        //       TextSpan(
-                        //         text: "$errors\n",
-                        //         style: GoogleFonts.notoSans(
-                        //           fontSize: 15,
-                        //           color: Colors.red,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        RichText(
+                          textAlign: TextAlign.left,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "$errors\n",
+                                style: GoogleFonts.notoSans(
+                                  fontSize: 15,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         customTextField(
                           inputType: TextInputType.name,
                           icon: const Icon(
@@ -236,8 +244,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           hint: "Enter a username",
                           label: "Username",
-                          onChanged: _setName,
-                          onSubmit: (val) {},
+                          onChanged: (val) {},
+                          onSubmit: _setName,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Enter a valid username';
@@ -253,8 +261,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           icon: const Icon(Icons.mail_outline, size: 18),
                           hint: "Enter Email Address",
                           label: "Email",
-                          onChanged: _setEmail,
-                          onSubmit: (val) {},
+                          onChanged: (val) {},
+                          onSubmit: _setEmail,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Enter a valid Email';
@@ -270,11 +278,11 @@ class _SignUpPageState extends State<SignUpPage> {
                           inputType: TextInputType.visiblePassword,
                           hint: "Enter Password",
                           label: "Password",
-                          onChanged: _setPassword,
-                          onSubmit: (val) {},
+                          onChanged: (val) {},
+                          onSubmit: _setPassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter some text';
+                              return 'Enter a valid password';
                             }
                             return null;
                           },
@@ -282,10 +290,23 @@ class _SignUpPageState extends State<SignUpPage> {
                         const SizedBox(
                           height: 15,
                         ),
-                        customButton(
-                          callback: _onSubmit,
-                          role: "register",
-                          title: status,
+                        customExtendButton(
+                          ctx: context,
+                          child: !loading
+                              ? Text(
+                                  "Sign Up",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5!
+                                      .copyWith(
+                                        color: kTextLight,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                )
+                              : const CircularProgressIndicator(
+                                  color: kTextLight,
+                                ),
+                          onPressed: _onSubmit,
                         ),
                       ],
                     ),
@@ -293,25 +314,36 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 20,
                   ),
-                  customButton(
-                    callback: _handleSignIn,
-                    role: "login",
-                    title: "Continue with Google",
-                  ),
                   const SizedBox(
                     height: 10,
                   ),
-                  Center(
-                    child: TextButton(
-                      onPressed: () => _NavigateToLogin(context),
-                      child: Text(
-                        "ALREADY REGISTERED? LOGIN",
-                        style: GoogleFonts.notoSans(
-                          fontSize: 15,
-                          letterSpacing: 1.3,
-                          fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Already have an account",
+                          style: GoogleFonts.notoSans(
+                            fontSize: 16,
+                            letterSpacing: 1.3,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
+                        TextButton(
+                          onPressed: () => _navigateToLogin(),
+                          child: Text(
+                            "Sign In",
+                            style: GoogleFonts.notoSans(
+                              fontSize: 16,
+                              letterSpacing: 1.3,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(

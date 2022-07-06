@@ -66,7 +66,7 @@ class _MerchantHomeState extends State<MerchantHome> {
         unselectedItemColor: kTextMediumColor,
         selectedLabelStyle: GoogleFonts.notoSans(
           fontSize: 16,
-          color: Theme.of(context).colorScheme.tertiary,
+          color: Theme.of(context).primaryColor,
           height: 1.8,
           fontWeight: FontWeight.w600,
         ),
@@ -105,12 +105,10 @@ class _MerchantHomeState extends State<MerchantHome> {
             ),
           ),
         ],
-        selectedItemColor: Theme.of(context).colorScheme.tertiary,
+        selectedItemColor: Theme.of(context).primaryColor,
         showSelectedLabels: true,
         currentIndex: _count,
-        selectedIconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.tertiary,
-        ),
+        selectedIconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         onTap: _handleNavigation,
       ),
     );
