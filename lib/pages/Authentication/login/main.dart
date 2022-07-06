@@ -1,12 +1,17 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
+import 'package:msafi_mobi/helpers/http_services.dart';
+import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
+import 'package:provider/provider.dart';
+
+import '../reset/forgot_password.dart';
 
 class LoginPageOptions extends StatefulWidget {
   const LoginPageOptions({Key? key}) : super(key: key);
@@ -19,44 +24,23 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
 // https://aa5a-41-89-160-19.in.ngrok.io
   String errors = "";
   String status = "Login";
+  String snackBarMessage = "";
+  bool showSnack = false;
+  bool loading = false;
 
+// form key
+  final _formKey = GlobalKey<FormState>();
+
+// user map
   final Map<String, String> user = {
     "email": "",
     "password": "",
   };
 
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    // Optional clientId
-    clientId:
-        '1040045272468-do114pg48n1p7sund8ds6u8g916f87v6.apps.googleusercontent.com',
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
-
-  GoogleSignInAccount? _currentUser;
   @override
   void initState() {
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
-      setState(() {
-        _currentUser = account;
-      });
-    });
-    // if already signed in automatically sign in
-    _googleSignIn.signInSilently();
   }
-
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signIn();
-    } catch (err) {
-      print(err);
-    }
-  }
-
-  Future<void> _handleSignOut() => _googleSignIn.disconnect();
 
   _setEmail(val) {
     setState(() {
@@ -64,96 +48,124 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
     });
   }
 
-  _postErrorMessage(message) {
-    setState(() {
-      errors = message;
-    });
-  }
-
+// populate user in user map
   _setPassword(val) {
     setState(() {
       user['password'] = val;
     });
   }
 
-  _updateStatus(msg) {
+  _postErrors(msg) {
     setState(() {
-      status = msg;
+      errors = msg;
     });
   }
 
-  _nextPage(role) {
+  _nextPage(List stores) {
     // create a user object and check type
+    final role = context.read<User>().role;
     if (role == "merchant") {
-      Navigator.popAndPushNamed(context, "/mart-onboarding");
-    } else if (role == "user") {
-    } else {}
-  }
-
-  _onSubmit() async {
-    _updateStatus("Loading ...");
-
-    Navigator.of(context).pushNamed('/mart-onboarding');
-
-    var url = Uri.parse('http://10.0.2.2:3000/v1/auth/login');
-
-    try {
-      var response = await http.post(
-        url,
-        body: user,
-      );
-
-      final data = json.decode(response.body);
-
-      if (response.statusCode == 200) {
-        _updateStatus("Success");
-        final uToken = json.encode(data["user"]["tokens"]);
-
-        final result = await CustomSharedPreferences().createdFootPrint(uToken);
-
-        if (!result) {
-          _updateStatus("Promise with system");
-        } else {
-          _updateStatus("saved");
-          _nextPage(data["user"]["role"]);
-        }
-
-        return;
+      if (stores.length > 1) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/mart-home", (route) => false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/mart-onboarding", (route) => false);
       }
-      _updateStatus("Failed!");
-
-      _postErrorMessage(data['message']);
-    } catch (err) {
-      print(err);
-      _updateStatus("Connection Err!");
+    } else if (role == "user") {
+      Navigator.pushNamedAndRemoveUntil(
+          context, "/default-home", (route) => false);
+    } else {
+      // do nothing
     }
   }
 
-  _NavigateToRegister(BuildContext ctx) {
-    return Navigator.of(context).pushNamed('/register');
+  // snack bar
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> customSnackBar(
+      String message) {
+    setState(() {
+      snackBarMessage = message;
+    });
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarMessage),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      ),
+    );
+  }
+
+// called when form is submitted
+  _onSubmit() async {
+    // get current state of Form
+    final form = _formKey.currentState;
+    // Navigator.of(context).pushNamed('/mart-onboarding');
+    if (form!.validate()) {
+      // call saved event on every textfield on the form
+      form.save();
+      // show loading
+      setState(() {
+        loading = true;
+      });
+      var url = Uri.parse('${baseUrl()}/auth/login');
+
+      try {
+        // send data to server
+        final response = await http
+            .post(
+              url,
+              body: user,
+            )
+            .timeout(
+              const Duration(seconds: 10),
+            );
+
+        final data = json.decode(response.body);
+
+        if (response.statusCode == 200) {
+          return await _handleUserSignIn(data);
+        } else {
+          _postErrors("Email or password is Incorrect");
+        }
+      } on SocketException {
+        customSnackBar('Could not connect to server');
+      } on TimeoutException catch (e) {
+        customSnackBar("Connection Timeout");
+      } on Error catch (e) {
+        customSnackBar("An error ocurred");
+      }
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  // handleErrors() {}
+  _handleUserSignIn(dynamic data) async {
+    // call to User<> provider
+    final res = await context.read<User>().createUser(data);
+    if (res) {
+      customSnackBar("Success");
+      _nextPage(data['stores']);
+    } else {
+      customSnackBar("Error occurred whilst saving");
+    }
+
+    setState(() {
+      loading = false;
+    });
+  }
+
+  _navigateToRegister() {
+    Navigator.of(context).pushNamed('/register');
   }
 
   @override
   Widget build(BuildContext context) {
-    _goback() {
-      return Navigator.of(context).pop();
-    }
-
-    // void _showSnackBar(String message) {
-    //   Scaffold.of(context).showSnackBar(SnackBar(
-    //     content: Text(message,
-    //         style: GoogleFonts.notoSans(
-    //           fontSize: 15,
-    //           color: kTextLight,
-    //         )),
-    //     duration: const Duration(milliseconds: 1000),
-    //   ));
-    // }
-
-    final GoogleSignInAccount? user = _currentUser;
-
-    // _showSnackBar(user.toString());
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -162,7 +174,7 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
           backgroundColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, size: 22),
-            onPressed: _goback,
+            onPressed: () => Navigator.of(context).pop(),
             color: kTextColor,
           ),
           actions: [],
@@ -186,18 +198,16 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                           text: "\nSign In!",
                           style: GoogleFonts.notoSans(
                             fontSize: 33,
-                            fontWeight: FontWeight.bold,
-                            color: kTextColor,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         TextSpan(
                           text:
-                              "\n\nPlease enter your valid data in order to sign in to account",
+                              "\n\nPlease enter your valid data in order to sign in to account\n\n",
                           style: GoogleFonts.notoSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: kTextColor,
-                          ),
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.primary),
                         )
                       ],
                     ),
@@ -205,31 +215,29 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                   const SizedBox(
                     height: 10,
                   ),
+                  Text(
+                    errors,
+                    style: GoogleFonts.notoSans(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // RichText(
-                        //   textAlign: TextAlign.left,
-                        //   text: TextSpan(
-                        //     children: [
-                        //       TextSpan(
-                        //         text: "$errors\n",
-                        //         style: GoogleFonts.notoSans(
-                        //           fontSize: 15,
-                        //           color: Colors.red,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                         customTextField(
                           inputType: TextInputType.emailAddress,
                           icon: const Icon(Icons.mail_outline, size: 18),
                           hint: "Enter Email Address",
                           label: "Email",
-                          onChanged: _setEmail,
-                          onSubmit: (val) {},
+                          onChanged: (val) {},
+                          onSubmit: _setEmail,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Enter a valid email address';
@@ -245,8 +253,8 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                           inputType: TextInputType.visiblePassword,
                           hint: "Enter Password",
                           label: "Password",
-                          onChanged: _setPassword,
-                          onSubmit: (val) {},
+                          onChanged: (val) {},
+                          onSubmit: _setPassword,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "password is required";
@@ -260,25 +268,39 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                           },
                         ),
                         const SizedBox(
-                          height: 15,
+                          height: 30,
                         ),
-                        customButton(
-                          callback: _onSubmit,
-                          role: "register",
-                          title: status,
+                        customExtendButton(
+                          ctx: context,
+                          onPressed: _onSubmit,
+                          child: !loading
+                              ? Text(
+                                  "Login",
+                                  style: GoogleFonts.notoSans(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: kTextLight,
+                                  ),
+                                )
+                              : const CircularProgressIndicator(
+                                  color: kTextLight,
+                                ),
                         ),
                         const SizedBox(
                           height: 10,
                         ),
                         Center(
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => const EmailReset()));
+                            },
                             child: Text(
-                              "FORGOT PASSWORD",
+                              "Forgot password",
                               style: GoogleFonts.notoSans(
                                 fontSize: 15,
-                                letterSpacing: 1.3,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
                           ),
@@ -300,25 +322,33 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                   const SizedBox(
                     height: 15,
                   ),
-                  customButton(
-                    callback: _handleSignIn,
-                    role: "login",
-                    title: "Login with Google",
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Center(
-                    child: TextButton(
-                      onPressed: () => _NavigateToRegister(context),
-                      child: Text(
-                        "NOT SIGNED? IN REGISTER",
-                        style: GoogleFonts.notoSans(
-                          fontSize: 15,
-                          letterSpacing: 1.3,
-                          fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account",
+                          style: GoogleFonts.notoSans(
+                            fontSize: 16,
+                            letterSpacing: 1.3,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
+                        TextButton(
+                          onPressed: () => _navigateToRegister(),
+                          child: Text(
+                            "Sign Up",
+                            style: GoogleFonts.notoSans(
+                              fontSize: 16,
+                              letterSpacing: 1.3,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(

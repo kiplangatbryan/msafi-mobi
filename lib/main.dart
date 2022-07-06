@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
 import 'package:msafi_mobi/pages/onboarding/main.dart';
+import 'package:msafi_mobi/pages/regular/home/main.dart';
+import 'package:msafi_mobi/providers/basket.providers.dart';
 import 'package:msafi_mobi/providers/map.provider.dart';
+import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/settings.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +23,9 @@ void main() {
         ChangeNotifierProvider(create: (context) => SearchToggle()),
         ChangeNotifierProvider(create: (context) => PlacesResults()),
         ChangeNotifierProvider(create: (context) => MerchantRoute()),
+        ChangeNotifierProvider(create: (context) => User()),
+        ChangeNotifierProvider(create: (context) => Basket()),
+        ChangeNotifierProvider(create: (context) => Store()),
       ],
       child: const MyApp(),
     ),
@@ -50,6 +56,7 @@ class _MyAppState extends State<MyApp> {
         "/login": (context) => const LoginPageOptions(),
         "/register": (context) => const SignUpPage(),
         "/mart-home": (context) => const MerchantHome(),
+        "/default-home": (context) => const ClientHomePage(),
       },
       // home: const SetPricingPage(),
     );
