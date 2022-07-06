@@ -1,29 +1,57 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 
-class MartConfig extends ChangeNotifier {
-  late final String name;
-  late final String description;
-  late final String address;
-  final List<Map> selectedClothes = [];
+import '../helpers/custom_shared_pf.dart';
 
-  int get count => selectedClothes.length;
+class User extends ChangeNotifier {
+  Person? user;
+  bool isUser = false;
 
-  List<Map> get getClothes => selectedClothes;
+// getters
+  get email => user!.email;
+  get name => user!.name;
+  get role => user!.role;
+  get status => user!.status;
 
-  void setName(String name) {
-    name = name;
+// setter
+  Future<bool> createUser(Map body) async {
+    // connvert to json string
+    final uToken = json.encode(body);
+    // persist in localstorage
+    final result = await CustomSharedPreferences().createdFootPrint();
+    final status = await CustomSharedPreferences().storeUser(uToken);
+
+    if (result && status) {
+      user = Person(
+        email: body['user']['email'],
+        id: body['user']['id'],
+        name: body['user']['name'],
+        status: body['user']['status'],
+        role: body['user']['role'],
+      );
+      notifyListeners();
+      return true;
+    }
+    return await Future.delayed(
+      const Duration(seconds: 1),
+      () => false,
+    );
   }
+}
 
-  void setDescription(String description) {
-    description = description;
-  }
-
-  void setAddress(String address) {
-    address = address;
-  }
-
-  void mapSelectedItems(List<Map> selected) {
-    selectedClothes.addAll(selected);
-    notifyListeners();
-  }
+// class containing user
+class Person {
+  String role;
+  String name;
+  String email;
+  String status;
+  String id;
+  Person({
+    required this.email,
+    required this.id,
+    required this.status,
+    required this.role,
+    required this.name,
+  });
 }
