@@ -9,12 +9,18 @@ const createStore = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send();
 });
 
-const fetchStores = catchAsync(async (req, res) => {
-  const stores = await launderService.fetchStores(req.user.id);
+const fetchStore = catchAsync(async (req, res) => {
+  const stores = await launderService.fetchStore(req.user.id);
+  res.status(httpStatus.OK).send(stores);
+});
+
+const fetchAllStores = catchAsync(async (req, res) => {
+  const stores = await launderService.fetchAllStores();
   res.status(httpStatus.OK).send(stores);
 });
 
 module.exports = {
   createStore,
-  fetchStores,
+  fetchStore,
+  fetchAllStores,
 };

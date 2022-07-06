@@ -27,7 +27,7 @@ const create = async (userId, { name, description, address, pricing, storeImg })
   return Stores.create(data);
 };
 
-const fetchStores = async (userId) => {
+const fetchStore = async (userId) => {
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
@@ -35,7 +35,12 @@ const fetchStores = async (userId) => {
   return Stores.find({ userId });
 };
 
+const fetchAllStores = async () => {
+  return Stores.find();
+};
+
 module.exports = {
   create,
-  fetchStores,
+  fetchStore,
+  fetchAllStores,
 };
