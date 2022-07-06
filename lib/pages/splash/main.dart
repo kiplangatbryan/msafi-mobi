@@ -28,9 +28,26 @@ class _SplashScreenState extends State<SplashScreen> {
     await CustomSharedPreferences().checkOnboarding().then(
       (value) async {
         if (!value) _navigateToOnboarding();
-        if (value) _navigateTologin();
+        if (value) _handleUser();
       },
     );
+  }
+
+  // validate user token and route accordingly
+  _handleUser() async {
+    final res = await CustomSharedPreferences().checkOrFetchUser();
+    if (res == null) {
+      await Future.delayed(
+        const Duration(seconds: 1),
+       () => _navigateTologin(),
+      );
+    } else {
+      //Later validate the token
+      await Future.delayed(
+        const Duration(seconds: 1),
+        () => _navigateTologin(),
+      );
+    }
   }
 
   _navigateTologin() {
