@@ -11,6 +11,7 @@ ThemeData lightThemeData(BuildContext context) {
     colorScheme: const ColorScheme.light(
       primary: kTextColor,
       secondary: kTextMediumColor,
+      secondaryContainer: kSecondaryColor,
       error: Colors.red,
       tertiary: kAccentColor,
     ),
