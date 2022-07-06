@@ -3,12 +3,6 @@ const nodemailer = require('nodemailer');
 const config = require('../config/config');
 const logger = require('../config/logger');
 
-// const mailgunAuth = {
-//   auth: {
-//     api_key: '9109d4ebae2ef5e7668ea34ee9f72cd8-1b8ced53-e94bfaca',
-//     domain: 'postmaster@sandboxbdecb4b43b114e15b06e387463bd3a85.mailgun.org',
-//   },
-// };
 const transport = nodemailer.createTransport(config.email.smtp);
 /* istanbul ignore next */
 if (config.env !== 'test') {
