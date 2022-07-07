@@ -9,13 +9,17 @@ import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/settings.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'pages/launderMarts/main.dart';
 import 'pages/launderMarts/onboarding/main.dart';
+import 'pages/launderMarts/onboarding/pages/location.dart';
+import 'pages/launderMarts/onboarding/pages/showLocations.dart';
 import 'pages/splash/main.dart';
 import 'providers/merchant.provider.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: ".env");
   runApp(
     MultiProvider(
       providers: [
