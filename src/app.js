@@ -34,6 +34,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(xss());
 app.use(mongoSanitize());
 
+// accept form data
+app.use(express.urlencoded({ extended: false }));
+
 // gzip compression
 app.use(compression());
 
@@ -49,6 +52,7 @@ passport.use('jwt', jwtStrategy);
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
+app.use('/v1/uploads', express.static('uploads'));
 
 // v1 api routes
 app.use('/v1', routes);
