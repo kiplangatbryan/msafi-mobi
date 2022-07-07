@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
@@ -104,16 +105,16 @@ class HomePageView extends StatelessWidget {
                         horizontal: 10,
                       ),
                       child: Container(
-                        width: 60,
-                        height: 60,
+                        width: 55,
+                        height: 55,
                         decoration: const BoxDecoration(
                           color: kSpecialAc,
-                          borderRadius: BorderRadius.all(Radius.circular(70.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(55.0)),
                         ),
                         child: const Center(
                           child: Icon(
                             Icons.location_on,
-                            size: 30,
+                            size: 25,
                             color: kBackgroundColor,
                           ),
                         ),
@@ -132,6 +133,7 @@ class HomePageView extends StatelessWidget {
                                 text: "Your Location\n",
                                 style: GoogleFonts.notoSans(
                                   fontSize: 14,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               TextSpan(
@@ -165,16 +167,20 @@ class HomePageView extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Cleaners",
-                    style: Theme.of(context).textTheme.headline6!.copyWith()),
+                Text(
+                  "Cleaners",
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
                 TextButton(
                   onPressed: () {},
                   child: Text(
-                    "view all",
+                    "View all",
                     style: GoogleFonts.notoSans(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
-                      color: splashColor,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                 ),
@@ -202,8 +208,37 @@ class LanderMartsList extends StatefulWidget {
 
 class _LanderMartsListState extends State<LanderMartsList> {
   bool loading = false;
+  String snackBarMessage = "";
+  bool showSnack = false;
+
+  void initState() {
+    super.initState();
+    fetchStores();
+  }
+
+  // snack bar
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> customSnackBar(
+      String message) {
+    setState(() {
+      snackBarMessage = message;
+    });
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarMessage),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      ),
+    );
+  }
 
   Future<void> fetchStores() async {
+    setState(() {
+      loading = true;
+    });
     var url = Uri.parse('${baseUrl()}/store/fetchStores');
 
     try {
@@ -215,16 +250,25 @@ class _LanderMartsListState extends State<LanderMartsList> {
       final data = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        // return await _handleUserSignIn(data);
+        // ignore: use_build_context_synchronously
+        context.read<Store>().saveStores(data);
+
+        Future.delayed(
+            const Duration(seconds: 1),
+            () => {
+                  setState(() {
+                    loading = false;
+                  })
+                });
       } else {
         // _postErrors("Email or password is Incorrect");
       }
     } on SocketException {
-      // customSnackBar('Could not connect to server');
+      customSnackBar('Could not connect to server');
     } on TimeoutException catch (e) {
-      // customSnackBar("Connection Timeout");
+      customSnackBar("Connection Timeout");
     } on Error catch (e) {
-      // customSnackBar("An error ocurred");
+      customSnackBar("An error ocurred");
     }
     setState(() {
       loading = false;
@@ -233,27 +277,42 @@ class _LanderMartsListState extends State<LanderMartsList> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 20,
-          horizontal: 20,
-        ),
-        child: Row(
-          children: [
-            StoreItem(),
-            StoreItem(),
-            StoreItem(),
-          ],
-        ),
-      ),
-    );
+    return loading
+        ? SizedBox(
+            height: 200,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          )
+        : SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: 20,
+              ),
+              child: Row(
+                children: List.generate(context.read<Store>().count, (index) {
+                  return StoreItem(
+                    index: index,
+                    title: context.read<Store>().stores[index]['name'],
+                  );
+                }),
+              ),
+            ),
+          );
   }
 }
 
+// ignore: must_be_immutable
 class StoreItem extends StatelessWidget {
-  const StoreItem({
+  int index;
+  String title;
+  StoreItem({
+    required this.title,
+    required this.index,
     Key? key,
   }) : super(key: key);
 
@@ -261,8 +320,8 @@ class StoreItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (_) => const LaunderMartView()));
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => LaunderMartView(index: index)));
       },
       child: Container(
           width: MediaQuery.of(context).size.width - 40,
@@ -295,7 +354,7 @@ class StoreItem extends StatelessWidget {
                 ),
                 child: Text(
                   textAlign: TextAlign.start,
-                  "Furaha cleaners",
+                  title,
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ),

@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (res == null) {
       await Future.delayed(
         const Duration(seconds: 1),
-       () => _navigateTologin(),
+        () => _navigateTologin(),
       );
     } else {
       //Later validate the token
@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: splashColor.withOpacity(.5),
+          color: Theme.of(context).primaryColor,
         ),
         child: Stack(
           children: [
