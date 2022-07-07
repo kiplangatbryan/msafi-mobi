@@ -60,11 +60,7 @@ class _BasicInformationState extends State<BasicInformation> {
         bottomOpacity: .3,
         elevation: 1,
         backgroundColor: Theme.of(context).canvasColor,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_outlined, size: 18),
-          onPressed: _goback,
-          color: kTextMediumColor,
-        ),
+       
         title: Text(
           "Getting Started",
           style: TextStyle(
