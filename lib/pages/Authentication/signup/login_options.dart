@@ -42,15 +42,15 @@ class _SignUpPageState extends State<SignUpPage> {
     super.initState();
   }
 
-  _setName(val) {
+  _setName(String val) {
     setState(() {
-      user['name'] = val;
+      user['name'] = val.trim();
     });
   }
 
-  _setEmail(val) {
+  _setEmail(String val) {
     setState(() {
-      user['email'] = val;
+      user['email'] = val.trim();
     });
   }
 
@@ -60,9 +60,9 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  _setPassword(val) {
+  _setPassword(String val) {
     setState(() {
-      user['password'] = val;
+      user['password'] = val.trim();
     });
   }
 
