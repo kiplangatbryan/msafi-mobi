@@ -63,7 +63,10 @@ class _SetPricingPagestate extends State<SetPricingPage> {
       // save all the to store
       if (page + 1 == context.read<MartConfig>().count) {
         await _updateStoreInformation();
+        return;
       }
+      _pageController.nextPage(
+          duration: const Duration(seconds: 1), curve: Curves.easeIn);
     }
   }
 
