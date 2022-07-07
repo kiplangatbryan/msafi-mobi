@@ -15,7 +15,25 @@ const password = (value, helpers) => {
   return value;
 };
 
+const arrayCheck = (value, helpers) => {
+  const arr = JSON.parse(value);
+  if (!Array.isArray(arr)) {
+    return helpers.message('{{#label}} must be an array');
+  }
+  return arr;
+};
+
+const checkObject = (value, helpers) => {
+  const obj = JSON.parse(value);
+  if (!(obj && typeof obj === 'object' && obj.constructor === Object)) {
+    return helpers.message('{{#label}} must be an object');
+  }
+  return obj;
+};
+
 module.exports = {
   objectId,
   password,
+  arrayCheck,
+  checkObject,
 };

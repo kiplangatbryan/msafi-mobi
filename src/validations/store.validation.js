@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { objectId } = require('./custom.validation');
+const { objectId, arrayCheck, checkObject } = require('./custom.validation');
 
 const createStore = {
   body: Joi.object().keys({
@@ -7,19 +7,19 @@ const createStore = {
     description: Joi.string().required().min(15),
     // userId: Joi.string().required().custom(objectId),
     address: Joi.string().required(),
-    pricing: Joi.array().required(),
-    storeImg: Joi.string().required(),
-    locations: Joi.array().required(),
+    pricing: Joi.custom(arrayCheck).required(),
+    locations: Joi.custom(arrayCheck).required(),
+    payment: Joi.custom(checkObject).required(),
   }),
 };
 
-const fetchStores = {
+const fetchStore = {
   params: Joi.object().keys({
-    userId: Joi.string().custom(objectId),
+    storeId: Joi.string().custom(objectId),
   }),
 };
 
 module.exports = {
   createStore,
-  fetchStores,
+  fetchStore,
 };
