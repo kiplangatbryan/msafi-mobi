@@ -12,6 +12,16 @@ const storeSchema = mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    payment: {
+      paybill: {
+        type: String,
+        default: '',
+      },
+      enabled: {
+        type: Boolean,
+        default: false,
+      },
+    },
     description: {
       type: String,
       required: true,
@@ -25,7 +35,7 @@ const storeSchema = mongoose.Schema(
       required: true,
     },
     storeImg: {
-      type: String,
+      type: Array,
       required: true,
     },
   },
