@@ -10,3 +10,7 @@ yarn-error.log
 
 # Code coverage
 coverage
+
+# static files
+uploads/
+
