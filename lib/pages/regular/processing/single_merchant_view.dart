@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/themes/main.dart';
+import 'package:provider/provider.dart';
 
+import '../../../providers/store.providers.dart';
 import 'cloth_select.dart';
 
 class LaunderMartView extends StatelessWidget {
-  const LaunderMartView({Key? key}) : super(key: key);
+  int index;
+  LaunderMartView({required this.index, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final store = context.read<Store>().stores[index];
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
@@ -30,93 +34,96 @@ class LaunderMartView extends StatelessWidget {
               ),
         ),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Hilarios's Place\n",
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  TextSpan(
-                      text: "Royal Ln . Mesa in Jersey",
-                      style: Theme.of(context).textTheme.subtitle1),
-                ],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.only(
+            bottom: 30,
+          ),
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 30,
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 200,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(.07),
-                borderRadius: BorderRadius.circular(10),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "${store['name']}\n",
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                    TextSpan(
+                        text: store['address'],
+                        style: Theme.of(context).textTheme.subtitle1),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
+              const SizedBox(
+                height: 20,
               ),
-              child: Column(
-                children: [
-                  const MartSchedule(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  const ContactInfo(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(.07),
-                      borderRadius: BorderRadius.circular(10),
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(.04),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: Column(
+                  children: [
+                    const MartSchedule(),
+                    const SizedBox(
+                      height: 15,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                      horizontal: 20,
+                    const ContactInfo(),
+                    const SizedBox(
+                      height: 15,
                     ),
-                    child: Column(
-                      children: const [
-                        StationItem(),
-                        SizedBox(
-                          height: 18,
-                        ),
-                        StationItem(),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  customExtendButton(
-                      ctx: context,
-                      child: Text(
-                        "Up Next",
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: kTextLight,
-                            ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withOpacity(.04),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const LaundrySelection()));
-                      })
-                ],
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                        horizontal: 20,
+                      ),
+                      child: Column(
+                        children: const [
+                          StationItem(),
+                          StationItem(),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    customExtendButton(
+                        ctx: context,
+                        child: Text(
+                          "Up Next",
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: kTextLight,
+                                  ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => LaundrySelection(index: index)));
+                        })
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -131,6 +138,9 @@ class StationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(
+        bottom: 15,
+      ),
       child: Column(
         children: [
           Row(
@@ -192,7 +202,7 @@ class ContactInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(.07),
+        color: Theme.of(context).primaryColor.withOpacity(.02),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: const EdgeInsets.symmetric(
@@ -232,6 +242,10 @@ class ContactInfo extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.only(
+                top: 12,
+                bottom: 12,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -256,7 +270,7 @@ class MartSchedule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(.07),
+        color: Theme.of(context).primaryColor.withOpacity(.02),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: const EdgeInsets.symmetric(

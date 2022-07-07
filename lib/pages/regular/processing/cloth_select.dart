@@ -1,12 +1,18 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/configs/data.dart';
+import 'package:provider/provider.dart';
 
+import '../../../providers/store.providers.dart';
 import '../../../themes/main.dart';
 
 class LaundrySelection extends StatefulWidget {
-  const LaundrySelection({Key? key}) : super(key: key);
+  int index;
+  LaundrySelection({required this.index, Key? key}) : super(key: key);
 
   @override
   State<LaundrySelection> createState() => _LaundrySelectionState();
@@ -14,6 +20,32 @@ class LaundrySelection extends StatefulWidget {
 
 class _LaundrySelectionState extends State<LaundrySelection> {
   final searchController = TextEditingController();
+  // fetch images from localstore
+  final clothes = fetchClothes();
+  late final basket;
+  late final storeClothes;
+
+  @override
+  void initState() {
+    super.initState();
+    _initStore();
+  }
+
+  _initStore() {
+    final storeInf = context.read<Store>().stores;
+    setState(() {
+      storeClothes = storeInf[widget.index]['pricing'];
+      basket = List.filled(storeClothes.length, 0);
+    });
+  }
+
+  List _getImgUrl(String id) {
+    List temp = [];
+    temp.addAll(clothes);
+    // return clothes.where((element) => element['id'] == id);
+    temp.retainWhere((element) => element['title'] == id);
+    return temp;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,11 +73,28 @@ class _LaundrySelectionState extends State<LaundrySelection> {
           top: 20,
         ),
         child: Column(
-          children: const [
-            LaundryBox(),
-            LaundryBox(),
-            LaundryBox(),
-          ],
+          children: List.generate(storeClothes.length, (index) {
+            // return Container();
+            return LaundryBox(
+              decreament: () {
+                if (basket[index] > 0) {
+                  setState(() {
+                    basket[index] = basket[index] - 1;
+                  });
+                }
+              },
+              increament: () {
+                setState(() {
+                  // print(basket[index]++);
+                  basket[index] = basket[index] + 1;
+                });
+              },
+              value: basket[index],
+              price: storeClothes[index]['price'].toString(),
+              title: storeClothes[index]['id'],
+              image: _getImgUrl(storeClothes[index]['id'])[0]['imagePath'],
+            );
+          }),
         ),
       ),
     );
@@ -101,7 +150,20 @@ class _LaundrySelectionState extends State<LaundrySelection> {
 }
 
 class LaundryBox extends StatelessWidget {
-  const LaundryBox({
+  String title;
+  String price;
+  String image;
+  int value;
+  Function increament;
+  Function decreament;
+
+  LaundryBox({
+    required this.image,
+    required this.title,
+    required this.value,
+    required this.price,
+    required this.increament,
+    required this.decreament,
     Key? key,
   }) : super(key: key);
 
@@ -122,13 +184,13 @@ class LaundryBox extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Image(
-            image: AssetImage("assets/clothes/shirt.png"),
+          Image(
+            image: AssetImage(image),
             width: 80,
           ),
           Column(children: [
             Text(
-              "T-shirt",
+              title,
               style: Theme.of(context).textTheme.headline6,
             ),
             const SizedBox(
@@ -137,7 +199,7 @@ class LaundryBox extends StatelessWidget {
             Row(
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () => decreament(),
                   child: Container(
                     width: 30,
                     height: 30,
@@ -159,14 +221,14 @@ class LaundryBox extends StatelessWidget {
                   width: 10,
                 ),
                 Text(
-                  "0",
+                  value.toString(),
                   style: Theme.of(context).textTheme.headline6,
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => increament(),
                   child: Container(
                     width: 30,
                     height: 30,
@@ -188,7 +250,7 @@ class LaundryBox extends StatelessWidget {
             )
           ]),
           Text(
-            "\$ 8.50",
+            "KES $price",
             style: Theme.of(context).textTheme.headline6,
           ),
         ],
