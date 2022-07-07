@@ -18,11 +18,12 @@ const getUserById = async (id) => {
  * @returns {Promise}
  */
 
-const create = async (userId, { name, description, address, pricing, storeImg }) => {
+const create = async (userId, { name, description, address, pricing }, files) => {
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
   }
+  const storeImg = files.avatar.map((element) => element.destination + element.filename);
   const data = { name, description, address, pricing, storeImg, userId };
   return Stores.create(data);
 };
