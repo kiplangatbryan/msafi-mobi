@@ -1,9 +1,9 @@
-POST http://localhost:3000/v1/auth/register
+POST https://maps.googleapis.com/maps/api/place/details/json?input=$rongai&types=geocode&key=AIzaSyASBc-Ac9yrei1uG8iPF4DJvkQf8slxjlw
+Content-Type: "application/json"
 
 {
-    password: "@status300",
-    email: "state@gmail.com",
-    name: "kadet"
+    "password": "mate.mobi@gmail.com",
+    "email": "@mate254",
 }
 
 

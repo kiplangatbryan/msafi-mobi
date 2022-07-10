@@ -18,8 +18,10 @@ const genderOpt = {
 
 const statusTypes = {
   PENDING: 'pending',
-  PROCESSING: 'processing',
+  DROPPED: 'dropped',
+  INITIAL: 'initial',
   COMPLETED: 'completed',
+  PICKED: 'picked',
 };
 
 module.exports = {

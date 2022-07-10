@@ -71,7 +71,7 @@ module.exports = {
     accessTokenUri: envVars.TOKEN_URL,
     consumerKeyUri: envVars.CONSUMER_KEY,
     consumerSecret: envVars.CONSUMER_SECRET,
-    processUri: envVars.ONLINE_PROCESS_URL,
+    simulateMpesaUri: envVars.ONLINE_PROCESS_URL,
     passkey: envVars.passkey,
     shortcode: envVars.shortcode,
   },

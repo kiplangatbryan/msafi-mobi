@@ -10,7 +10,7 @@ const config = require('../config/config');
  */
 
 const getAccessToken = async () => {
-  const phraseText = `${config.mpesaPay.accessTokenUri}:${config.mpesaPay.consumerKeyUri}`;
+  const phraseText = `${config.mpesaPay.consumerKeyUri}:${config.mpesaPay.consumerSecret}`;
   const phraseKey = Buffer.from(phraseText).toString('base64');
 
   try {
@@ -22,7 +22,7 @@ const getAccessToken = async () => {
 
     return res.data.access_token;
   } catch (err) {
-    throw ApiError(httpStatus.SERVICE_UNAVAILABLE, err.response.data);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.code);
   }
 };
 
@@ -31,31 +31,30 @@ const getAccessToken = async () => {
  * @returns {Promise<Response>}
  */
 
-const mpesaExpress = async (account, targetTill, businessName) => {
+const mpesaExpress = async (account) => {
   const timestamp = moment().format('YYYYMMDDHHmmss');
   // console.log(process.env.shortcode);
   // eslint-disable-next-line new-cap
-  const blobText = Buffer.from(config.mpesaPay.passkey + config.mpesaPay.passkey + timestamp);
+  const blobText = Buffer.from(config.mpesaPay.shortcode + config.mpesaPay.passkey + timestamp);
   const Password = blobText.toString('base64');
 
   const authToken = await getAccessToken();
 
   try {
     const res = await axios.post(
-      process.env.ONLINE_PROCESS_URL,
+      config.env.simulateMpesaUri,
       {
-        BusinessShortCode: process.env.shortcode,
+        BusinessShortCode: config.env.shortcode,
         Password,
         Timestamp: timestamp,
         TransactionType: 'CustomerPayBillOnline',
         Amount: 1,
-        PartyA: account,
-        PhoneNumber: account,
-        PartyB: targetTill,
-        // PartyB: 174379,
+        PartyA: parseInt(account, 10),
+        PhoneNumber: parseInt(account, 10),
+        PartyB: config.env.shortcode,
         CallBackURL: 'https://wasafi.onrender.com/v1/store/stk-push/callback',
-        AccountReference: businessName,
-        TransactionDesc: 'service payment',
+        AccountReference: 'CompanyX',
+        TransactionDesc: 'Payment for Laundry Service',
       },
       {
         headers: {
@@ -65,7 +64,7 @@ const mpesaExpress = async (account, targetTill, businessName) => {
     );
     return res.data;
   } catch (err) {
-    throw ApiError(httpStatus.SERVICE_UNAVAILABLE, err.response.data);
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.code);
   }
 };
 
@@ -74,22 +73,18 @@ const mpesaExpress = async (account, targetTill, businessName) => {
  * @returns {Promise<Response>}
  */
 
-const callback = (req, res) => {
-  // console.log('-----------Received M-Pesa webhook-----------');
-
-  // console.log(req.body);
-  // console.log('-----------------------');
-
+const callback = (response) => {
+  // eslint-disable-next-line no-console
+  console.log(response);
   const message = {
     ResponseCode: '00000000',
     ResponseDesc: 'success',
   };
 
-  res.status(200).json(message);
+  return message;
 };
 
 module.exports = {
   mpesaExpress,
-  getAccessToken,
   callback,
 };

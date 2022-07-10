@@ -19,7 +19,28 @@ const fetchStore = {
   }),
 };
 
+const createOrder = {
+  body: Joi.object().keys({
+    stationId: Joi.string().required().custom(objectId),
+    storeId: Joi.string().required().custom(objectId),
+    expectedPickUp: Joi.date().required(),
+    clothes: Joi.array().items({
+      id: Joi.string().required(),
+      count: Joi.number().required(),
+      total: Joi.number().required(),
+    }),
+  }),
+};
+
+const fetchOrders = {
+  params: Joi.object().keys({
+    storeId: Joi.string().required().custom(objectId),
+  }),
+};
+
 module.exports = {
   createStore,
   fetchStore,
+  createOrder,
+  fetchOrders,
 };

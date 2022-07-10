@@ -19,8 +19,29 @@ const fetchAllStores = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(stores);
 });
 
+const createOrder = catchAsync(async (req, res) => {
+  const { body } = req;
+  const order = await launderService.createOrder(body, req.user.id);
+  res.status(httpStatus.CREATED).send(order);
+});
+
+const fetchOrders = catchAsync(async (req, res) => {
+  const { storeId } = req.params;
+  const orders = await launderService.fetchOrders(storeId, req.user.id);
+  res.status(httpStatus.OK).send(orders);
+});
+
+const search = catchAsync(async (req, res) => {
+  const { storeId, q } = req.query;
+  const results = await launderService.search(storeId, q);
+  res.status(httpStatus.OK).send(results);
+});
+
 module.exports = {
   createStore,
   fetchStore,
   fetchAllStores,
+  createOrder,
+  fetchOrders,
+  search,
 };

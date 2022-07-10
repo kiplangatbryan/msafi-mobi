@@ -44,7 +44,7 @@ const create = async (userId, storeId, locations) => {
 const fetchStations = async (storeId) => {
   const spot = await getStoreById(storeId);
   if (!spot) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Pick Up Station Association not Found!');
+    throw new ApiError(httpStatus.NO_CONTENT, 'Pick Up Station Association not Found!');
   }
   return Stations.find({ storeId });
 };

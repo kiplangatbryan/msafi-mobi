@@ -21,6 +21,10 @@ const logout = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const verifyToken = catchAsync(async (req, res) => {
+  res.status(200).send();
+});
+
 const refreshTokens = catchAsync(async (req, res) => {
   const tokens = await authService.refreshAuth(req.body.refreshToken);
   res.send({ ...tokens });
@@ -57,4 +61,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  verifyToken,
 };

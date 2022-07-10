@@ -7,7 +7,11 @@ const ordersSchema = mongoose.Schema(
     paymentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Payment',
+    },
+    paid: {
       required: true,
+      type: Boolean,
+      default: false,
     },
     stationId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,14 +32,18 @@ const ordersSchema = mongoose.Schema(
       type: String,
       enum: Object.values(statusTypes),
       required: true,
+      default: 'initial',
     },
-    expectedPickIp: {
+    expectedPickUp: {
       required: true,
       type: Date,
     },
     clothes: {
       required: true,
       type: Array,
+    },
+    droppedOff: {
+      type: Date,
     },
   },
   {
