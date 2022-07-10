@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 const axios = require('axios');
 const httpStatus = require('http-status');
 const moment = require('moment');
@@ -31,7 +32,7 @@ const getAccessToken = async () => {
  * @returns {Promise<Response>}
  */
 
-const mpesaExpress = async (account) => {
+const mpesaExpress = async (MSSID) => {
   const timestamp = moment().format('YYYYMMDDHHmmss');
   // console.log(process.env.shortcode);
   // eslint-disable-next-line new-cap
@@ -42,16 +43,17 @@ const mpesaExpress = async (account) => {
 
   try {
     const res = await axios.post(
-      config.env.simulateMpesaUri,
+      config.mpesaPay.simulateMpesaUri,
       {
-        BusinessShortCode: config.env.shortcode,
+        BusinessShortCode: config.mpesaPay.shortcode,
         Password,
         Timestamp: timestamp,
         TransactionType: 'CustomerPayBillOnline',
         Amount: 1,
-        PartyA: parseInt(account, 10),
-        PhoneNumber: parseInt(account, 10),
-        PartyB: config.env.shortcode,
+        PartyA: parseInt(MSSID, 10),
+        PhoneNumber: parseInt(MSSID, 10),
+        PartyB: config.mpesaPay.shortcode,
+        // callBackURL: 'https://9360-41-89-160-19.eu.ngrok.io/v1/store/stk-push/callback',
         CallBackURL: 'https://wasafi.onrender.com/v1/store/stk-push/callback',
         AccountReference: 'CompanyX',
         TransactionDesc: 'Payment for Laundry Service',
