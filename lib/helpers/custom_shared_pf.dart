@@ -26,4 +26,9 @@ class CustomSharedPreferences {
     SharedPreferences localData = await SharedPreferences.getInstance();
     return localData.getString("IjMjKB");
   }
+
+  Future<bool> logout() async {
+    SharedPreferences localData = await SharedPreferences.getInstance();
+    return await localData.remove('IjMjKB');
+  }
 }

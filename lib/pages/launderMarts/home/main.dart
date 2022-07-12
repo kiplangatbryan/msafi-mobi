@@ -1,8 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
+import 'package:msafi_mobi/components/snackback_component.dart';
 import 'package:msafi_mobi/configs/data.dart';
 import 'package:msafi_mobi/helpers/size_calculator.dart';
 import 'package:msafi_mobi/pages/launderMarts/components/util_widgets.dart';
@@ -10,430 +16,651 @@ import 'package:msafi_mobi/pages/launderMarts/orders/main.dart';
 import 'package:msafi_mobi/pages/launderMarts/orders/single-order.dart';
 import 'package:msafi_mobi/pages/launderMarts/settings/main.dart';
 import 'package:msafi_mobi/themes/main.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import 'package:http/http.dart' as http;
+
+import '../../../helpers/http_services.dart';
+import '../../../providers/merchant.provider.dart';
+import '../../../providers/user.provider.dart';
+import '../components/single_order.dart';
 import '../profile/main.dart';
 
-class MerchantHomePage extends StatefulWidget {
+class MerchantHomePage extends StatelessWidget {
   const MerchantHomePage({Key? key}) : super(key: key);
-
-  @override
-  State<MerchantHomePage> createState() => _MerchantHomePageState();
-}
-
-class _MerchantHomePageState extends State<MerchantHomePage> {
-  final PageController _pageController = PageController(initialPage: 0);
-  late int page;
-
-  @override
-  void initState() {
-    super.initState();
-    page = _pageController.initialPage;
-  }
-
-  double get maxWidth => MediaQuery.of(context).size.width;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 238, 238, 238),
+      backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Padding(
-          padding: EdgeInsets.only(
-            top: sizeCompute(small: 60, large: 80, width: maxWidth),
-            bottom: sizeCompute(small: 20, large: 20, width: maxWidth),
+          padding: const EdgeInsets.only(
+            // top: sizeCompute(small: 60, large: 80, width: maxWidth),
+            bottom: 20,
           ),
           child: Column(
             children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal:
-                            sizeCompute(small: 15, large: 20, width: maxWidth)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Container(
+                padding: const EdgeInsets.only(
+                  left: 25,
+                  right: 25,
+                  bottom: 70,
+                  top: 50,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      textAlign: TextAlign.left,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Good Afternoon\n",
+                            style: GoogleFonts.notoSans(
+                              fontSize: 21,
+                              color: Theme.of(context).backgroundColor,
+                            ),
+                          ),
+                          TextSpan(
+                            text: "Welcome  ",
+                            style: GoogleFonts.notoSans(
+                              fontSize: 18,
+                              height: 1.6,
+                              color: Theme.of(context)
+                                  .backgroundColor
+                                  .withOpacity(.8),
+                            ),
+                          ),
+                          TextSpan(
+                            text: context.read<User>().name,
+                            style: GoogleFonts.notoSans(
+                              fontSize: 18,
+                              color: Theme.of(context).backgroundColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RichText(
-                          textAlign: TextAlign.left,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "Good Afternoon\n",
-                                style: GoogleFonts.notoSans(
-                                    fontSize: sizeCompute(
-                                        small: 21, large: 24, width: maxWidth),
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                              ),
-                              TextSpan(
-                                text: "Welcome back",
-                                style: GoogleFonts.notoSans(
-                                  fontSize: sizeCompute(
-                                      small: 16, large: 17, width: maxWidth),
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ],
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.notifications_active_outlined,
+                            size: 30,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(.8),
                           ),
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.notifications_active_outlined,
-                                size: 30,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        const MerchantSettings()));
-                              },
-                              icon: const Icon(
-                                Icons.settings_outlined,
-                                size: 30,
-                              ),
-                            )
-                          ],
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    const MerchantSettings()));
+                          },
+                          icon: Icon(
+                            Icons.settings_outlined,
+                            size: 30,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(.8),
+                          ),
                         )
                       ],
+                    )
+                  ],
+                ),
+              ),
+              Transform.translate(
+                offset: const Offset(0, -45),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20),
                     ),
                   ),
-                  const SizedBox(
-                    height: 18,
+                  padding: const EdgeInsets.only(
+                    left: 25,
+                    right: 25,
+                    top: 30,
+                    bottom: 100,
                   ),
-                  Column(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      LimitedBox(
-                        maxHeight: 200,
-                        child: PageView(
-                          pageSnapping: true,
-                          controller: _pageController,
-                          allowImplicitScrolling: true,
-
-                          onPageChanged: (index) {
-                            setState(() {
-                              page = index;
-                            });
-                          },
-                          // ignore: prefer_const_literals_to_create_immutables
+                      RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
                           children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: sizeCompute(
-                                    small: 15, large: 20, width: maxWidth),
-                              ),
-                              child: transactionsSummary(context),
+                            TextSpan(
+                              text: "Find An Order or Basket\n",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22,
+                                  ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: sizeCompute(
-                                    small: 15, large: 20, width: maxWidth),
+                            TextSpan(
+                              text: "Enter a basket number",
+                              style: GoogleFonts.notoSans(
+                                fontSize: 16,
+                                height: 1.6,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(.7),
                               ),
-                              child: transactionsSummary(context),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(
-                        height: 25,
+                        height: 20,
                       ),
-                      Center(
-                        child: SmoothPageIndicator(
-                          controller: _pageController,
-                          effect: const ExpandingDotsEffect(
-                            dotHeight: 11,
-                            dotWidth: 11,
-                            activeDotColor: kSmoothIndicator,
-                            dotColor: kTextLightColor,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: CustomSearchField(
+                              onTapped: () {
+                                context.read<MerchantRoute>().setCurrentPage(1);
+                                context
+                                    .read<MerchantRoute>()
+                                    .setAutoFocusState(true);
+                              },
+                            ),
                           ),
-                          count: 2,
-                        ),
-                      ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              borderRadius: BorderRadius.circular(60),
+                            ),
+                            height: 60,
+                            width: 60,
+                            child: Center(
+                              child: Icon(
+                                Icons.search_rounded,
+                                size: 35,
+                                color: Theme.of(context).backgroundColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal:
-                      sizeCompute(small: 15, large: 20, width: maxWidth),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Recent Orders",
-                          style: GoogleFonts.notoSans(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const MerchantOrders(),
-                              ),
-                            );
-                          },
-                          child: Text(
-                            "view all",
-                            style: GoogleFonts.notoSans(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: splashColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    ordersSummary(maxWidth),
-                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container transactionsSummary(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
-        color: Theme.of(context).scaffoldBackgroundColor,
-      ),
-      padding: EdgeInsets.symmetric(
-        vertical: sizeCompute(small: 18, large: 18, width: maxWidth),
-        horizontal: sizeCompute(small: 15, large: 15, width: maxWidth),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -40,
-            child: Lottie.asset(
-              "assets/lottie/relax.json",
-              fit: BoxFit.contain,
-              width: 180,
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Ksh. 400,000.00\n\n",
-                      style: GoogleFonts.notoSans(
-                        fontSize: 23,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+              Transform.translate(
+                offset: const Offset(0, -100),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).backgroundColor,
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      topLeft: Radius.circular(20),
                     ),
-                    TextSpan(
-                      text: "Transactions so far.\n",
-                      style: GoogleFonts.notoSans(
-                        fontSize: 16,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              SizedBox(
-                width: 180,
-                child: customOrderBtn(),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  ListView ordersSummary(double maxWidth) {
-    return ListView.builder(
-      physics: const ScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: 3,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    SingleOrder(order: fetchOrders()[index])));
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: Theme.of(context).scaffoldBackgroundColor,
-            ),
-            margin: const EdgeInsets.only(bottom: 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 50,
-                  padding: EdgeInsets.symmetric(
-                    vertical:
-                        sizeCompute(small: 18, large: 15, width: maxWidth),
                   ),
-                  child: Icon(
-                    Icons.history_toggle_off,
-                    size: 30,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical:
-                          sizeCompute(small: 15, large: 15, width: maxWidth),
-                      horizontal:
-                          sizeCompute(small: 15, large: 15, width: maxWidth),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 25,
+                          right: 25,
+                          top: 30,
+                          bottom: 20,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${fetchOrders()[index]['id']}",
-                              style: GoogleFonts.notoSans(
-                                fontSize: sizeCompute(
-                                    small: 18, large: 19, width: maxWidth),
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              "Statistics",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
-                            Text(
-                              "${fetchOrders()[index]['total'].toString()} KES",
-                              style: GoogleFonts.notoSans(
-                                fontSize: sizeCompute(
-                                    small: 18, large: 19, width: maxWidth),
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            const SizedBox(
+                              height: 20,
                             ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Placed on:",
-                              style: GoogleFonts.notoSans(
-                                fontSize: sizeCompute(
-                                    small: 14, large: 16, width: maxWidth),
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            Text(
-                              DateTime.parse(
-                                fetchOrders()[index]['expected_pick_up'],
-                              ).toMoment().toString(),
-                              style: GoogleFonts.notoSans(
-                                fontSize: sizeCompute(
-                                    small: 14, large: 16, width: maxWidth),
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 6,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              child: Text(
-                                "Placed at:",
-                                style: GoogleFonts.notoSans(
-                                  fontSize: sizeCompute(
-                                      small: 14, large: 16, width: maxWidth),
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  fontWeight: FontWeight.w600,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                StatsBadges(
+                                  icon: Icon(
+                                    Icons.swap_vert_outlined,
+                                    size: 40,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.7),
+                                  ),
+                                  title: "Earnings",
+                                  value: "+ 10,100.00",
                                 ),
-                              ),
+                                StatsBadges(
+                                  icon: Icon(
+                                    Icons.receipt_long,
+                                    size: 40,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.7),
+                                  ),
+                                  title: "Orders",
+                                  value: "+ 544",
+                                ),
+                                StatsBadges(
+                                  icon: Icon(
+                                    Icons.home_max_outlined,
+                                    size: 40,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.7),
+                                  ),
+                                  title: "Stations",
+                                  value: "3",
+                                ),
+                              ],
                             ),
-                            Text(
-                              fetchOrders()[index]['pick_up_station'],
-                              style: GoogleFonts.notoSans(
-                                fontSize: sizeCompute(
-                                    small: 14, large: 16, width: maxWidth),
-                                color: kTextMediumColor,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            const SizedBox(
+                              height: 40,
                             ),
+                            storeStats(context),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const RecentOrders(),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  GestureDetector customOrderBtn() {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 12,
+  Row storeStats(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "Recent Orders",
+          style: Theme.of(context).textTheme.headline6,
         ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Theme.of(context).colorScheme.tertiary,
-        ),
-        child: Center(
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const MerchantOrders(),
+              ),
+            );
+          },
           child: Text(
-            "View summary",
-            style: GoogleFonts.notoSans(
-              fontSize: 18.0,
-              letterSpacing: 1.3,
-              fontWeight: FontWeight.bold,
-              color: kTextLight,
-              decorationStyle: TextDecorationStyle.wavy,
-            ),
+            "View all",
+            style: Theme.of(context).textTheme.headline6!.copyWith(
+                  color: Theme.of(context).primaryColor,
+                ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class RecentOrders extends StatefulWidget {
+  const RecentOrders({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<RecentOrders> createState() => _RecentOrdersState();
+}
+
+class _RecentOrdersState extends State<RecentOrders> {
+  bool loading = false;
+  List orderList = [];
+  late final NUMBER_OF_ORDERS;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrders();
+  }
+
+  _fetchOrders() async {
+    var url =
+        Uri.parse('${baseUrl()}/store/fetchOrders/62c7aa3a0be196261ce03980');
+    setState(() {
+      loading = true;
+    });
+    var authToken = await checkAndValidateAuthToken();
+
+    try {
+      // send data to server
+      final response = await http.get(url, headers: {
+        "Authorization": "Bearer $authToken",
+      }).timeout(
+        const Duration(seconds: 10),
+      );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          if (data.length > 10) {
+            NUMBER_OF_ORDERS = 10;
+          } else {
+            NUMBER_OF_ORDERS = data.length;
+          }
+          orderList = data;
+        });
+      } else {
+        customSnackBar(
+            context: context, message: "Server Error", onPressed: () {});
+      }
+    } on SocketException {
+      customSnackBar(
+          context: context,
+          message: "Could not connect to server!",
+          onPressed: () {});
+    } on TimeoutException catch (e) {
+      customSnackBar(
+          context: context, message: "Connection timed out!", onPressed: () {});
+    } on Error catch (e) {
+      customSnackBar(
+          context: context, message: "An error occurred", onPressed: () {});
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return loading
+        ? Container(
+            height: 150,
+            child: Center(
+              child: Lottie.asset(
+                "assets/lottie/circular-loading.json",
+                fit: BoxFit.contain,
+              ),
+            ),
+          )
+        : SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                // ignore: prefer_const_literals_to_create_immutables
+                children: List.generate(NUMBER_OF_ORDERS, (index) {
+              final order = orderList[index];
+              return SingleOrderComponent(
+                order: order,
+                customerName: order['userId']['name'],
+                status: order['status'],
+                orderId: order['id'],
+                stationName: order['stationId']['name'],
+                expectedDate: order['expectedPickUp'],
+              );
+            })),
+          );
+  }
+}
+
+class StatsBadges extends StatelessWidget {
+  String title;
+  String value;
+  Icon icon;
+  StatsBadges({
+    required this.title,
+    required this.value,
+    required this.icon,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          height: 100,
+          width: 100,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor.withOpacity(.08),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon,
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                value,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.tertiary,
+                      fontSize: 14,
+                    ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
+      ],
+    );
+  }
+}
+
+class CustomSearchField extends StatelessWidget {
+  final onTapped;
+  const CustomSearchField({
+    required this.onTapped,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      onTap: onTapped,
+      cursorColor: kTextColor,
+      cursorHeight: 20,
+      keyboardType: TextInputType.text,
+      style: GoogleFonts.notoSans(
+        color: kTextColor,
+        fontWeight: FontWeight.w600,
+        fontSize: 17,
+      ),
+      decoration: InputDecoration(
+        hintText: "Enter order number",
+        filled: true,
+        fillColor: kDigital,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        contentPadding: const EdgeInsets.fromLTRB(20, 18, 0, 18),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(
+            color: Colors.transparent,
+          ),
+          gapPadding: 10,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(
+            color: Colors.transparent,
+          ),
+          gapPadding: 10,
         ),
       ),
     );
   }
 }
+
+// ListView ordersSummary(double maxWidth) {
+//   return ListView.builder(
+//     physics: const ScrollPhysics(),
+//     shrinkWrap: true,
+//     itemCount: 3,
+//     itemBuilder: (context, index) {
+//       return GestureDetector(
+//         onTap: () {
+//           Navigator.of(context).push(MaterialPageRoute(
+//               builder: (context) => SingleOrder(order: fetchOrders()[index])));
+//         },
+//         child: Container(
+//           decoration: BoxDecoration(
+//             borderRadius: BorderRadius.circular(6),
+//             color: Theme.of(context).scaffoldBackgroundColor,
+//           ),
+//           margin: const EdgeInsets.only(bottom: 10),
+//           child: Row(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Container(
+//                 width: 50,
+//                 padding: EdgeInsets.symmetric(
+//                   vertical: sizeCompute(small: 18, large: 15, width: maxWidth),
+//                 ),
+//                 child: Icon(
+//                   Icons.history_toggle_off,
+//                   size: 30,
+//                   color: Theme.of(context).primaryColor,
+//                 ),
+//               ),
+//               Expanded(
+//                 child: Container(
+//                   padding: EdgeInsets.symmetric(
+//                     vertical:
+//                         sizeCompute(small: 15, large: 15, width: maxWidth),
+//                     horizontal:
+//                         sizeCompute(small: 15, large: 15, width: maxWidth),
+//                   ),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text(
+//                             "${fetchOrders()[index]['id']}",
+//                             style: GoogleFonts.notoSans(
+//                               fontSize: sizeCompute(
+//                                   small: 18, large: 19, width: maxWidth),
+//                               color: Theme.of(context).colorScheme.primary,
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                           Text(
+//                             "${fetchOrders()[index]['total'].toString()} KES",
+//                             style: GoogleFonts.notoSans(
+//                               fontSize: sizeCompute(
+//                                   small: 18, large: 19, width: maxWidth),
+//                               color: Theme.of(context).colorScheme.primary,
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(
+//                         height: 8,
+//                       ),
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           Text(
+//                             "Placed on:",
+//                             style: GoogleFonts.notoSans(
+//                               fontSize: sizeCompute(
+//                                   small: 14, large: 16, width: maxWidth),
+//                               color: Theme.of(context).colorScheme.secondary,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                           Text(
+//                             DateTime.parse(
+//                               fetchOrders()[index]['expected_pick_up'],
+//                             ).toMoment().toString(),
+//                             style: GoogleFonts.notoSans(
+//                               fontSize: sizeCompute(
+//                                   small: 14, large: 16, width: maxWidth),
+//                               color: Theme.of(context).colorScheme.secondary,
+//                               fontWeight: FontWeight.w600,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(
+//                         height: 6,
+//                       ),
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         children: [
+//                           SizedBox(
+//                             width: 100,
+//                             child: Text(
+//                               "Placed at:",
+//                               style: GoogleFonts.notoSans(
+//                                 fontSize: sizeCompute(
+//                                     small: 14, large: 16, width: maxWidth),
+//                                 color: Theme.of(context).colorScheme.secondary,
+//                                 fontWeight: FontWeight.w600,
+//                               ),
+//                             ),
+//                           ),
+//                           Text(
+//                             fetchOrders()[index]['pick_up_station'],
+//                             style: GoogleFonts.notoSans(
+//                               fontSize: sizeCompute(
+//                                   small: 14, large: 16, width: maxWidth),
+//                               color: kTextMediumColor,
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       );
+//     },
+//   );
+// }

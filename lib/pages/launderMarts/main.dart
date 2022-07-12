@@ -24,35 +24,14 @@ class _MerchantHomeState extends State<MerchantHome> {
     NotificationsScreen(),
     AccountSettings(),
   ];
-  Widget _currentPage = Container();
-  dynamic merchantRoute;
-  int _count = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _currentPage = routes[_count];
-    });
-    merchantRoute = context.read<MerchantRoute>();
-    _count = merchantRoute.current;
-  }
-
-  _handleNavigation(index) {
-    // update global  state
-    merchantRoute.setCurrentPage(index);
-    setState(() {
-      // read from global state
-      _count = merchantRoute.current;
-      _currentPage = routes[_count];
-      // set the current index to the index
-    });
-  }
+  final double iconSize = 25;
 
   @override
   Widget build(BuildContext context) {
+    final router = context.watch<MerchantRoute>();
     return Scaffold(
-      body: _currentPage,
+      body: routes[router.currentPage],
       bottomNavigationBar: BottomNavigationBar(
         elevation: 50,
         enableFeedback: true,
@@ -65,7 +44,7 @@ class _MerchantHomeState extends State<MerchantHome> {
         ),
         unselectedItemColor: kTextMediumColor,
         selectedLabelStyle: GoogleFonts.notoSans(
-          fontSize: 16,
+          fontSize: 13,
           color: Theme.of(context).primaryColor,
           height: 1.8,
           fontWeight: FontWeight.w600,
@@ -76,7 +55,7 @@ class _MerchantHomeState extends State<MerchantHome> {
             icon: Icon(
               Icons.dashboard_outlined,
               color: Theme.of(context).colorScheme.secondary,
-              size: 28,
+              size: iconSize,
             ),
           ),
           BottomNavigationBarItem(
@@ -84,7 +63,7 @@ class _MerchantHomeState extends State<MerchantHome> {
             icon: Icon(
               Icons.track_changes,
               color: Theme.of(context).colorScheme.secondary,
-              size: 28,
+              size: iconSize,
             ),
           ),
           BottomNavigationBarItem(
@@ -92,7 +71,7 @@ class _MerchantHomeState extends State<MerchantHome> {
             icon: Icon(
               Icons.notifications_active,
               color: Theme.of(context).colorScheme.secondary,
-              size: 28,
+              size: iconSize,
             ),
           ),
           BottomNavigationBarItem(
@@ -107,9 +86,9 @@ class _MerchantHomeState extends State<MerchantHome> {
         ],
         selectedItemColor: Theme.of(context).primaryColor,
         showSelectedLabels: true,
-        currentIndex: _count,
+        currentIndex: router.currentPage,
         selectedIconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-        onTap: _handleNavigation,
+        onTap: router.setCurrentPage,
       ),
     );
   }

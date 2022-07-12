@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/helpers/http_services.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:http/http.dart' as http;
-import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/user.provider.dart';
@@ -110,7 +108,6 @@ class _CodeVerifyState extends State<CodeVerify> {
             );
 
         // final data = json.decode(response.body);
-        print(response.statusCode);
 
         if (response.statusCode == 200) {
         } else {

@@ -44,14 +44,14 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
 
   _setEmail(val) {
     setState(() {
-      user['email'] = val;
+      user['email'] = val.trim();
     });
   }
 
 // populate user in user map
   _setPassword(val) {
     setState(() {
-      user['password'] = val;
+      user['password'] = val.trim();
     });
   }
 
@@ -113,6 +113,8 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
       });
       var url = Uri.parse('${baseUrl()}/auth/login');
 
+      print(url);
+
       try {
         // send data to server
         final response = await http
@@ -129,7 +131,7 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
         if (response.statusCode == 200) {
           return await _handleUserSignIn(data);
         } else {
-          _postErrors("Email or password is Incorrect");
+          _postErrors(data['message']);
         }
       } on SocketException {
         customSnackBar('Could not connect to server');
