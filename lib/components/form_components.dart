@@ -16,7 +16,7 @@ SizedBox customExtendButton(
         ),
         elevation: 1,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(30),
         ),
       ),
       onPressed: onPressed,

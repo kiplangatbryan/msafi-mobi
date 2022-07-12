@@ -13,10 +13,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'pages/launderMarts/main.dart';
 import 'pages/launderMarts/onboarding/main.dart';
-import 'pages/launderMarts/onboarding/pages/location.dart';
-import 'pages/launderMarts/onboarding/pages/showLocations.dart';
 import 'pages/splash/main.dart';
 import 'providers/merchant.provider.dart';
+import 'providers/system.provider.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -30,6 +29,7 @@ Future main() async {
         ChangeNotifierProvider(create: (context) => User()),
         ChangeNotifierProvider(create: (context) => Basket()),
         ChangeNotifierProvider(create: (context) => Store()),
+        ChangeNotifierProvider(create: (context) => AppState()),
       ],
       child: const MyApp(),
     ),
