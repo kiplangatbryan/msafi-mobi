@@ -1,10 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/themes/main.dart';
+import 'package:provider/provider.dart';
 
 import '../../helpers/custom_shared_pf.dart';
+import '../../providers/user.provider.dart';
 import '../onboarding/main.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _loadNavigationData() async {
     await Future.delayed(
-      const Duration(seconds: 4),
+      const Duration(seconds: 2),
     );
     await CustomSharedPreferences().checkOnboarding().then(
       (value) async {
@@ -43,18 +49,29 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     } else {
       //Later validate the token
-      await Future.delayed(
-        const Duration(seconds: 1),
-        () => _navigateTologin(),
-      );
+      await Future.delayed(const Duration(seconds: 1),
+          // () => _navigateTologin(),
+          () async {
+        final data = json.decode(res);
+
+        await context.read<User>().createUser(data);
+        if (data['user']['role'] == 'user') {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/default-home', (route) => false);
+        } else {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/mart-home', (route) => false);
+        }
+      });
     }
   }
 
   _navigateTologin() {
-    return Navigator.of(context).pushReplacement(
+    return Navigator.of(context).pushAndRemoveUntil(
       CupertinoPageRoute(
         builder: (context) => const LoginPageOptions(),
       ),
+      (route) => false,
     );
   }
 
@@ -73,8 +90,11 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         height: double.infinity,
         width: double.infinity,
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/splash.jpg'),
+            fit: BoxFit.cover,
+          ),
         ),
         child: Stack(
           children: [
