@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
@@ -154,7 +156,7 @@ class HomePageView extends StatelessWidget {
               const SizedBox(
                 height: 30,
               ),
-              const Offers(),
+              // const Offers(),
             ]),
           ),
           const SizedBox(
@@ -187,9 +189,39 @@ class HomePageView extends StatelessWidget {
               ],
             ),
           ),
-          LanderMartsList(),
-          SizedBox(
+          const LanderMartsList(),
+          const SizedBox(
             height: 50,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              // clean up
+              var status = await CustomSharedPreferences().logout();
+              if (status) {
+                Navigator.of(context).pushReplacementNamed('/login');
+              } else {
+                SnackBar(
+                  content: Text("Could not logout"),
+                  action: SnackBarAction(
+                    label: 'Undo',
+                    onPressed: () {
+                      // Some code to undo the change.
+                    },
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+              horizontal: 35,
+              vertical: 10,
+            )),
+            child: Text(
+              "Logout",
+              style: Theme.of(context).textTheme.headline6!.copyWith(
+                    color: kTextLight,
+                  ),
+            ),
           ),
         ],
       ),
@@ -210,7 +242,9 @@ class _LanderMartsListState extends State<LanderMartsList> {
   bool loading = false;
   String snackBarMessage = "";
   bool showSnack = false;
+  bool errorState = false;
 
+  @override
   void initState() {
     super.initState();
     fetchStores();
@@ -247,10 +281,11 @@ class _LanderMartsListState extends State<LanderMartsList> {
             const Duration(seconds: 10),
           );
 
-      final data = json.decode(response.body);
+      List data = json.decode(response.body);
 
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
+
         context.read<Store>().saveStores(data);
 
         Future.delayed(
@@ -268,7 +303,11 @@ class _LanderMartsListState extends State<LanderMartsList> {
     } on TimeoutException catch (e) {
       customSnackBar("Connection Timeout");
     } on Error catch (e) {
-      customSnackBar("An error ocurred");
+      // print(e);
+      setState(() {
+        errorState = true;
+      });
+      customSnackBar("$e");
     }
     setState(() {
       loading = false;
@@ -286,23 +325,67 @@ class _LanderMartsListState extends State<LanderMartsList> {
               ),
             ),
           )
-        : SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-                horizontal: 20,
-              ),
-              child: Row(
-                children: List.generate(context.read<Store>().count, (index) {
-                  return StoreItem(
-                    index: index,
-                    title: context.read<Store>().stores[index]['name'],
-                  );
-                }),
-              ),
-            ),
-          );
+        : errorState
+            ? Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                height: 300,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      textAlign: TextAlign.center,
+                      "Their was a problem with Your connection.",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          errorState = false;
+                        });
+                        fetchStores();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                        horizontal: 35,
+                        vertical: 10,
+                      )),
+                      child: Text(
+                        "Try again",
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                              color: kTextLight,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 20,
+                    horizontal: 20,
+                  ),
+                  child: Row(
+                    children:
+                        List.generate(context.read<Store>().count, (index) {
+                      return Hero(
+                        tag: context.read<Store>().stores[index]['id'],
+                        child: StoreItem(
+                          index: index,
+                          title: context.read<Store>().stores[index]['name'],
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              );
   }
 }
 
@@ -320,8 +403,10 @@ class StoreItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => LaunderMartView(index: index)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => LaunderMartView(
+                tagId: context.read<Store>().stores[index]['id'],
+                index: index)));
       },
       child: Container(
           width: MediaQuery.of(context).size.width - 40,
@@ -329,8 +414,9 @@ class StoreItem extends StatelessWidget {
             right: 20,
           ),
           decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(10),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10),
               ),
               color: kTextLight,
               boxShadow: [
@@ -343,8 +429,18 @@ class StoreItem extends StatelessWidget {
               ]),
           child: Column(
             children: [
-              const Image(
-                image: AssetImage("assets/images/171.png"),
+              Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        '${baseUrl()}/${context.read<Store>().stores[index]['storeImg'][0]}'),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10),
+                  ),
+                ),
                 height: 180,
               ),
               Padding(

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/configs/data.dart';
 import 'package:msafi_mobi/helpers/size_calculator.dart';
 import 'package:msafi_mobi/pages/launderMarts/orders/single-order.dart';
+import 'package:msafi_mobi/providers/merchant.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
+import 'package:provider/provider.dart';
+
+import '../../../components/snackback_component.dart';
+import '../../../helpers/http_services.dart';
+import '../../../services/store.services.dart';
 
 class MerchantOrders extends StatefulWidget {
   const MerchantOrders({Key? key}) : super(key: key);
@@ -18,13 +22,38 @@ class MerchantOrders extends StatefulWidget {
 class _MerchantOrdersState extends State<MerchantOrders> {
   // text editing controller
   final searchController = TextEditingController();
+  // List will hold search results
+  List searchResults = [];
+  late final bool autoFocus;
 
   // toggle active state
   int active = 0;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    autoFocus = context.read<MerchantRoute>().autoFocusState;
+  }
+
+  _findOrders(val) async {
+    final token = await checkAndValidateAuthToken();
+    final response = await StoreService().search(val, token);
+
+    if (double.tryParse(response) == null) {
+      customSnackBar(
+        context: context,
+        message: "An Fatal Error Ocurred",
+        onPressed: () {},
+      );
+    }
+    setState(() {
+      searchResults = response;
+    });
+  }
+
+  @override
+  void dispose() {
+    // context.read<MerchantRoute>().setAutoFocusState(false);
+    super.dispose();
   }
 
   @override
@@ -151,7 +180,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>
-                              SingleOrder(order: fetchOrders()[index])));
+                              SingleOrderView(order: fetchOrders()[index])));
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,6 +334,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
   TextFormField searchBar() {
     return TextFormField(
       controller: searchController,
+      autofocus: autoFocus,
       style: GoogleFonts.notoSans(
         color: kTextColor,
         fontWeight: FontWeight.w600,
@@ -313,7 +343,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
       cursorColor: kTextColor,
       cursorHeight: 22,
       decoration: InputDecoration(
-        hintText: "Search",
+        hintText: "Enter order number",
         hintStyle: GoogleFonts.notoSans(
           color: kTextMediumColor,
           fontSize: 16,
@@ -346,7 +376,13 @@ class _MerchantOrdersState extends State<MerchantOrders> {
           icon: const Icon(Icons.close),
         ),
       ),
-      onChanged: (val) {},
+      onChanged: (val) async {
+        if (val.length > 1) {
+          // throttle the search event
+          await Future.delayed(const Duration(seconds: 1));
+          await _findOrders(val);
+        }
+      },
     );
   }
 }

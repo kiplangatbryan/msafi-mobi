@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/pages/launderMarts/email/main.dart';
 import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
 
+import '../../../helpers/custom_shared_pf.dart';
 import '../components/util_widgets.dart';
 
 class AccountSettings extends StatefulWidget {
@@ -104,6 +106,18 @@ class _AccountSettingsState extends State<AccountSettings> {
                       title: "Show Location Preferences",
                       subtitle: "Set the params for showing location",
                     ),
+                    customExtendButton(
+                        ctx: context,
+                        child: Text('logout'),
+                        onPressed: () async {
+                          final status =
+                              await CustomSharedPreferences().logout();
+                          if (status) {
+                            // ignore: use_build_context_synchronously
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                '/login', (route) => false);
+                          }
+                        })
                   ],
                 ),
               )
