@@ -108,11 +108,18 @@ class MartConfig extends ChangeNotifier {
 
 class MerchantRoute extends ChangeNotifier {
   int currentPage = 0;
+  bool autoFocus = false;
 
   get current => currentPage;
+  get autoFocusState => autoFocus;
 
   void setCurrentPage(int page) {
     currentPage = page;
+    notifyListeners();
+  }
+
+  void setAutoFocusState(bool value) {
+    autoFocus = value;
     notifyListeners();
   }
 }

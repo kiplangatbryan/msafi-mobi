@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/configs/data.dart';
+import 'package:msafi_mobi/pages/regular/processing/bucket.dart';
+import 'package:msafi_mobi/providers/basket.providers.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/store.providers.dart';
@@ -22,13 +25,55 @@ class _LaundrySelectionState extends State<LaundrySelection> {
   final searchController = TextEditingController();
   // fetch images from localstore
   final clothes = fetchClothes();
-  late final basket;
-  late final storeClothes;
+  List<int> basket = [];
+  List storeClothes = [];
 
   @override
   void initState() {
     super.initState();
     _initStore();
+  }
+
+  List _updateCart() {
+    List temp = [];
+
+    // record the history of array arrangement in key value pairs in trackers array
+    var counter = 0;
+    List tracker = [];
+    for (var i = 0; i < basket.length; i++) {
+      if (basket[i] > 0) {
+        if (counter == 0) {
+          tracker.add({counter: i});
+        }
+        counter += 1;
+        tracker.add({counter: i});
+        temp.add({
+          ...storeClothes[i],
+          "count": basket[i],
+        });
+      }
+    }
+    context.read<Basket>().populateTracker(tracker);
+    return temp;
+  }
+
+  void updateBusketStore() {
+    List bucket = [];
+    List localBasket = _updateCart();
+    for (var element in clothes) {
+      for (var item in localBasket) {
+        if (item['id'] == element['title']) {
+          var chest = {
+            "id": item['id'],
+            "count": item['count'],
+            "imagePath": element['imagePath'],
+            "price": item['price'],
+          };
+          bucket.add(chest);
+        }
+      }
+    }
+    context.read<Basket>().fillBusket(bucket);
   }
 
   _initStore() {
@@ -37,8 +82,10 @@ class _LaundrySelectionState extends State<LaundrySelection> {
       storeClothes = storeInf[widget.index]['pricing'];
       basket = List.filled(storeClothes.length, 0);
     });
+    context.read<Basket>().createBucket(basket);
   }
 
+  // Filter the image of a specific product
   List _getImgUrl(String id) {
     List temp = [];
     temp.addAll(clothes);
@@ -52,7 +99,7 @@ class _LaundrySelectionState extends State<LaundrySelection> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
-        elevation: 2,
+        elevation: 1,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
@@ -62,6 +109,18 @@ class _LaundrySelectionState extends State<LaundrySelection> {
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              updateBusketStore();
+            },
+            icon: Icon(
+              Icons.shopping_bag_outlined,
+              size: 30,
+              color: Theme.of(context).colorScheme.primary.withOpacity(.7),
+            ),
+          )
+        ],
         title: searchBar(),
         centerTitle: true,
       ),
@@ -85,7 +144,6 @@ class _LaundrySelectionState extends State<LaundrySelection> {
               },
               increament: () {
                 setState(() {
-                  // print(basket[index]++);
                   basket[index] = basket[index] + 1;
                 });
               },
@@ -97,6 +155,46 @@ class _LaundrySelectionState extends State<LaundrySelection> {
           }),
         ),
       ),
+      bottomSheet: BottomSheet(
+          // elevation: 30,
+          enableDrag: true,
+          onClosing: () {},
+          onDragStart: (context) {},
+          builder: (BuildContext context) {
+            return Container(
+              decoration: BoxDecoration(
+                  color: Theme.of(context).backgroundColor,
+                  boxShadow: const [
+                    BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.black,
+                      spreadRadius: 5,
+                      offset: Offset(0, 8),
+                    )
+                  ],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  )),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25,
+                vertical: 20,
+              ),
+              child: customExtendButton(
+                  ctx: context,
+                  child: Text(
+                    "Go to Basket",
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: kTextLight,
+                        ),
+                  ),
+                  onPressed: () {
+                    updateBusketStore();
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const Bucket()));
+                  }),
+            );
+          }),
     );
   }
 
@@ -178,7 +276,7 @@ class LaundryBox extends StatelessWidget {
         vertical: 15,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(.08),
+        color: Theme.of(context).primaryColor.withOpacity(.04),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(

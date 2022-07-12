@@ -1,18 +1,101 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:msafi_mobi/components/form_components.dart';
+import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import 'package:http/http.dart' as http;
+
+import '../../../helpers/http_services.dart';
 import '../../../providers/store.providers.dart';
 import 'cloth_select.dart';
 
-class LaunderMartView extends StatelessWidget {
+class LaunderMartView extends StatefulWidget {
   int index;
-  LaunderMartView({required this.index, Key? key}) : super(key: key);
+  String tagId;
+  LaunderMartView({required this.index, required this.tagId, Key? key})
+      : super(key: key);
+
+  @override
+  State<LaunderMartView> createState() => _LaunderMartViewState();
+}
+
+class _LaunderMartViewState extends State<LaunderMartView> {
+  final PageController _pageController = PageController(initialPage: 0);
+  late int page;
+  String snackBarMessage = "";
+  bool loading = false;
+  bool showSnack = false;
+  List pickUpSpots = [];
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> customSnackBar(
+      String message) {
+    setState(() {
+      snackBarMessage = message;
+    });
+
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackBarMessage),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    page = _pageController.initialPage;
+    _fetchPickUpSpots();
+  }
+
+  _fetchPickUpSpots() async {
+    setState(() {
+      loading = true;
+    });
+    var storeId = context.read<Store>().stores[widget.index]['id'];
+    var url = Uri.parse('${baseUrl()}/store/fetchStations/$storeId');
+    final token = await checkAndValidateAuthToken();
+    try {
+      // send data to server
+      final response = await http
+          .get(url, headers: {"Authorization": "Bearer $token"}).timeout(
+        const Duration(seconds: 10),
+      );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          loading = false;
+          pickUpSpots = data;
+        });
+      } else {
+        customSnackBar('There was a problem');
+      }
+    } on SocketException {
+      customSnackBar('Could not connect to server');
+    } on TimeoutException catch (e) {
+      customSnackBar("Connection Timeout");
+    } on Error catch (e) {
+      customSnackBar("An error ocurred");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final store = context.read<Store>().stores[index];
+    final store = context.read<Store>().stores[widget.index];
+    final count = store['storeImg'].length;
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
@@ -55,19 +138,64 @@ class LaunderMartView extends StatelessWidget {
                           ),
                     ),
                     TextSpan(
-                        text: store['address'],
-                        style: Theme.of(context).textTheme.subtitle1),
+                      text: store['address'],
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            height: 1.4,
+                          ),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(.04),
-                  borderRadius: BorderRadius.circular(10),
+              Hero(
+                tag: widget.index,
+                child: SizedBox(
+                  height: 200,
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        page = index;
+                      });
+                    },
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: List.generate(count, (id) {
+                      return Container(
+                        height: 200,
+                        margin: const EdgeInsets.only(
+                          left: 20,
+                          right: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                '${baseUrl()}/${store['storeImg'][id]}'),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 15,
+                ),
+                child: Center(
+                  child: SmoothPageIndicator(
+                    controller: _pageController,
+                    effect: const ExpandingDotsEffect(
+                      activeDotColor: kSmoothIndicator,
+                      dotColor: kTextLightColor,
+                      dotHeight: 10,
+                      dotWidth: 10,
+                    ),
+                    count: count,
+                  ),
                 ),
               ),
               const SizedBox(
@@ -79,11 +207,13 @@ class LaunderMartView extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    const MartSchedule(),
                     const SizedBox(
                       height: 15,
                     ),
-                    const ContactInfo(),
+                    ContactInfo(
+                      name: store['userId']['name'],
+                      phoneNumber: store['userId']['email'],
+                    ),
                     const SizedBox(
                       height: 15,
                     ),
@@ -96,12 +226,25 @@ class LaunderMartView extends StatelessWidget {
                         vertical: 15,
                         horizontal: 20,
                       ),
-                      child: Column(
-                        children: const [
-                          StationItem(),
-                          StationItem(),
-                        ],
-                      ),
+                      child: loading
+                          ? const SizedBox(
+                              height: 100,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            )
+                          : Column(
+                              children: List.generate(
+                                pickUpSpots.length,
+                                (i) => StationItem(
+                                  name: pickUpSpots[i]['name'],
+                                  Lat: pickUpSpots[i]['lat'],
+                                  Long: pickUpSpots[i]['long'],
+                                ),
+                              ),
+                            ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -117,7 +260,8 @@ class LaunderMartView extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => LaundrySelection(index: index)));
+                              builder: (_) =>
+                                  LaundrySelection(index: widget.index)));
                         })
                   ],
                 ),
@@ -131,7 +275,13 @@ class LaunderMartView extends StatelessWidget {
 }
 
 class StationItem extends StatelessWidget {
-  const StationItem({
+  String name;
+  String Long;
+  String Lat;
+  StationItem({
+    required this.name,
+    required this.Long,
+    required this.Lat,
     Key? key,
   }) : super(key: key);
 
@@ -148,9 +298,9 @@ class StationItem extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
+                  const SizedBox(
                     width: 35,
-                    child: const Center(
+                    child: Center(
                       child: Icon(
                         Icons.location_disabled,
                       ),
@@ -164,14 +314,11 @@ class StationItem extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: "Antonio Hillario\n",
-                          style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.subtitle2!,
                         ),
                         TextSpan(
-                          text: "Owner",
-                          style: Theme.of(context).textTheme.subtitle1!,
+                          text: "Tap to view on map",
+                          style: Theme.of(context).textTheme.subtitle2!,
                         )
                       ],
                     ),
@@ -181,7 +328,7 @@ class StationItem extends StatelessWidget {
               IconButton(
                 onPressed: () {},
                 icon: const Icon(
-                  Icons.pin_drop,
+                  Icons.dock_sharp,
                   size: 40,
                 ),
               ),
@@ -194,7 +341,12 @@ class StationItem extends StatelessWidget {
 }
 
 class ContactInfo extends StatelessWidget {
-  const ContactInfo({
+  String name;
+  String phoneNumber;
+
+  ContactInfo({
+    required this.name,
+    required this.phoneNumber,
     Key? key,
   }) : super(key: key);
 
@@ -214,27 +366,30 @@ class ContactInfo extends StatelessWidget {
         children: [
           Row(
             children: [
-              const CircleAvatar(
-                child: Image(
-                  image: AssetImage("assets/clothes/hat.png"),
-                ),
+              CircleAvatar(
+                maxRadius: 25,
+                minRadius: 20,
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+                child: Text("A", style: Theme.of(context).textTheme.headline6),
               ),
               const SizedBox(
-                width: 10,
+                width: 20,
               ),
               RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: "Antonio Hillario\n",
+                      text: "$name\n",
                       style: Theme.of(context).textTheme.headline6!.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
                           ),
                     ),
                     TextSpan(
                       text: "Owner",
-                      style: Theme.of(context).textTheme.subtitle1!,
-                    )
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            height: 1.4,
+                          ),
+                    ),
                   ],
                 ),
               ),
@@ -242,117 +397,23 @@ class ContactInfo extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.only(
-                top: 12,
-                bottom: 12,
+              padding: const EdgeInsets.only(
+                top: 8,
+                bottom: 8,
               ),
+              primary: Theme.of(context).primaryColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
             onPressed: () {},
             child: const Icon(
-              Icons.phone,
+              Icons.phone_outlined,
+              size: 25,
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class MartSchedule extends StatelessWidget {
-  const MartSchedule({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(.02),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.symmetric(
-        vertical: 15,
-        horizontal: 15,
-      ),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          "Open Hours",
-          style: Theme.of(context).textTheme.headline6!.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(.07),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(.07),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.lock_clock_sharp,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    "08:00",
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.arrow_right_outlined,
-              size: 35,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(.07),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(.07),
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.history,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    "06:00",
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        )
-      ]),
     );
   }
 }
