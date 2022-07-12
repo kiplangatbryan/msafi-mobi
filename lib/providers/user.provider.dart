@@ -6,13 +6,14 @@ import '../helpers/custom_shared_pf.dart';
 
 class User extends ChangeNotifier {
   Person? user;
-  bool isUser = false;
+  bool isLoggedIn = false;
 
 // getters
-  get email => user!.email;
-  get name => user!.name;
-  get role => user!.role;
-  get status => user!.status;
+  get email => user?.email;
+  get name => user?.name;
+  get role => user?.role;
+  get status => user?.status;
+  get loggedIn => isLoggedIn;
 
 // setter
   Future<bool> createUser(Map body) async {
@@ -30,6 +31,7 @@ class User extends ChangeNotifier {
         status: body['user']['status'],
         role: body['user']['role'],
       );
+      isLoggedIn = true;
       notifyListeners();
       return true;
     }
