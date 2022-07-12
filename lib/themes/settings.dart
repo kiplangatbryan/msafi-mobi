@@ -6,14 +6,17 @@ ThemeData lightThemeData(BuildContext context) {
   return ThemeData.light().copyWith(
     primaryColor: kPrimaryColor,
     scaffoldBackgroundColor: kTextLight,
+    backgroundColor: kTextLight,
+    splashColor: kPrimaryColor,
     iconTheme: const IconThemeData(
       color: kTextColor,
     ),
-    textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme),
+    // textTheme: GoogleFonts.notoSansAdlamTextTheme(Theme.of(context).textTheme),
     colorScheme: const ColorScheme.light(
       primary: kTextColor,
       secondary: kTextMediumColor,
       secondaryContainer: kSecondaryColor,
+      background: kSpecialAc,
       error: Colors.red,
       tertiary: kAccentColor,
     ),
