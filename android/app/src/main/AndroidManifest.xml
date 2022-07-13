@@ -40,5 +40,7 @@
         <meta-data android:name="com.google.android.geo.API_KEY"
                android:value="AIzaSyASBc-Ac9yrei1uG8iPF4DJvkQf8slxjlw"/>
 
+ <!-- <meta-data android:name="com.mapbox.token"
+               android:value="sk.eyJ1IjoiYnJpYW4tdGsiLCJhIjoiY2w1aWk5eWU0MDg5MjNicGxseWVjdXhwMCJ9.JjJT6Sq0_P4wggugUZvoKw"/> -->
     </application>
 </manifest>
