@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:msafi_mobi/pages/regular/processing/checkout.dart';
 import 'package:msafi_mobi/providers/basket.providers.dart';
 import 'package:provider/provider.dart';
 
+import '../../../components/form_components.dart';
+import '../../../providers/orders.providers.dart';
+import '../../../providers/store.providers.dart';
+import '../../../themes/main.dart';
+
 class Bucket extends StatefulWidget {
-  const Bucket({Key? key}) : super(key: key);
+  int index;
+  Bucket({required this.index, Key? key}) : super(key: key);
 
   @override
   State<Bucket> createState() => _BucketState();
@@ -11,25 +18,19 @@ class Bucket extends StatefulWidget {
 
 class _BucketState extends State<Bucket> {
   // fetch images from localstore
-  List<int> basket = [];
   List storeClothes = [];
 
   @override
   void initState() {
     super.initState();
+    _initStore();
   }
 
-  List _updateCart() {
-    List temp = [];
-    for (var i = 0; i < basket.length; i++) {
-      if (basket[i] > 0) {
-        temp.add({
-          ...storeClothes[i],
-          "count": basket[i],
-        });
-      }
-    }
-    return temp;
+  _initStore() {
+    final storeInf = context.read<Store>().stores;
+    setState(() {
+      storeClothes = storeInf[widget.index]['pricing'];
+    });
   }
 
   @override
@@ -39,7 +40,7 @@ class _BucketState extends State<Bucket> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
-        elevation: 1,
+        elevation: 0,
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
@@ -67,38 +68,96 @@ class _BucketState extends State<Bucket> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          bottom: 30,
-          left: 20,
-          right: 20,
-          top: 20,
-        ),
-        child: Column(
-          children: List.generate(bucket.length, (index) {
-            // return Container();
-            return LaundryBox(
-              decreament: () {
-                if (basket[index] > 0) {
-                  setState(() {
-                    basket[index] = basket[index] - 1;
-                  });
-                }
-              },
-              increament: () {
-                setState(() {
-                  basket[index] = basket[index] + 1;
-                });
-              },
-              value: bucket[index]['count'],
-              price:
-                  (bucket[index]['price'] * bucket[index]['count']).toString(),
-              title: bucket[index]['id'],
-              image: bucket[index]['imagePath'],
-            );
-          }),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            bottom: 30,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: Column(
+            children: List.generate(storeClothes.length, (index) {
+              // return Container();
+              int value = context.read<Basket>().basket[index];
+              final price = storeClothes[index]['price'];
+
+              return value > 0
+                  ? LaundryBox(
+                      decreament: () {
+                        context
+                            .read<Basket>()
+                            .decreament(index: index, isCart: true);
+                      },
+                      increament: () {
+                        context
+                            .read<Basket>()
+                            .increament(index: index, isCart: true);
+                      },
+                      value: context.watch<Basket>().basket[index],
+                      price: (price * context.watch<Basket>().basket[index])
+                          .toString(), //the price pulled * count
+                      title: storeClothes[index]['id'],
+                      image: storeClothes[index]['imagePath'],
+                    )
+                  : Container();
+            }),
+          ),
         ),
       ),
+      bottomSheet: BottomSheet(
+          // elevation: 30,
+          onClosing: () {},
+          builder: (BuildContext context) {
+            return Container(
+              height: 150,
+              decoration: BoxDecoration(
+                  color: Theme.of(context).backgroundColor,
+                  boxShadow: const [
+                    BoxShadow(
+                      blurRadius: 5,
+                      color: Colors.black,
+                      spreadRadius: 5,
+                      offset: Offset(0, 8),
+                    )
+                  ],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  )),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25,
+                vertical: 20,
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    "Total \$ ${context.watch<Basket>().getTotal}",
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  const SizedBox(
+                    height: 17,
+                  ),
+                  customExtendButton(
+                      ctx: context,
+                      child: Text(
+                        "Proceed to Chekout",
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                              color: kTextLight,
+                            ),
+                      ),
+                      onPressed: () {
+                        final amount = context.read<Basket>().getTotal;
+                        final clothes = context.read<Basket>().listOfClothes();
+                        context.read<Order>().setAmount(amount);
+                        context.read<Order>().setClothes(clothes);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => const CheckOut()));
+                      }),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

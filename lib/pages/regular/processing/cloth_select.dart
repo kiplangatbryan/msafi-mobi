@@ -1,11 +1,8 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
-import 'package:msafi_mobi/configs/data.dart';
 import 'package:msafi_mobi/pages/regular/processing/bucket.dart';
 import 'package:msafi_mobi/providers/basket.providers.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +21,6 @@ class LaundrySelection extends StatefulWidget {
 class _LaundrySelectionState extends State<LaundrySelection> {
   final searchController = TextEditingController();
   // fetch images from localstore
-  final clothes = fetchClothes();
   List<int> basket = [];
   List storeClothes = [];
 
@@ -34,64 +30,15 @@ class _LaundrySelectionState extends State<LaundrySelection> {
     _initStore();
   }
 
-  List _updateCart() {
-    List temp = [];
-
-    // record the history of array arrangement in key value pairs in trackers array
-    var counter = 0;
-    List tracker = [];
-    for (var i = 0; i < basket.length; i++) {
-      if (basket[i] > 0) {
-        if (counter == 0) {
-          tracker.add({counter: i});
-        }
-        counter += 1;
-        tracker.add({counter: i});
-        temp.add({
-          ...storeClothes[i],
-          "count": basket[i],
-        });
-      }
-    }
-    context.read<Basket>().populateTracker(tracker);
-    return temp;
-  }
-
-  void updateBusketStore() {
-    List bucket = [];
-    List localBasket = _updateCart();
-    for (var element in clothes) {
-      for (var item in localBasket) {
-        if (item['id'] == element['title']) {
-          var chest = {
-            "id": item['id'],
-            "count": item['count'],
-            "imagePath": element['imagePath'],
-            "price": item['price'],
-          };
-          bucket.add(chest);
-        }
-      }
-    }
-    context.read<Basket>().fillBusket(bucket);
-  }
-
   _initStore() {
     final storeInf = context.read<Store>().stores;
     setState(() {
       storeClothes = storeInf[widget.index]['pricing'];
       basket = List.filled(storeClothes.length, 0);
     });
+    // push tracking values to store
+    context.read<Basket>().setPricing(storeClothes);
     context.read<Basket>().createBucket(basket);
-  }
-
-  // Filter the image of a specific product
-  List _getImgUrl(String id) {
-    List temp = [];
-    temp.addAll(clothes);
-    // return clothes.where((element) => element['id'] == id);
-    temp.retainWhere((element) => element['title'] == id);
-    return temp;
   }
 
   @override
@@ -112,7 +59,7 @@ class _LaundrySelectionState extends State<LaundrySelection> {
         actions: [
           IconButton(
             onPressed: () {
-              updateBusketStore();
+              // updateBusketStore();
             },
             icon: Icon(
               Icons.shopping_bag_outlined,
@@ -124,42 +71,35 @@ class _LaundrySelectionState extends State<LaundrySelection> {
         title: searchBar(),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          bottom: 30,
-          left: 20,
-          right: 20,
-          top: 20,
-        ),
-        child: Column(
-          children: List.generate(storeClothes.length, (index) {
-            // return Container();
-            return LaundryBox(
-              decreament: () {
-                if (basket[index] > 0) {
-                  setState(() {
-                    basket[index] = basket[index] - 1;
-                  });
-                }
-              },
-              increament: () {
-                setState(() {
-                  basket[index] = basket[index] + 1;
-                });
-              },
-              value: basket[index],
-              price: storeClothes[index]['price'].toString(),
-              title: storeClothes[index]['id'],
-              image: _getImgUrl(storeClothes[index]['id'])[0]['imagePath'],
-            );
-          }),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            bottom: 100,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: Column(
+            children: List.generate(storeClothes.length, (index) {
+              // return Container();
+              return LaundryBox(
+                  decreament: () {
+                    context.read<Basket>().decreament(index: index);
+                  },
+                  increament: () {
+                    context.read<Basket>().increament(index: index);
+                  },
+                  value: context.watch<Basket>().basket[index],
+                  price: storeClothes[index]['price'].toString(),
+                  title: storeClothes[index]['id'],
+                  image: storeClothes[index]['imagePath']);
+            }),
+          ),
         ),
       ),
       bottomSheet: BottomSheet(
           // elevation: 30,
-          enableDrag: true,
           onClosing: () {},
-          onDragStart: (context) {},
           builder: (BuildContext context) {
             return Container(
               decoration: BoxDecoration(
@@ -189,9 +129,9 @@ class _LaundrySelectionState extends State<LaundrySelection> {
                         ),
                   ),
                   onPressed: () {
-                    updateBusketStore();
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const Bucket()));
+                    context.read<Basket>().calculateTotal();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => Bucket(index: widget.index)));
                   }),
             );
           }),

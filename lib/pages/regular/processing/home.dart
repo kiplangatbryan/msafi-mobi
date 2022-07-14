@@ -178,7 +178,7 @@ class HomePageView extends StatelessWidget {
                 TextButton(
                   onPressed: () {},
                   child: Text(
-                    "View all",
+                    "see all",
                     style: GoogleFonts.notoSans(
                       fontSize: 17,
                       fontWeight: FontWeight.bold,
@@ -192,36 +192,6 @@ class HomePageView extends StatelessWidget {
           const LanderMartsList(),
           const SizedBox(
             height: 50,
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              // clean up
-              var status = await CustomSharedPreferences().logout();
-              if (status) {
-                Navigator.of(context).pushReplacementNamed('/login');
-              } else {
-                SnackBar(
-                  content: Text("Could not logout"),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {
-                      // Some code to undo the change.
-                    },
-                  ),
-                );
-              }
-            },
-            style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-              horizontal: 35,
-              vertical: 10,
-            )),
-            child: Text(
-              "Logout",
-              style: Theme.of(context).textTheme.headline6!.copyWith(
-                    color: kTextLight,
-                  ),
-            ),
           ),
         ],
       ),
@@ -243,6 +213,7 @@ class _LanderMartsListState extends State<LanderMartsList> {
   String snackBarMessage = "";
   bool showSnack = false;
   bool errorState = false;
+  late int _sizePreview;
 
   @override
   void initState() {
@@ -285,7 +256,16 @@ class _LanderMartsListState extends State<LanderMartsList> {
 
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
-
+        if (data.length > 3) {
+          setState(() {
+            _sizePreview = 3;
+          });
+        } else {
+          setState(() {
+            _sizePreview = data.length;
+          });
+        }
+        // ignore: use_build_context_synchronously
         context.read<Store>().saveStores(data);
 
         Future.delayed(
@@ -373,8 +353,7 @@ class _LanderMartsListState extends State<LanderMartsList> {
                     horizontal: 20,
                   ),
                   child: Row(
-                    children:
-                        List.generate(context.read<Store>().count, (index) {
+                    children: List.generate(_sizePreview, (index) {
                       return Hero(
                         tag: context.read<Store>().stores[index]['id'],
                         child: StoreItem(
@@ -393,8 +372,12 @@ class _LanderMartsListState extends State<LanderMartsList> {
 class StoreItem extends StatelessWidget {
   int index;
   String title;
+  EdgeInsets margin;
   StoreItem({
     required this.title,
+    this.margin = const EdgeInsets.only(
+      right: 20,
+    ),
     required this.index,
     Key? key,
   }) : super(key: key);
@@ -409,10 +392,8 @@ class StoreItem extends StatelessWidget {
                 index: index)));
       },
       child: Container(
-          width: MediaQuery.of(context).size.width - 40,
-          margin: const EdgeInsets.only(
-            right: 20,
-          ),
+          width: MediaQuery.of(context).size.width,
+          margin: margin,
           decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(10),
