@@ -12,6 +12,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../helpers/http_services.dart';
+import '../../../providers/orders.providers.dart';
 import '../../../providers/store.providers.dart';
 import 'cloth_select.dart';
 
@@ -79,6 +80,7 @@ class _LaunderMartViewState extends State<LaunderMartView> {
         setState(() {
           loading = false;
           pickUpSpots = data;
+          context.read<Stations>().setPickUps(data);
         });
       } else {
         customSnackBar('There was a problem');
@@ -240,8 +242,8 @@ class _LaunderMartViewState extends State<LaunderMartView> {
                                 pickUpSpots.length,
                                 (i) => StationItem(
                                   name: pickUpSpots[i]['name'],
-                                  Lat: pickUpSpots[i]['lat'],
-                                  Long: pickUpSpots[i]['long'],
+                                  lat: pickUpSpots[i]['lat'],
+                                  long: pickUpSpots[i]['long'],
                                 ),
                               ),
                             ),
@@ -276,65 +278,75 @@ class _LaunderMartViewState extends State<LaunderMartView> {
 
 class StationItem extends StatelessWidget {
   String name;
-  String Long;
-  String Lat;
+  String long;
+  String lat;
   StationItem({
     required this.name,
-    required this.Long,
-    required this.Lat,
+    required this.long,
+    required this.lat,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(
-        bottom: 15,
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const SizedBox(
-                    width: 35,
-                    child: Center(
-                      child: Icon(
-                        Icons.location_disabled,
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        margin: const EdgeInsets.only(
+          bottom: 15,
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 35,
+                      child: Center(
+                        child: Icon(
+                          Icons.location_on,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Antonio Hillario\n",
-                          style: Theme.of(context).textTheme.subtitle2!,
-                        ),
-                        TextSpan(
-                          text: "Tap to view on map",
-                          style: Theme.of(context).textTheme.subtitle2!,
-                        )
-                      ],
+                    const SizedBox(
+                      width: 10,
                     ),
-                  ),
-                ],
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.dock_sharp,
-                  size: 40,
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "$name\n",
+                            style:
+                                Theme.of(context).textTheme.headline6!.copyWith(
+                                      fontSize: 17,
+                                    ),
+                          ),
+                          TextSpan(
+                            text: "Tap to view on map",
+                            style:
+                                Theme.of(context).textTheme.subtitle1!.copyWith(
+                                      height: 1.4,
+                                    ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.zoom_in_map_sharp,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

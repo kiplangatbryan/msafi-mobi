@@ -10,17 +10,12 @@ class MartConfig extends ChangeNotifier {
   late String bsname;
   late String description;
   late String address;
-  List<Map> locations = [
-    {
-      "name": "West Side",
-      "stationImg": "/blank/choli.png",
-      "long": "1.000245",
-      "lat": "2.546467",
-    }
-  ];
+  late List<Map> locations;
   late List pricing;
-  String storeImg = "/blank/choli.png";
+  late List storeImg;
   List<Map> selectedClothes = [];
+  late Map payment;
+  late String storeId;
 
 // getters
   int get count => selectedClothes.length;
@@ -31,7 +26,8 @@ class MartConfig extends ChangeNotifier {
   get ulocations => locations;
   get ustoreImg => storeImg;
   get upricing => pricing;
-
+  get paymentMethod => payment;
+  get id => storeId;
   void setName(String name) {
     bsname = name;
     notifyListeners();
@@ -47,24 +43,43 @@ class MartConfig extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void setLocations(List loc) {
-  //   locations = loc;
-  //   notifyListeners();
-  // }
+  void setLocations(List<Map> loc) {
+    locations = loc;
+    notifyListeners();
+  }
 
   void setPricing(List prices) {
     pricing = prices;
     notifyListeners();
   }
 
-  // void setStoreImg(String img) {
-  //   storeImg = img;
-  //   notifyListeners();
-  // }
+  void setStoreImg(List img) {
+    storeImg = img;
+    notifyListeners();
+  }
+
+  void setPayments(Map pay) {
+    payment = pay;
+  }
+
+  void setStoreId(String id) {
+    storeId = id;
+  }
 
   void mapSelectedItems(List<Map> selected) {
     selectedClothes = selected;
     notifyListeners();
+  }
+
+  void populateStore(Map data) {
+    setName(data['name']);
+    setDescription(data['description']);
+    setAddress(data['address']);
+    setPricing(data['pricing']);
+    setStoreImg(data['storeImg']);
+    setStoreImg(data['storeImg']);
+    setPayments(data['payment']);
+    setStoreId(data['id']);
   }
 
   // push changes to server
