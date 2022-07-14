@@ -19,7 +19,7 @@ class _LocationFeedScreenState extends State<LocationFeedScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 10,
               vertical: 8,
             ),
@@ -40,7 +40,7 @@ class _LocationFeedScreenState extends State<LocationFeedScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 customButton(
                   title: "Next",
                   role: "next",

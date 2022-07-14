@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:msafi_mobi/helpers/http_services.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../providers/merchant.provider.dart';
-import '../../../../providers/user.provider.dart';
+import 'map_summary.dart';
 
 class SetPricingPage extends StatefulWidget {
   const SetPricingPage({Key? key}) : super(key: key);
@@ -20,7 +19,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
   late int page;
 
   final _origBtnText = "Save";
-  final String _finishBtnText = "Save and Finish";
+  final String _finishBtnText = "Save and Continue";
   // variables to keep track of data
   double price = 0;
   String id = "";
@@ -66,7 +65,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
         return;
       }
       _pageController.nextPage(
-          duration: const Duration(seconds: 1), curve: Curves.easeIn);
+          duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
     }
   }
 
@@ -86,16 +85,14 @@ class _SetPricingPagestate extends State<SetPricingPage> {
   // persist changes in global provider
   _updateStoreInformation() async {
     context.read<MartConfig>().setPricing(clothPrices);
-    final authToken = await checkAndValidateAuthToken();
-    final response =
-        // ignore: use_build_context_synchronously
-        await context.read<MartConfig>().createOrUpdateStore(authToken);
+    // final authToken = await checkAndValidateAuthToken();
+    // final response =
+    //     // ignore: use_build_context_synchronously
+    //     await context.read<MartConfig>().createOrUpdateStore(authToken);
 
-    if (response == 0) {
-      // ignore: use_build_context_synchronously
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil("/mart-home", (route) => false);
-    }
+    // ignore: use_build_context_synchronously
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const MapIntro()));
   }
 
   @override
@@ -208,11 +205,10 @@ class _SetPricingPagestate extends State<SetPricingPage> {
                     page + 1 == context.read<MartConfig>().count
                         ? _finishBtnText
                         : _btnText,
-                    style: GoogleFonts.notoSans(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: kTextLight,
+                          fontSize: 25,
+                        ),
                   ),
                 ),
                 const SizedBox(

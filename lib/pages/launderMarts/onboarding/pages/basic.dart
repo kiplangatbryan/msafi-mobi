@@ -7,6 +7,7 @@ import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/merchant.provider.dart';
+import 'customize.dart';
 
 class BasicInformation extends StatefulWidget {
   const BasicInformation({Key? key}) : super(key: key);
@@ -20,6 +21,7 @@ class _BasicInformationState extends State<BasicInformation> {
   String address = "";
   String name = "";
   String description = "";
+  String phone = "";
 
   final _formKey = GlobalKey<FormState>();
 
@@ -30,11 +32,6 @@ class _BasicInformationState extends State<BasicInformation> {
 
   @override
   Widget build(BuildContext context) {
-    _goback() {
-      // navigate to the previous screen
-      return Navigator.of(context).pop();
-    }
-
     _storeInfo() {
       // saves the user info into the Mart providers [localstore]
 
@@ -46,6 +43,8 @@ class _BasicInformationState extends State<BasicInformation> {
         context.read<MartConfig>().setAddress(address);
         context.read<MartConfig>().setDescription(description);
         context.read<MartConfig>().setName(name);
+        context.read<MartConfig>().setPhone(phone);
+
         // navigate to next page
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -60,14 +59,12 @@ class _BasicInformationState extends State<BasicInformation> {
         bottomOpacity: .3,
         elevation: 1,
         backgroundColor: Theme.of(context).canvasColor,
-       
+        centerTitle: true,
         title: Text(
           "Getting Started",
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                fontSize: 18,
+              ),
         ),
       ),
       body: SingleChildScrollView(
@@ -92,11 +89,10 @@ class _BasicInformationState extends State<BasicInformation> {
                       TextSpan(
                         text:
                             "\n\nWelcome ${context.read<User>().name} Let's Build Together!",
-                        style: GoogleFonts.notoSans(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       TextSpan(
                         text:
@@ -110,10 +106,10 @@ class _BasicInformationState extends State<BasicInformation> {
                   ),
                 ),
                 customTextField(
-                  hint: "e.g John's Laundry",
+                  hint: "e.g Laundry X",
                   label: "What's Your business name?",
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value.length < 3 || value.isEmpty) {
                       return 'Business name is required';
                     }
                     return null;
@@ -134,11 +130,38 @@ class _BasicInformationState extends State<BasicInformation> {
                   height: 10,
                 ),
                 customTextField(
+                  hint: "0700 000 000",
+                  label: "Business Contact",
+                  validator: (value) {
+                    final pattern = RegExp(r'^0[0-9]+');
+                    if (value.length < 10 ||
+                        value.length > 10 ||
+                        !pattern.hasMatch(value)) {
+                      return 'Business contact is required';
+                    }
+                    return null;
+                  },
+                  icon: const Icon(
+                    Icons.phone_outlined,
+                    size: 18,
+                  ),
+                  inputType: TextInputType.name,
+                  onSubmit: (val) {
+                    setState(() {
+                      phone = val;
+                    });
+                  },
+                  onChanged: (val) {},
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                customTextField(
                   hint: "Business Address",
                   label: "Where can clients Find You?",
                   inputType: TextInputType.streetAddress,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value.length < 5 || value.isEmpty) {
                       return 'Business address is required';
                     }
                     return null;
@@ -160,7 +183,7 @@ class _BasicInformationState extends State<BasicInformation> {
                 customTextField(
                   hint: "Description",
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value.length < 15 || value.isEmpty) {
                       return 'Description is required';
                     }
                     return null;
@@ -184,16 +207,17 @@ class _BasicInformationState extends State<BasicInformation> {
                   height: 20,
                 ),
                 customExtendButton(
-                    ctx: context,
-                    child: Text(
-                      "Next",
-                      style: GoogleFonts.notoSans(
-                        fontSize: 20,
-                        color: kTextLight,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  ctx: context,
+                  child: Text(
+                    "Next",
+                    style: GoogleFonts.notoSans(
+                      fontSize: 20,
+                      color: kTextLight,
+                      fontWeight: FontWeight.bold,
                     ),
-                    onPressed: _storeInfo),
+                  ),
+                  onPressed: _storeInfo,
+                ),
               ],
             ),
           ),
