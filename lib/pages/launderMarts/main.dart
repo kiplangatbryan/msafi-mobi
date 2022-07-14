@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +21,7 @@ class _MerchantHomeState extends State<MerchantHome> {
     MerchantHomePage(),
     MerchantOrders(),
     NotificationsScreen(),
-    AccountSettings(),
+    MerchantSettings(),
   ];
 
   final double iconSize = 25;

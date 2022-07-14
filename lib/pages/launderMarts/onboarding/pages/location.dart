@@ -24,6 +24,8 @@ class PickUpspotsSelection extends StatefulWidget {
 class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
   Completer<GoogleMapController> _controller = Completer();
 
+// default user location
+  final centerLocation = "";
 // fabe key
   final fabKey = GlobalKey<FabCircularMenuState>();
 
@@ -33,6 +35,8 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
   bool pressedNear = false;
   bool cardTapped = false;
   bool getDirection = false;
+  // hold all search results
+  List searchResults = [];
 
 //  places url
   static const placesUrl =
@@ -49,19 +53,46 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
 
 // initialize map coordinates
   static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
+    target: LatLng(-1.2998511640066677, 36.80207174296653),
+    zoom: 17.4746,
   );
 
   static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(0.28927317965072585, 35.29253462041064),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+    bearing: 192.8334901395799,
+    target: LatLng(0.28927317965072585, 35.29253462041064),
+    tilt: 59.440717697143555,
+    zoom: 19.151926040649414,
+  );
+
+  // zooms the focus to the selected location
+  Future<void> goToLocation({required LatLng coords}) async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          bearing: 192.8334901395799,
+          target: coords,
+          tilt: 59.440717697143555,
+          zoom: 19.151926040649414,
+        ),
+      ),
+    );
+  }
+
+  // handle taps on map
+  _onMapTap(LatLng coords) {
+    print(coords);
+  }
+
+  // fetch results
+  _setResults(List res) {
+    setState(() {
+      searchResults = res;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final searchResults = context.watch<PlacesResults>();
     final searchFlag = context.watch<SearchToggle>();
 
     return Scaffold(
@@ -78,6 +109,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
                 },
+                onTap: _onMapTap,
               ),
             ),
             searchToggle
@@ -114,7 +146,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                                   const EdgeInsets.fromLTRB(15, 15, 15, 15),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   color: Colors.transparent,
                                 ),
                                 gapPadding: 10,
@@ -141,8 +173,8 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                             onChanged: (val) {
                               if (_debounce?.isActive ?? false)
                                 _debounce?.cancel();
-                              _debounce =
-                                  Timer(Duration(milliseconds: 700), () async {
+                              _debounce = Timer(
+                                  const Duration(milliseconds: 700), () async {
                                 if (val.length > 2) {
                                   if (searchFlag.searchToggle) {
                                     searchFlag.toggleSearch();
@@ -150,10 +182,10 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                                   }
                                   List results =
                                       await MapServices().searchPlaces(val);
-
-                                  searchResults.setResults(results);
+                                  searchFlag.toggleSearch();
+                                  _setResults(results);
                                 } else {
-                                  searchResults.setResults([]);
+                                  _setResults([]);
                                 }
                               });
                             },
@@ -164,61 +196,39 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                   )
                 : Container(),
             searchFlag.searchToggle
-                ? searchResults.allReturnedResults.length != 0
+                ? searchResults.isNotEmpty
                     ? Positioned(
-                        top: 100.0,
-                        left: 15.0,
+                        top: 115,
+                        left: 20,
                         child: Container(
-                          height: 200.0,
-                          width: MediaQuery.of(context).size.width - 30.0,
+                          width: MediaQuery.of(context).size.width - 40,
                           decoration: BoxDecoration(
+                            color: Theme.of(context).backgroundColor,
                             borderRadius: BorderRadius.circular(5),
-                            color: Colors.white.withOpacity(.7),
                           ),
-                          child: ListView(children: [
-                            ...searchResults.allReturnedResults
-                                .map((e) => buildListItem(e, searchFlag))
-                          ]),
-                        ),
-                      )
+                          child: Column(
+                              children:
+                                  List.generate(searchResults.length, (index) {
+                            return searchResultsList(
+                                searchResults[index], searchFlag);
+                          })),
+                        ))
                     : Positioned(
-                        top: 100.0,
-                        left: 15.0,
+                        top: 115,
+                        left: 20,
                         child: Container(
-                            height: 200.0,
-                            width: MediaQuery.of(context).size.width - 30.0,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.white.withOpacity(.7),
+                          width: MediaQuery.of(context).size.width - 40,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).backgroundColor,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "No relevant results found",
+                              style: Theme.of(context).textTheme.headline6,
                             ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  "No results to display",
-                                  style: GoogleFonts.notoSans(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5.0,
-                                ),
-                                SizedBox(
-                                  width: 125.0,
-                                  child: ElevatedButton(
-                                    onPressed: () {},
-                                    child: Center(
-                                      child: Text(
-                                        "close this",
-                                        style: GoogleFonts.notoSans(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            )),
+                          ),
+                        ),
                       )
                 : Container(),
           ],
@@ -237,6 +247,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
           children: [
             RawMaterialButton(
               onPressed: () {
+                goToLocation(coords: LatLng(0, 0));
                 setState(() {
                   searchToggle = true;
                   radiusSlider = false;
@@ -245,19 +256,17 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                   getDirection = false;
                 });
               },
-              child: Icon(
+              child: const Icon(
                 Icons.search,
                 size: 30,
                 color: kTextColor,
               ),
             ),
             RawMaterialButton(
-              onPressed: () {
-                _showSnackBar(context, "You pressed 2");
-              },
+              onPressed: () {},
               shape: CircleBorder(),
               padding: const EdgeInsets.all(24.0),
-              child: Icon(
+              child: const Icon(
                 Icons.looks_two,
                 color: kTextColor,
                 size: 30,
@@ -269,47 +278,59 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
     );
   }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
-  }
+  Widget searchResultsList(placeItem, searchFlag) {
+    return InkWell(
+      onTap: () async {
+        final lat = placeItem['center'][0];
+        final long = placeItem['center'][1];
 
-  Widget buildListItem(placeItem, searchFlag) {
-    return Padding(
-      padding: EdgeInsets.all(5.0),
-      child: GestureDetector(
-        onTap: () {
-          searchFlag.toggleSearch();
-        },
+        searchFlag.toggleSearch();
+        setState(() {
+          searchToggle = false;
+          searchController.text = "";
+        });
+        print('$lat, $long');
+        // await goToLocation(coords: LatLng(lat, long));
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 10,
+        ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.location_on, size: 25.0, color: Colors.green),
-            SizedBox(
+            const SizedBox(
               width: 4.0,
             ),
-            Container(
-              height: 40.0,
-              width: MediaQuery.of(context).size.width,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(placeItem["description"] ?? ""),
-              ),
+            Icon(Icons.location_on,
+                size: 25.0, color: Theme.of(context).primaryColor),
+            const SizedBox(
+              width: 5.0,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ' ${placeItem["place_name"].split(",")[0]}\n',
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        fontSize: 17,
+                      ),
+                ),
+                Text(
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.clip,
+                  '${placeItem["place_name"].split(",")[1]} ${placeItem["place_name"].split(",")[2]}',
+                  style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                        height: 0.1,
+                      ),
+                )
+              ],
             ),
           ],
         ),
       ),
     );
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message,
-          style: GoogleFonts.notoSans(
-            fontSize: 15,
-            color: kTextLight,
-          )),
-      duration: const Duration(milliseconds: 1000),
-    ));
   }
 }

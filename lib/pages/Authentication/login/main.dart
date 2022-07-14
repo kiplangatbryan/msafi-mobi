@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/helpers/http_services.dart';
+import 'package:msafi_mobi/providers/merchant.provider.dart';
 import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:http/http.dart' as http;
@@ -65,7 +66,9 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
     // create a user object and check type
     final role = context.read<User>().role;
     if (role == "merchant") {
-      if (stores.length > 1) {
+      if (stores.isNotEmpty) {
+        // populate the stores state
+        context.read<MartConfig>().populateStore(stores[0]);
         Navigator.pushNamedAndRemoveUntil(
             context, "/mart-home", (route) => false);
       } else {

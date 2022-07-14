@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
+import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/location.dart';
 import 'package:msafi_mobi/pages/onboarding/main.dart';
 import 'package:msafi_mobi/pages/regular/home/main.dart';
 import 'package:msafi_mobi/providers/basket.providers.dart';
@@ -13,8 +14,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'pages/launderMarts/main.dart';
 import 'pages/launderMarts/onboarding/main.dart';
-import 'pages/splash/main.dart';
 import 'providers/merchant.provider.dart';
+import 'providers/orders.providers.dart';
 import 'providers/system.provider.dart';
 
 Future main() async {
@@ -30,6 +31,8 @@ Future main() async {
         ChangeNotifierProvider(create: (context) => Basket()),
         ChangeNotifierProvider(create: (context) => Store()),
         ChangeNotifierProvider(create: (context) => AppState()),
+        ChangeNotifierProvider(create: (context) => Order()),
+        ChangeNotifierProvider(create: (context) => Stations()),
       ],
       child: const MyApp(),
     ),
@@ -54,7 +57,7 @@ class _MyAppState extends State<MyApp> {
       title: "Msafi-Mobi",
       initialRoute: "/",
       routes: {
-        "/": (context) => const SplashScreen(),
+        "/": (context) => const PickUpspotsSelection(),
         "/user-onboarding": (context) => const OnboardingPage(),
         "/mart-onboarding": (context) => const BoardingRender(),
         "/login": (context) => const LoginPageOptions(),

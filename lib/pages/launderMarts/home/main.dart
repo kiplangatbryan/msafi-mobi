@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,7 +38,7 @@ class MerchantHomePage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(
             // top: sizeCompute(small: 60, large: 80, width: maxWidth),
-            bottom: 20,
+            bottom: 0,
           ),
           child: Column(
             children: [
@@ -355,12 +354,18 @@ class _RecentOrdersState extends State<RecentOrders> {
   }
 
   _fetchOrders() async {
-    var url =
-        Uri.parse('${baseUrl()}/store/fetchOrders/62c7aa3a0be196261ce03980');
+    final storeId = context.read<MartConfig>().id;
+    var url = Uri.parse('${baseUrl()}/store/fetchOrders/$storeId');
     setState(() {
       loading = true;
     });
-    var authToken = await checkAndValidateAuthToken();
+    String authToken = await checkAndValidateAuthToken();
+    if (authToken == "NaN") {
+      // throw an error
+      customSnackBar(
+          context: context, message: "Invalid refreshToken", onPressed: () {});
+      return;
+    }
 
     try {
       // send data to server
@@ -405,31 +410,54 @@ class _RecentOrdersState extends State<RecentOrders> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? Container(
-            height: 150,
+        ? SizedBox(
             child: Center(
               child: Lottie.asset(
                 "assets/lottie/circular-loading.json",
+                height: 150,
                 fit: BoxFit.contain,
               ),
             ),
           )
-        : SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-                // ignore: prefer_const_literals_to_create_immutables
-                children: List.generate(NUMBER_OF_ORDERS, (index) {
-              final order = orderList[index];
-              return SingleOrderComponent(
-                order: order,
-                customerName: order['userId']['name'],
-                status: order['status'],
-                orderId: order['id'],
-                stationName: order['stationId']['name'],
-                expectedDate: order['expectedPickUp'],
+        : orderList.isEmpty
+            ? SizedBox(
+                child: Column(
+                  children: [
+                    Lottie.asset(
+                      "assets/lottie/sent-email-animation.json",
+                      height: 150,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "You don't have any orders yet",
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: List.generate(
+                    NUMBER_OF_ORDERS,
+                    (index) {
+                      final order = orderList[index];
+                      return SingleOrderComponent(
+                        order: order,
+                        customerName: order['userId']['name'],
+                        status: order['status'],
+                        orderId: order['id'],
+                        stationName: order['stationId']['name'],
+                        expectedDate: order['expectedPickUp'],
+                      );
+                    },
+                  ),
+                ),
               );
-            })),
-          );
   }
 }
 
@@ -454,7 +482,7 @@ class StatsBadges extends StatelessWidget {
           height: 100,
           width: 100,
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor.withOpacity(.08),
+            color: Theme.of(context).primaryColor.withOpacity(.04),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -530,137 +558,3 @@ class CustomSearchField extends StatelessWidget {
     );
   }
 }
-
-// ListView ordersSummary(double maxWidth) {
-//   return ListView.builder(
-//     physics: const ScrollPhysics(),
-//     shrinkWrap: true,
-//     itemCount: 3,
-//     itemBuilder: (context, index) {
-//       return GestureDetector(
-//         onTap: () {
-//           Navigator.of(context).push(MaterialPageRoute(
-//               builder: (context) => SingleOrder(order: fetchOrders()[index])));
-//         },
-//         child: Container(
-//           decoration: BoxDecoration(
-//             borderRadius: BorderRadius.circular(6),
-//             color: Theme.of(context).scaffoldBackgroundColor,
-//           ),
-//           margin: const EdgeInsets.only(bottom: 10),
-//           child: Row(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               Container(
-//                 width: 50,
-//                 padding: EdgeInsets.symmetric(
-//                   vertical: sizeCompute(small: 18, large: 15, width: maxWidth),
-//                 ),
-//                 child: Icon(
-//                   Icons.history_toggle_off,
-//                   size: 30,
-//                   color: Theme.of(context).primaryColor,
-//                 ),
-//               ),
-//               Expanded(
-//                 child: Container(
-//                   padding: EdgeInsets.symmetric(
-//                     vertical:
-//                         sizeCompute(small: 15, large: 15, width: maxWidth),
-//                     horizontal:
-//                         sizeCompute(small: 15, large: 15, width: maxWidth),
-//                   ),
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Text(
-//                             "${fetchOrders()[index]['id']}",
-//                             style: GoogleFonts.notoSans(
-//                               fontSize: sizeCompute(
-//                                   small: 18, large: 19, width: maxWidth),
-//                               color: Theme.of(context).colorScheme.primary,
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                           Text(
-//                             "${fetchOrders()[index]['total'].toString()} KES",
-//                             style: GoogleFonts.notoSans(
-//                               fontSize: sizeCompute(
-//                                   small: 18, large: 19, width: maxWidth),
-//                               color: Theme.of(context).colorScheme.primary,
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       const SizedBox(
-//                         height: 8,
-//                       ),
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Text(
-//                             "Placed on:",
-//                             style: GoogleFonts.notoSans(
-//                               fontSize: sizeCompute(
-//                                   small: 14, large: 16, width: maxWidth),
-//                               color: Theme.of(context).colorScheme.secondary,
-//                               fontWeight: FontWeight.w600,
-//                             ),
-//                           ),
-//                           Text(
-//                             DateTime.parse(
-//                               fetchOrders()[index]['expected_pick_up'],
-//                             ).toMoment().toString(),
-//                             style: GoogleFonts.notoSans(
-//                               fontSize: sizeCompute(
-//                                   small: 14, large: 16, width: maxWidth),
-//                               color: Theme.of(context).colorScheme.secondary,
-//                               fontWeight: FontWeight.w600,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                       const SizedBox(
-//                         height: 6,
-//                       ),
-//                       Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           SizedBox(
-//                             width: 100,
-//                             child: Text(
-//                               "Placed at:",
-//                               style: GoogleFonts.notoSans(
-//                                 fontSize: sizeCompute(
-//                                     small: 14, large: 16, width: maxWidth),
-//                                 color: Theme.of(context).colorScheme.secondary,
-//                                 fontWeight: FontWeight.w600,
-//                               ),
-//                             ),
-//                           ),
-//                           Text(
-//                             fetchOrders()[index]['pick_up_station'],
-//                             style: GoogleFonts.notoSans(
-//                               fontSize: sizeCompute(
-//                                   small: 14, large: 16, width: maxWidth),
-//                               color: kTextMediumColor,
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       );
-//     },
-//   );
-// }

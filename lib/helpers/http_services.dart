@@ -6,8 +6,8 @@ import 'dart:async';
 import 'dart:io';
 
 String baseUrl() {
-  return "http://10.0.2.2:3000/v1";
-  // return "http://192.168.43.165:3000/v1";
+  // return "http://10.0.2.2:3000/v1";
+  return "http://192.168.43.165:3000/v1";
 }
 
 Future<String> checkAndValidateAuthToken() async {
@@ -25,11 +25,8 @@ Future<String> checkAndValidateAuthToken() async {
     return token;
   }
   final response = await handleRefresh(refresh, data);
-  print(int.tryParse(response));
 
-  if (int.tryParse(response) == null) {
-    print(response);
-
+  if (response is String) {
     return response;
   }
   return "NaN";

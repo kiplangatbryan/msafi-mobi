@@ -18,7 +18,7 @@ class User extends ChangeNotifier {
 // setter
   Future<bool> createUser(Map body) async {
     // connvert to json string
-    final uToken = json.encode(body);
+    final uToken = json.encode(body['user']);
     // persist in localstorage
     final result = await CustomSharedPreferences().createdFootPrint();
     final status = await CustomSharedPreferences().storeUser(uToken);
