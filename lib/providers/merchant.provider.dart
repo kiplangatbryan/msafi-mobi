@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -10,6 +11,7 @@ class MartConfig extends ChangeNotifier {
   late String bsname;
   late String description;
   late String address;
+  late String bsphone;
   late List<Map> locations;
   late List pricing;
   late List storeImg;
@@ -28,8 +30,15 @@ class MartConfig extends ChangeNotifier {
   get upricing => pricing;
   get paymentMethod => payment;
   get id => storeId;
+  get phone => bsphone;
+
   void setName(String name) {
     bsname = name;
+    notifyListeners();
+  }
+
+  void setPhone(String name) {
+    bsphone = name;
     notifyListeners();
   }
 
@@ -43,7 +52,7 @@ class MartConfig extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLocations(List<Map> loc) {
+  void setLocations(List<Map<dynamic, dynamic>> loc) {
     locations = loc;
     notifyListeners();
   }
@@ -91,20 +100,26 @@ class MartConfig extends ChangeNotifier {
       "address": uaddress,
       "description": udescription,
       "pricing": upricing,
-      "locations": ulocations,
       "storeImg": ustoreImg,
+      "phone": bsphone,
+      "locations": ulocations,
     };
     final body = json.encode(data);
 
+    final dio = Dio();
+    // FormData formData = FormData.fromMap({
+    //   "avatar": await MultipartFile.fromFile(
+    //     imageFile.path,
+    //     filename: fileName,
+    //     contentType: MediaType("image", "jpeg"), //important
+    //   ),
+    // });
+
     try {
       // send data to server
-      final response = await http.post(url, body: body, headers: {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        "Authorization": "Bearer $token",
-      }).timeout(
-        const Duration(seconds: 5),
-      );
+      final response = await dio.post("${baseUrl()}/store/createStore",
+          // data: formData,
+          options: Options(headers: {"Authorization": "Bearer $token"}));
 
       if (response.statusCode == 201) {
         return 0;

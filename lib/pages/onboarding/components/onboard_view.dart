@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
+import '../login_options.dart';
 import 'btn_links.dart';
 
 class OnBoardingView extends StatelessWidget {
@@ -71,14 +73,24 @@ class OnBoardingView extends StatelessWidget {
           hasBtn
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    NavButtons(
-                      title: "Get Started",
-                      icon: Icon(
-                        Icons.arrow_forward_outlined,
-                        color: Colors.white,
-                      ),
-                    ),
+                  children: [
+                    customExtendButton(
+                        ctx: context,
+                        child: Text(
+                          "Let's go",
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    color: kTextLight,
+                                  ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const AuthenticationOptions(),
+                            ),
+                          );
+                        })
                   ],
                 )
               : Container(),

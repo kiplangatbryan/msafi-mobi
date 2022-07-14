@@ -53,14 +53,18 @@ class _SplashScreenState extends State<SplashScreen> {
           // () => _navigateTologin(),
           () async {
         final data = json.decode(res);
+        print(data);
 
         await context.read<User>().createUser(data);
         if (data['user']['role'] == 'user') {
           Navigator.of(context)
               .pushNamedAndRemoveUntil('/default-home', (route) => false);
-        } else {
+        } else if (data['stores'].length > 0) {
           Navigator.of(context)
               .pushNamedAndRemoveUntil('/mart-home', (route) => false);
+        } else {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/mart-onboarding', (route) => false);
         }
       });
     }

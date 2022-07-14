@@ -51,6 +51,8 @@ dependencies:
   dropdown_button2: ^1.6.2
   moment_dart: ^0.7.2
   image_picker: ^0.8.5+3
+  modal_bottom_sheet: ^2.1.0
+  mime: ^1.0.2
   # mapbox_gl: ^0.16.0
   dio: ^4.0.6
   flutter_awesome_select: ^6.4.0

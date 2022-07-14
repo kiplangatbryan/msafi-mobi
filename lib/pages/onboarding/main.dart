@@ -40,22 +40,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 const OnBoardingView(
                   title: "We Are Available Full Time",
                   lotieAsset: 'delivery.json',
-                  highlight:
-                      'Free delivery for your laundry basket at your available for 24hrs',
+                  highlight: 'Chap chap services available round the clock',
                   hasBtn: false,
                 ),
                 const OnBoardingView(
                   title: "Let Us Worry About Everything",
                   lotieAsset: 'relax.json',
                   highlight:
-                      'Take a break from buying shampoo and washing, we\'ve got you',
+                      'Take a break from buying washing detergent and cleaning , we\'ve got you',
                   hasBtn: false,
                 ),
                 const OnBoardingView(
                   title: "What Are\nYou Waiting For",
                   lotieAsset: 'ride.json',
                   highlight:
-                      'Hop on and lets take a look see,We promise you gonna enjoy it',
+                      'Hop on and let\'s take a look and see. We promise you gonna enjoy it',
                   hasBtn: true,
                 ),
               ],
