@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:msafi_mobi/components/form_components.dart';
-import 'package:msafi_mobi/pages/launderMarts/email/main.dart';
-import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
+import 'package:provider/provider.dart';
 
-import '../../../helpers/custom_shared_pf.dart';
-import '../components/util_widgets.dart';
+import '../../../providers/user.provider.dart';
 
 class AccountSettings extends StatefulWidget {
   const AccountSettings({Key? key}) : super(key: key);
@@ -19,107 +15,103 @@ class _AccountSettingsState extends State<AccountSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
+        elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        // leading: IconButton(
-        //   onPressed: () {
-        //     Navigator.of(context).pop();
-        //   },
-        //   icon: Icon(
-        //     Icons.arrow_back_ios_outlined,
-        //     color: Theme.of(context).colorScheme.primary,
-        //   ),
-        // ),
-        title: Text(
-          "Account",
-          style: GoogleFonts.notoSans(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios_outlined,
             color: Theme.of(context).colorScheme.primary,
           ),
+        ),
+        title: Text(
+          "Account Profile",
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                fontSize: 14,
+              ),
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 20,
             vertical: 30,
           ),
           child: Column(
             children: [
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FadButton(
-                      onPressed: () {},
-                      child: NavigateToProfile(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: const [
+                        ClipOval(
+                          child: Image(
+                            image: AssetImage('assets/app/user.png'),
+                            width: 180,
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: CircleAvatar(
+                            minRadius: 25,
+                            maxRadius: 35,
+                            child: Icon(
+                              Icons.camera_outlined,
+                              size: 35,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    const SizedBox(
-                      height: 20,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  profileBox(
+                    label: "+254746613059",
+                    icon: const Icon(
+                      Icons.phone_outlined,
+                      size: 20,
                     ),
-                    Text(
-                      'User Account',
-                      style: GoogleFonts.notoSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    hint: "Tap to change phone number",
+                    onTap: () {},
+                  ),
+                  profileBox(
+                    label: "@${context.read<User>().name}",
+                    icon: const Icon(
+                      Icons.person_outlined,
+                      size: 20,
                     ),
-                    const SizedBox(
-                      height: 20,
+                    hint: "Tap to change your name",
+                    onTap: () {},
+                  ),
+                  profileBox(
+                    label: "${context.read<User>().email}",
+                    icon: const Icon(
+                      Icons.mail_outline_outlined,
+                      size: 20,
                     ),
-                    CustomBtnLink(
-                      callback: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (_) => const EmailChange()));
-                        print("clicked");
-                      },
-                      title: "Email",
-                      subtitle: "briankiplangat71@gmail.com",
+                    hint: "Tap to change your email",
+                    onTap: () {},
+                  ),
+                  profileBox(
+                    label: "Change password",
+                    icon: const Icon(
+                      Icons.password_outlined,
+                      size: 2,
                     ),
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    CustomBtnLink(
-                      callback: () {
-                        print("clicked");
-                      },
-                      title: "Password",
-                      subtitle: "Tap to change password",
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Text(
-                      'Preferences',
-                      style: GoogleFonts.notoSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    CustomBtnLink(
-                      callback: () {},
-                      title: "Show Location Preferences",
-                      subtitle: "Set the params for showing location",
-                    ),
-                    customExtendButton(
-                        ctx: context,
-                        child: Text('logout'),
-                        onPressed: () async {
-                          final status =
-                              await CustomSharedPreferences().logout();
-                          if (status) {
-                            // ignore: use_build_context_synchronously
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                '/login', (route) => false);
-                          }
-                        })
-                  ],
-                ),
+                    hint: "Tap to change your password",
+                    onTap: () {},
+                  ),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                ],
               )
             ],
           ),
@@ -129,44 +121,52 @@ class _AccountSettingsState extends State<AccountSettings> {
   }
 }
 
-class CustomBtnLink extends StatelessWidget {
-  String title;
-  String subtitle;
-  Function callback;
+class profileBox extends StatelessWidget {
+  String label;
+  Icon icon;
+  String hint;
+  Function onTap;
 
-  CustomBtnLink({
-    required this.title,
-    required this.subtitle,
-    required this.callback,
+  profileBox({
+    required this.label,
+    required this.hint,
+    required this.icon,
+    required this.onTap,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => callback,
+    return InkWell(
+      onTap: () => onTap(),
       child: Container(
-        width: double.infinity,
-        child: Column(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 30,
+          vertical: 15,
+        ),
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: GoogleFonts.notoSans(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            icon,
             const SizedBox(
-              height: 4,
+              width: 15,
             ),
-            Text(
-              subtitle,
-              style: GoogleFonts.notoSans(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.primary.withOpacity(.6),
-                fontWeight: FontWeight.w700,
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: "$label\n",
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          fontSize: 14,
+                        ),
+                  ),
+                  TextSpan(
+                    text: hint,
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          height: 1.4,
+                        ),
+                  ),
+                ],
               ),
             ),
           ],

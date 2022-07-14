@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
-import '../components/util_widgets.dart';
+import '../../../components/form_components.dart';
+import '../../../helpers/custom_shared_pf.dart';
+import '../../../providers/user.provider.dart';
+import '../../../themes/main.dart';
 
 class MerchantSettings extends StatefulWidget {
   const MerchantSettings({Key? key}) : super(key: key);
@@ -15,85 +19,157 @@ class _MerchantSettingsState extends State<MerchantSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 2,
+        elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_outlined,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
         title: Text(
           "Settings",
-          style: GoogleFonts.notoSans(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                fontSize: 14,
+              ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.dark_mode_outlined,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 20,
             vertical: 30,
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'User Account',
-                      style: GoogleFonts.notoSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    CustomBtnLink(
-                      callback: () {},
-                      title: "Email",
-                      subtitle: "briankiplangat71@gmail.com",
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    CustomBtnLink(
-                      callback: () {},
-                      title: "Password",
-                      subtitle: "Tap to change password",
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Text(
-                      'Preferences',
-                      style: GoogleFonts.notoSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    CustomBtnLink(
-                      callback: () {},
-                      title: "Show Location Preferences",
-                      subtitle: "Set the params for showing location",
-                    ),
-                  ],
+              const NavigateToProfile(),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
                 ),
+                child: Text(
+                  'Settings',
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        fontSize: 14,
+                      ),
+                ),
+              ),
+              CustomBtnLink(
+                callback: () {},
+                title: "Business Name",
+                subtitle: "",
+              ),
+              CustomBtnLink(
+                callback: () {},
+                title: "Password",
+                subtitle: "Tap to change password",
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                ),
+                child: customExtendButton(
+                    ctx: context,
+                    child: Text(
+                      'Logout',
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            color: kTextLight,
+                          ),
+                    ),
+                    onPressed: () async {
+                      final status = await CustomSharedPreferences().logout();
+                      if (status) {
+                        // ignore: use_build_context_synchronously
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/login', (route) => false);
+                      }
+                    }),
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class NavigateToProfile extends StatelessWidget {
+  const NavigateToProfile({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 25,
+          vertical: 20,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  minRadius: 25,
+                  maxRadius: 30,
+                  child: Text(
+                    context.read<User>().name[0].toUpperCase(),
+                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                          color: kTextLight,
+                        ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                RichText(
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "${context.read<User>().name}\n",
+                        style: GoogleFonts.notoSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(.7),
+                        ),
+                      ),
+                      TextSpan(
+                        text: "view profile",
+                        style: GoogleFonts.notoSans(
+                          fontSize: 16,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(.7),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+            ),
+          ],
         ),
       ),
     );
@@ -114,31 +190,30 @@ class CustomBtnLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.notoSans(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
+    return InkWell(
+      onTap: (() => callback),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 25,
+          vertical: 10,
+        ),
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headline6,
             ),
-          ),
-          const SizedBox(
-            height: 4,
-          ),
-          Text(
-            subtitle,
-            style: GoogleFonts.notoSans(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.primary.withOpacity(.6),
-              fontWeight: FontWeight.w700,
+            const SizedBox(
+              height: 4,
             ),
-          ),
-        ],
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ],
+        ),
       ),
     );
   }

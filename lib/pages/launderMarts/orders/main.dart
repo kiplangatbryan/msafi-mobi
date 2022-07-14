@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/configs/data.dart';
@@ -8,9 +13,12 @@ import 'package:msafi_mobi/providers/merchant.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
+import 'package:http/http.dart' as http;
+
 import '../../../components/snackback_component.dart';
 import '../../../helpers/http_services.dart';
 import '../../../services/store.services.dart';
+import '../components/single_order.dart';
 
 class MerchantOrders extends StatefulWidget {
   const MerchantOrders({Key? key}) : super(key: key);
@@ -25,13 +33,18 @@ class _MerchantOrdersState extends State<MerchantOrders> {
   // List will hold search results
   List searchResults = [];
   late final bool autoFocus;
-
+// loading state
+  bool loading = false;
   // toggle active state
   int active = 0;
+  // hold all orders
+  List orderList = [];
+
   @override
   void initState() {
     super.initState();
     autoFocus = context.read<MerchantRoute>().autoFocusState;
+    _fetchOrders();
   }
 
   _findOrders(val) async {
@@ -47,6 +60,55 @@ class _MerchantOrdersState extends State<MerchantOrders> {
     }
     setState(() {
       searchResults = response;
+    });
+  }
+
+  _fetchOrders() async {
+    var url =
+        Uri.parse('${baseUrl()}/store/fetchOrders/62c7aa3a0be196261ce03980');
+    setState(() {
+      loading = true;
+    });
+    String authToken = await checkAndValidateAuthToken();
+    if (authToken == "NaN") {
+      // throw an error
+      customSnackBar(
+          context: context, message: "Invalid refreshToken", onPressed: () {});
+      return;
+    }
+
+    try {
+      // send data to server
+      final response = await http.get(url, headers: {
+        "Authorization": "Bearer $authToken",
+      }).timeout(
+        const Duration(seconds: 10),
+      );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          orderList = data;
+        });
+      } else {
+        customSnackBar(
+            context: context, message: "Server Error", onPressed: () {});
+      }
+    } on SocketException {
+      customSnackBar(
+          context: context,
+          message: "Could not connect to server!",
+          onPressed: () {});
+    } on TimeoutException catch (e) {
+      customSnackBar(
+          context: context, message: "Connection timed out!", onPressed: () {});
+    } on Error catch (e) {
+      customSnackBar(
+          context: context, message: "An error occurred", onPressed: () {});
+    }
+    setState(() {
+      loading = false;
     });
   }
 
@@ -171,159 +233,38 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                   ],
                 ),
               ),
-              ListView.builder(
-                physics: const ScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: fetchOrders().length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              SingleOrderView(order: fetchOrders()[index])));
-                    },
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 50,
-                          padding: EdgeInsets.symmetric(
-                            vertical: sizeCompute(
-                                small: 25, large: 15, width: maxWidth),
-                          ),
-                          child: Icon(
-                            Icons.history_toggle_off,
-                            size: 30,
-                            color: Theme.of(context).colorScheme.tertiary,
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: sizeCompute(
-                                  small: 15, large: 15, width: maxWidth),
-                              horizontal: sizeCompute(
-                                  small: 15, large: 15, width: maxWidth),
-                            ),
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 8,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "${fetchOrders()[index]['id']}",
-                                      style: GoogleFonts.notoSans(
-                                        fontSize: sizeCompute(
-                                            small: 18,
-                                            large: 19,
-                                            width: maxWidth),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      "${fetchOrders()[index]['total'].toString()} KES",
-                                      style: GoogleFonts.notoSans(
-                                        fontSize: sizeCompute(
-                                            small: 18,
-                                            large: 19,
-                                            width: maxWidth),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Placed on:",
-                                      style: GoogleFonts.notoSans(
-                                        fontSize: sizeCompute(
-                                            small: 14,
-                                            large: 16,
-                                            width: maxWidth),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ),
-                                    Text(
-                                      DateTime.parse(
-                                        fetchOrders()[index]
-                                            ['expected_pick_up'],
-                                      ).toMoment().toString(),
-                                      style: GoogleFonts.notoSans(
-                                        fontSize: sizeCompute(
-                                            small: 14,
-                                            large: 16,
-                                            width: maxWidth),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 6,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: 100,
-                                      child: Text(
-                                        "Placed at:",
-                                        style: GoogleFonts.notoSans(
-                                          fontSize: sizeCompute(
-                                              small: 14,
-                                              large: 16,
-                                              width: maxWidth),
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      fetchOrders()[index]['pick_up_station'],
-                                      style: GoogleFonts.notoSans(
-                                        fontSize: sizeCompute(
-                                            small: 14,
-                                            large: 16,
-                                            width: maxWidth),
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+              SizedBox(
+                height: 15,
               ),
+              loading
+                  ? SizedBox(
+                      height: 250,
+                      child: Center(
+                        child: Lottie.asset(
+                          "assets/lottie/circular-loading.json",
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      physics: const ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: orderList.length,
+                      itemBuilder: (context, index) {
+                        final order = orderList[index];
+                        return SingleOrderComponent(
+                          margin: const EdgeInsets.only(
+                            bottom: 10,
+                          ),
+                          order: order,
+                          customerName: order['userId']['name'],
+                          status: order['status'],
+                          orderId: order['id'],
+                          stationName: order['stationId']['name'],
+                          expectedDate: order['expectedPickUp'],
+                        );
+                      },
+                    ),
             ],
           ),
         ),

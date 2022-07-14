@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
 import 'package:msafi_mobi/pages/regular/processing/home.dart';
-import 'package:msafi_mobi/pages/regular/processing/orders.dart';
+import 'package:msafi_mobi/pages/regular/processing/launder_view.dart';
 import 'package:msafi_mobi/pages/regular/processing/settings.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +19,7 @@ class ClientHomePage extends StatefulWidget {
 class _ClientHomePageState extends State<ClientHomePage> {
   List<Widget> routes = const [
     HomePageView(),
-    OrdersView(),
+    LaunderView(),
     SettingsView(),
     AccountSettings(),
   ];
@@ -85,7 +85,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
             ),
           ),
           BottomNavigationBarItem(
-            label: 'Orders',
+            label: 'Launders',
             icon: Icon(
               Icons.track_changes,
               color: Theme.of(context).colorScheme.secondary,
