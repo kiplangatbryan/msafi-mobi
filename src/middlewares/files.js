@@ -28,7 +28,7 @@ const handler = (folder) => {
 
 const profile = [{ name: 'avatar', maxCount: 1 }];
 
-const config = [{ name: 'avatar', maxCount: 3 }];
+const config = [{ name: 'avatar', maxCount: 5 }];
 
 const fileHandler = (type) => (type === 'store' ? handler('stores').fields(config) : handler('profileImgs').fields(profile));
 

@@ -6,7 +6,8 @@ const createStore = catchAsync(async (req, res) => {
   const { locations } = req.body;
   const launderStore = await launderService.create(req.user.id, req.body, req.files);
   await stationService.create(req.user.id, launderStore.id, locations);
-  res.status(httpStatus.CREATED).send();
+  const response = 'sucess';
+  res.status(httpStatus.CREATED).send(response);
 });
 
 const fetchStore = catchAsync(async (req, res) => {
@@ -37,6 +38,12 @@ const search = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(results);
 });
 
+const changeState = catchAsync(async (req, res) => {
+  const { storeId, orderId } = req.body;
+  await launderService.changeState(req.user.id, storeId, orderId);
+  res.status(httpStatus.OK).send();
+});
+
 module.exports = {
   createStore,
   fetchStore,
@@ -44,4 +51,5 @@ module.exports = {
   createOrder,
   fetchOrders,
   search,
+  changeState,
 };

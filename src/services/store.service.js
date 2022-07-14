@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const { Stores, User, Orders } = require('../models');
+const { tokenTypes } = require('../config/tokens');
 
 /**
  * Get user by id
@@ -18,13 +19,13 @@ const getUserById = async (id) => {
  * @returns {Promise}
  */
 
-const create = async (userId, { name, description, address, pricing }, files) => {
+const create = async (userId, { name, description, address, pricing, phone }, files) => {
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
   }
   const storeImg = files.avatar.map((element) => element.destination + element.filename);
-  const data = { name, description, address, pricing, storeImg, userId };
+  const data = { name, description, address, pricing, phone, storeImg, userId };
   return Stores.create(data);
 };
 
@@ -48,7 +49,7 @@ const fetchStore = async (userId) => {
  */
 
 const fetchAllStores = async () => {
-  return Stores.find();
+  return Stores.find().populate('userId').exec();
 };
 
 /**
@@ -81,12 +82,33 @@ const fetchOrders = async (storeId, userId) => {
   return Orders.find({ storeId }).populate('userId').populate('stationId').exec();
 };
 
-const search = async (storeId, query) => {
-  const response = await Orders.find({ storeId }).populate('userId').populate('stationId').exec();
-  const result = response.filter((item) => {
-    return item.id === query;
+const search = async (storeId) => {
+  // const pipeline = [
+  //   {
+  //     $match: { _id: { $eq: storeId } },
+  //   },
+  // ];
+  const response = await Orders.find({ storeId }).aggregate().populate('userId').populate('stationId');
+
+  return response;
+};
+
+const changeState = async (userId, storeId, orderId) => {
+  const orders = await fetchOrders(storeId, userId);
+  const result = orders.find((value) => {
+    return value.id === orderId;
   });
-  return result;
+  if (result === undefined) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, 'Order not found');
+  }
+  const statesArr = Object.values(tokenTypes);
+  const pos = statesArr.findIndex((value) => {
+    return value === result.status;
+  });
+  result.status = pos < statesArr.length ? statesArr[pos + 1] : statesArr.lenth - 1;
+  let order = await Orders.findById(orderId);
+  order = { ...result };
+  return order.save();
 };
 
 module.exports = {
@@ -96,4 +118,5 @@ module.exports = {
   createOrder,
   fetchOrders,
   search,
+  changeState,
 };

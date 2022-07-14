@@ -36,8 +36,6 @@ const create = async (userId, storeId, locations) => {
   const data = locations.map((pickUp) => {
     return { ...pickUp, storeId };
   });
-  // eslint-disable-next-line no-console
-  console.log(data);
   return Stations.create(data);
 };
 

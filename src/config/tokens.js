@@ -17,11 +17,11 @@ const genderOpt = {
 };
 
 const statusTypes = {
-  PENDING: 'pending',
-  DROPPED: 'dropped',
-  INITIAL: 'initial',
-  COMPLETED: 'completed',
-  PICKED: 'picked',
+  INITIAL: 'Initial',
+  RECEIVED: 'Received',
+  PENDING: 'Pending',
+  COMPLETED: 'Completed',
+  PICKED: 'Picked',
 };
 
 module.exports = {

@@ -43,8 +43,8 @@ const resetPassword = catchAsync(async (req, res) => {
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
   const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
-  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
-  res.status(httpStatus.NO_CONTENT).send();
+  const response = await emailService.sendVerificationEmail(req.user.email, verifyEmailToken, req.user.name);
+  res.status(httpStatus.NO_CONTENT).send(response);
 });
 
 const verifyEmail = catchAsync(async (req, res) => {

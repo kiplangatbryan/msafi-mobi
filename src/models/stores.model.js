@@ -30,6 +30,10 @@ const storeSchema = mongoose.Schema(
       type: Array,
       required: true,
     },
+    phone: {
+      type: String,
+      required: true,
+    },
     address: {
       type: String,
       required: true,

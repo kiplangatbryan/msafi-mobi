@@ -15,9 +15,7 @@ router
   .post(auth('manageStore'), fileHandler('store'), validate(launderValidation.createStore), launderController.createStore);
 router.route('/fetchStore').get(auth('manageStore'), launderController.fetchStore);
 router.route('/fetchStores').get(launderController.fetchAllStores);
-router
-  .route('/fetchStations/:storeId')
-  .get(auth('manageStore'), validate(launderValidation.fetchStore), stationController.fetchStations);
+router.route('/fetchStations/:storeId').get(auth(), validate(launderValidation.fetchStore), stationController.fetchStations);
 // router.route('/test').post(validate(launderValidation.createStore), fileHandler('store'), launderController.createStore);
 
 // order routes
@@ -25,7 +23,9 @@ router.route('/createOrder').post(auth(), validate(launderValidation.createOrder
 router
   .route('/fetchOrders/:storeId')
   .get(auth('fetchOrders'), validate(launderValidation.fetchOrders), launderController.fetchOrders);
-router.route('/search').get(auth(), launderController.search);
+
+router.route('/changeState').post(auth('manageStore'), launderController.changeState);
+router.route('/search').get(launderController.search);
 router.route('/stk-push/simulate').post(paymentController.mpesaExpress);
 router.route('/stk-push/callback').post(paymentController.transactionCallback);
 

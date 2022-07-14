@@ -5,6 +5,7 @@ const { statusTypes } = require('../config/tokens');
 const ordersSchema = mongoose.Schema(
   {
     paymentId: {
+      required: true,
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Payment',
     },
@@ -32,7 +33,7 @@ const ordersSchema = mongoose.Schema(
       type: String,
       enum: Object.values(statusTypes),
       required: true,
-      default: 'initial',
+      default: 'Initial',
     },
     expectedPickUp: {
       required: true,
@@ -53,6 +54,7 @@ const ordersSchema = mongoose.Schema(
 
 // add plugin that converts mongoose to json
 ordersSchema.plugin(toJSON);
+ordersSchema.index({ paymentId: 1, storeId: 1, stationId: 1, userId: 1, expectedPickUp: 1 }, { name: 'order_search' });
 
 /**
  * @typedef Orders

@@ -6,6 +6,7 @@ const createStore = {
     name: Joi.string().required(),
     description: Joi.string().required().min(15),
     // userId: Joi.string().required().custom(objectId),
+    phone: Joi.string().required(),
     address: Joi.string().required(),
     pricing: Joi.custom(arrayCheck).required(),
     locations: Joi.custom(arrayCheck).required(),
