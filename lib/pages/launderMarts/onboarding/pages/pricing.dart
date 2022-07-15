@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../providers/merchant.provider.dart';
@@ -48,12 +49,17 @@ class _SetPricingPagestate extends State<SetPricingPage> {
 
     if (form!.validate()) {
       form.save();
-      late String clothid;
+      late String clothid, imagePath;
+      clothid = context.read<MartConfig>().getClothes[0]['title'];
+      imagePath = context.read<MartConfig>().getClothes[0]['imagePath'];
       if (id == "") {
-        clothid = context.read<MartConfig>().getClothes[0]['title'];
-        clothPrices[page] = {"id": clothid, "price": price};
+        clothPrices[page] = {
+          "id": clothid,
+          "price": price,
+          "imagePath": imagePath
+        };
       } else {
-        clothPrices[page] = {"id": id, "price": price};
+        clothPrices[page] = {"id": id, "price": price, "imagePath": imagePath};
       }
       setState(() {
         _btnText = "Saved";
@@ -92,7 +98,7 @@ class _SetPricingPagestate extends State<SetPricingPage> {
 
     // ignore: use_build_context_synchronously
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => const MapIntro()));
+        .push(CupertinoPageRoute(builder: (_) => const MapIntro()));
   }
 
   @override

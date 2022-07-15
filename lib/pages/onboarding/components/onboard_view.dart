@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -5,7 +6,6 @@ import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
 import '../login_options.dart';
-import 'btn_links.dart';
 
 class OnBoardingView extends StatelessWidget {
   final String title;
@@ -62,6 +62,7 @@ class OnBoardingView extends StatelessWidget {
                     fontSize: 17,
                     color: kTextColor.withOpacity(.8),
                     fontWeight: FontWeight.w600,
+                    height: 1.4,
                   ),
                 ),
               ],
@@ -85,7 +86,7 @@ class OnBoardingView extends StatelessWidget {
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            CupertinoPageRoute(
                               builder: (context) =>
                                   const AuthenticationOptions(),
                             ),

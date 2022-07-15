@@ -309,7 +309,7 @@ class afterImages extends StatelessWidget {
           ),
           onPressed: () async {
             // Navigator.of(context).push(
-            //   MaterialPageRoute(
+            //   CupertinoPageRoute(
             //     builder: (_) => const ProductSelection(),
             //   ),
             // );

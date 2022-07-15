@@ -32,7 +32,7 @@ class _AuthenticationOptionsState extends State<AuthenticationOptions> {
         child: Container(
           height: maxHeight,
           width: maxWidth,
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             vertical: 30,
           ),
           child: Column(

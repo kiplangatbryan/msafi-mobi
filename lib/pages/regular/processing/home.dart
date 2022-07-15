@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:msafi_mobi/providers/store.providers.dart';
@@ -11,14 +13,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
+import '../../../components/form_components.dart';
 import '../../../helpers/http_services.dart';
 import '../../../helpers/size_calculator.dart';
 import '../../../providers/user.provider.dart';
 import 'single_merchant_view.dart';
 
-class HomePageView extends StatelessWidget {
+class HomePageView extends StatefulWidget {
   const HomePageView({Key? key}) : super(key: key);
 
+  @override
+  State<HomePageView> createState() => _HomePageViewState();
+}
+
+class _HomePageViewState extends State<HomePageView> {
   @override
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width;
@@ -193,6 +201,22 @@ class HomePageView extends StatelessWidget {
           const SizedBox(
             height: 50,
           ),
+          // customExtendButton(
+          //     ctx: context,
+          //     child: Text(
+          //       'Logout',
+          //       style: Theme.of(context).textTheme.headline6!.copyWith(
+          //             color: kTextLight,
+          //           ),
+          //     ),
+          //     onPressed: () async {
+          //       final status = await CustomSharedPreferences().logout();
+          //       if (status) {
+          //         // ignore: use_build_context_synchronously
+          //         Navigator.of(context)
+          //             .pushNamedAndRemoveUntil('/login', (route) => false);
+          //       }
+          //     }),
         ],
       ),
     );
@@ -213,7 +237,7 @@ class _LanderMartsListState extends State<LanderMartsList> {
   String snackBarMessage = "";
   bool showSnack = false;
   bool errorState = false;
-  late int _sizePreview;
+  int _sizePreview = 0;
 
   @override
   void initState() {
@@ -386,7 +410,7 @@ class StoreItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context).push(CupertinoPageRoute(
             builder: (_) => LaunderMartView(
                 tagId: context.read<Store>().stores[index]['id'],
                 index: index)));

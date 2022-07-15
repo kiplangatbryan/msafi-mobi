@@ -11,6 +11,7 @@ class Basket extends ChangeNotifier {
   get bucketList => cart;
   get getBasket => basket;
   get getTotal => total;
+  get getCount => countBasket();
 
   void calculateTotal() {
     total = 0;
@@ -20,6 +21,16 @@ class Basket extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  int countBasket() {
+    int count = 0;
+    for (var element in basket) {
+      if (element > 0) {
+        count += 1;
+      }
+    }
+    return count;
   }
 
   List<Map> listOfClothes() {

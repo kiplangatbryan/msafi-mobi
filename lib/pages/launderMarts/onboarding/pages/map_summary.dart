@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:lottie/lottie.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 
@@ -87,7 +88,7 @@ class MapIntro extends StatelessWidget {
                       ),
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                             builder: (_) => const PickUpspotsSelection(),
                           ),
                         );

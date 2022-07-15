@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:moment_dart/moment_dart.dart';
 
@@ -35,7 +36,7 @@ class SingleOrderComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (_) => SingleOrderView(order: order),
         ),
       ),

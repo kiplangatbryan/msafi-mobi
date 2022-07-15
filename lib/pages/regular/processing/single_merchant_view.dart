@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:msafi_mobi/components/form_components.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
@@ -100,8 +102,8 @@ class _LaunderMartViewState extends State<LaunderMartView> {
     final count = store['storeImg'].length;
     return Scaffold(
       appBar: AppBar(
-        elevation: 1,
-        backgroundColor: Theme.of(context).canvasColor,
+        elevation: 0,
+        backgroundColor: Theme.of(context).backgroundColor,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back_ios_outlined,
@@ -115,7 +117,7 @@ class _LaunderMartViewState extends State<LaunderMartView> {
         title: Text(
           "Details",
           style: Theme.of(context).textTheme.headline6!.copyWith(
-                fontWeight: FontWeight.bold,
+              // fontWeight: FontWeight.bold,
               ),
         ),
       ),
@@ -254,14 +256,14 @@ class _LaunderMartViewState extends State<LaunderMartView> {
                     customExtendButton(
                         ctx: context,
                         child: Text(
-                          "Up Next",
+                          "Launder Now",
                           style:
                               Theme.of(context).textTheme.headline6!.copyWith(
                                     color: kTextLight,
                                   ),
                         ),
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
+                          Navigator.of(context).push(CupertinoPageRoute(
                               builder: (_) =>
                                   LaundrySelection(index: widget.index)));
                         })
