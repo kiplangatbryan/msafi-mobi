@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/providers/merchant.provider.dart';
 import 'package:provider/provider.dart';
@@ -210,7 +211,7 @@ class _SelectedSpotsState extends State<SelectedSpots> {
                 onPressed: () {
                   _updateLocations();
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    CupertinoPageRoute(
                       builder: (context) => const CustomizeStore(),
                     ),
                   );
