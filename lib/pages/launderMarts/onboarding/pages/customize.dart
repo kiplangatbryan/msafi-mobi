@@ -7,6 +7,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/components/snackback_component.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/selection.dart';
@@ -27,7 +28,8 @@ class CustomizeStore extends StatefulWidget {
 class _CustomizeStoreState extends State<CustomizeStore> {
   List<XFile>? imageFileList = [];
   bool selectedImageState = false;
-
+  bool success = true;
+  bool loading = false;
   final _picker = ImagePicker();
 
   _displayPickImageDialog() async {
@@ -51,7 +53,51 @@ class _CustomizeStoreState extends State<CustomizeStore> {
 
   Future<void> getLostData() async {}
 
+  showBottomSheet() {
+    showMaterialModalBottomSheet(
+      context: context,
+      builder: (context) => SingleChildScrollView(
+        controller: ModalScrollController.of(context),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 30,
+            vertical: 50,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              loading
+                  ? Lottie.asset("assets/lottie/circular-loading.json",
+                      fit: BoxFit.cover)
+                  : Container(),
+              if (!success)
+                customExtendButton(
+                  ctx: context,
+                  child: Text(
+                    "Retry",
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: kTextLight,
+                        ),
+                  ),
+                  onPressed: () async {
+                    await createOrUpdateStore();
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<int> createOrUpdateStore() async {
+    // showBottomSheet();
+    setState(() {
+      loading = true;
+    });
     var url = Uri.parse('');
     final store = context.read<MartConfig>();
     final token = await checkAndValidateAuthToken();
@@ -80,27 +126,48 @@ class _CustomizeStoreState extends State<CustomizeStore> {
       );
     }
 
+    final payment = {
+      "paybill": "",
+      "enabled": false,
+    };
     formData.fields.add(MapEntry("name", store.uname));
     formData.fields.add(MapEntry("address", store.uaddress));
     formData.fields.add(MapEntry("description", store.udescription));
     formData.fields.add(MapEntry("pricing", json.encode(store.upricing)));
     formData.fields.add(MapEntry("phone", store.bsphone));
     formData.fields.add(MapEntry("locations", json.encode(store.ulocations)));
-    print(formData.fields);
+    formData.fields.add(MapEntry("payment", json.encode(payment)));
+
+    // print(formData.fields);
 
     try {
       // send data to server
-      final response = await dio.post('${baseUrl()}/store/createStore',
-          // data: formData,
-          options: Options(headers: {"Authorization": "Bearer $token"}));
+      Response resp = await dio
+          .post('${baseUrl()}/store/createStore',
+              data: formData,
+              options: Options(headers: {
+                "Accept": "application/json",
+                "Content-Type":
+                    "multipart/form-data; boundary=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MmM2NWU0M2FlOWZmNDM5ZjBiZDcxMGIiLCJpYXQiOjE2NTc4MTQxMjksImV4cCI6MTY1NzgxNTkyOSwidHlwZSI6ImFjY2VzcyJ9.IqrkKLUREzNV8JaXabWk3HYweh12PHZ5kpDgoZq_kio",
+                "Authorization": "Bearer $token"
+              }))
+          .then(((value) {
+        Navigator.of(context).pushNamed("/mart-home");
+        return value;
+      }));
 
-      if (response.statusCode == 201) {
-        return 0;
-      } else {
-        return 1;
-      }
+      setState(() {
+        loading = false;
+        success = true;
+      });
+
+      // if (response) {}
     } catch (err) {
       print(err);
+      setState(() {
+        loading = false;
+        success = false;
+      });
     }
 
     return 1;
@@ -234,7 +301,7 @@ class afterImages extends StatelessWidget {
         customExtendButton(
           ctx: context,
           child: Text(
-            "Proceed",
+            "Upload and Finish",
             style: Theme.of(context)
                 .textTheme
                 .headline6!

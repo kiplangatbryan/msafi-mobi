@@ -112,14 +112,12 @@ class _SignUpPageState extends State<SignUpPage> {
 
       try {
         // send data to server
-        final response = await http
-            .post(
-              url,
-              body: user,
-            )
-            .timeout(
-              const Duration(seconds: 10),
-            );
+        final response = await http.post(
+          url,
+          body: {...user, "role": "user"},
+        ).timeout(
+          const Duration(seconds: 10),
+        );
 
         final data = json.decode(response.body);
 

@@ -26,6 +26,30 @@ SizedBox customExtendButton(
   );
 }
 
+SizedBox customSmallBtn(
+    {required BuildContext ctx, required Widget child, required onPressed}) {
+  return SizedBox(
+    width: double.infinity,
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: Theme.of(ctx).primaryColor,
+        enableFeedback: true,
+        padding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 30,
+        ),
+        elevation: 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+      onPressed: onPressed,
+      autofocus: true,
+      child: child,
+    ),
+  );
+}
+
 class customPasswordField extends StatelessWidget {
   String hint;
   String label;
