@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/selection.dart';
 import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
@@ -47,7 +48,7 @@ class _BasicInformationState extends State<BasicInformation> {
 
         // navigate to next page
         Navigator.of(context).push(
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => const ProductSelection(),
           ),
         );

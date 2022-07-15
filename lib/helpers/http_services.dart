@@ -6,8 +6,8 @@ import 'dart:async';
 import 'dart:io';
 
 String baseUrl() {
-  // return "http://10.0.2.2:3000/v1";
-  return "http://192.168.43.165:3000/v1";
+  return "http://10.0.2.2:3000/v1";
+  // return "http://192.168.43.165:3000/v1";
 }
 
 Future<String> checkAndValidateAuthToken() async {

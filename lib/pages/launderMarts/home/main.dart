@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -107,7 +108,7 @@ class MerchantHomePage extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
+                            Navigator.of(context).push(CupertinoPageRoute(
                                 builder: (context) =>
                                     const MerchantSettings()));
                           },
@@ -316,7 +317,7 @@ class MerchantHomePage extends StatelessWidget {
         TextButton(
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (context) => const MerchantOrders(),
               ),
             );

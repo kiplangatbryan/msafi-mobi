@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/helpers/http_services.dart';
@@ -115,8 +116,6 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
         loading = true;
       });
       var url = Uri.parse('${baseUrl()}/auth/login');
-
-      print(url);
 
       try {
         // send data to server
@@ -297,7 +296,7 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                         Center(
                           child: TextButton(
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
+                              Navigator.of(context).push(CupertinoPageRoute(
                                   builder: (_) => const EmailReset()));
                             },
                             child: Text(
