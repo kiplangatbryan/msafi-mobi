@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
+import 'package:flutter/cupertino.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../providers/store.providers.dart';
 import '../../../themes/main.dart';
+import '../components/laundry_box.dart';
 
 class LaundrySelection extends StatefulWidget {
   int index;
@@ -41,6 +43,19 @@ class _LaundrySelectionState extends State<LaundrySelection> {
     context.read<Basket>().createBucket(basket);
   }
 
+  _proceed() {
+    // calculate total
+    context.read<Basket>().calculateTotal();
+
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        builder: (_) => Bucket(
+          index: widget.index,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +74,15 @@ class _LaundrySelectionState extends State<LaundrySelection> {
         actions: [
           IconButton(
             onPressed: () {
-              // updateBusketStore();
+              showBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      padding: EdgeInsets.all(20),
+                      child: Text("Hey Now",
+                          style: Theme.of(context).textTheme.headline2),
+                    );
+                  });
             },
             icon: Icon(
               Icons.shopping_bag_outlined,
@@ -79,9 +102,11 @@ class _LaundrySelectionState extends State<LaundrySelection> {
             right: 20,
             top: 20,
           ),
-          child: Column(
-            children: List.generate(storeClothes.length, (index) {
-              // return Container();
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const ScrollPhysics(),
+            itemCount: storeClothes.length,
+            itemBuilder: ((context, index) {
               return LaundryBox(
                   decreament: () {
                     context.read<Basket>().decreament(index: index);
@@ -94,47 +119,67 @@ class _LaundrySelectionState extends State<LaundrySelection> {
                   title: storeClothes[index]['id'],
                   image: storeClothes[index]['imagePath']);
             }),
+
+            // return Container();
           ),
         ),
       ),
-      bottomSheet: BottomSheet(
-          // elevation: 30,
-          onClosing: () {},
-          builder: (BuildContext context) {
-            return Container(
-              decoration: BoxDecoration(
-                  color: Theme.of(context).backgroundColor,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 5,
-                      color: Colors.black,
-                      spreadRadius: 5,
-                      offset: Offset(0, 8),
-                    )
-                  ],
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  )),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 25,
-                vertical: 20,
-              ),
-              child: customExtendButton(
-                  ctx: context,
-                  child: Text(
-                    "Go to Basket",
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Icon(Icons.warning),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    "${context.watch<Basket>().getCount} items",
                     style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color: kTextLight,
+                          fontSize: 18,
                         ),
                   ),
-                  onPressed: () {
-                    context.read<Basket>().calculateTotal();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => Bucket(index: widget.index)));
-                  }),
-            );
-          }),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LimitedBox(
+                    maxWidth: 210,
+                    child: customSmallBtn(
+                      ctx: context,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Go to Bucket",
+                            style:
+                                Theme.of(context).textTheme.headline6!.copyWith(
+                                      color: kTextLight,
+                                    ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          const Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 23,
+                          )
+                        ],
+                      ),
+                      onPressed: () => _proceed(),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -183,116 +228,6 @@ class _LaundrySelectionState extends State<LaundrySelection> {
         ),
       ),
       onChanged: (val) {},
-    );
-  }
-}
-
-class LaundryBox extends StatelessWidget {
-  String title;
-  String price;
-  String image;
-  int value;
-  Function increament;
-  Function decreament;
-
-  LaundryBox({
-    required this.image,
-    required this.title,
-    required this.value,
-    required this.price,
-    required this.increament,
-    required this.decreament,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(
-        bottom: 10,
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 15,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(.04),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Image(
-            image: AssetImage(image),
-            width: 80,
-          ),
-          Column(children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () => decreament(),
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                          width: 2,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(.5),
-                        )),
-                    child: const Center(
-                      child: Icon(Icons.remove),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  value.toString(),
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                InkWell(
-                  onTap: () => increament(),
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                          width: 2,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(.5),
-                        )),
-                    child: const Center(
-                      child: Icon(Icons.add),
-                    ),
-                  ),
-                )
-              ],
-            )
-          ]),
-          Text(
-            "KES $price",
-            style: Theme.of(context).textTheme.headline6,
-          ),
-        ],
-      ),
     );
   }
 }
