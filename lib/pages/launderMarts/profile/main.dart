@@ -51,7 +51,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                         ClipOval(
                           child: Image(
                             image: AssetImage('assets/app/user.png'),
-                            width: 180,
+                            width: 120,
                           ),
                         ),
                         Positioned(
