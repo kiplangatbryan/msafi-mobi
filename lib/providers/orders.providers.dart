@@ -9,6 +9,7 @@ class Order extends ChangeNotifier {
   late String paymentId;
   late String storeId;
   bool paid = false;
+  String phone = "";
 
   get getAmount => amount;
   get clothesArray => clothes;
@@ -23,6 +24,10 @@ class Order extends ChangeNotifier {
 
   setExpectedData(dynamic time) {
     expectedDate = time;
+  }
+
+  setPhoneNumber(String phoneCont) {
+    phone = phoneCont;
   }
 
   void setStation(Map address) {
