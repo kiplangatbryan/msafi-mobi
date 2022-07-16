@@ -3,12 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
 SizedBox customExtendButton(
-    {required BuildContext ctx, required Widget child, required onPressed}) {
+    {required BuildContext ctx,
+    required Widget child,
+    Color? background,
+    required onPressed}) {
   return SizedBox(
     width: double.infinity,
     child: ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: Theme.of(ctx).primaryColor,
+        primary: background ?? Theme.of(ctx).primaryColor,
         enableFeedback: true,
         padding: const EdgeInsets.symmetric(
           vertical: 18,
