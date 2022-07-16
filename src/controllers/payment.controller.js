@@ -6,6 +6,7 @@ const mpesaExpress = catchAsync(async (req, res) => {
   const response = await paymentService.mpesaExpress(req.body.phone);
   res.status(httpStatus.OK).send(response);
 });
+
 const transactionCallback = catchAsync(async (req, res) => {
   const response = await paymentService.callback(req.body);
   res.status(httpStatus.OK).send(response);

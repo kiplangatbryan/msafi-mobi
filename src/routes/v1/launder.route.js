@@ -27,6 +27,7 @@ router
 router.route('/changeState').post(auth('manageStore'), launderController.changeState);
 router.route('/search').get(launderController.search);
 router.route('/stk-push/simulate').post(paymentController.mpesaExpress);
+// router.route('stk-push/query').get(auth(), paymentController.mpesaQuery)
 router.route('/stk-push/callback').post(paymentController.transactionCallback);
 
 module.exports = router;

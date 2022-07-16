@@ -5,7 +5,6 @@ const { statusTypes } = require('../config/tokens');
 const ordersSchema = mongoose.Schema(
   {
     paymentId: {
-      required: true,
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Payment',
     },
@@ -27,6 +26,10 @@ const ordersSchema = mongoose.Schema(
     storeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Store',
+      required: true,
+    },
+    amount: {
+      type: String,
       required: true,
     },
     status: {

@@ -75,9 +75,22 @@ const mpesaExpress = async (MSSID) => {
  * @returns {Promise<Response>}
  */
 
-const callback = (response) => {
+const callback = async (response) => {
   // eslint-disable-next-line no-console
-  console.log(response);
+  console.table(response);
+  // eslint-disable-next-line no-console
+  console.table(response.data.Body);
+  // eslint-disable-next-line no-console
+  console.table(response.data.Body.CallbackMetadata);
+
+  await axios.post(
+    'https://41bf-102-167-105-254.eu.ngrok.io/v1/store/stk-push/callback',
+
+    {
+      response,
+    }
+  );
+
   const message = {
     ResponseCode: '00000000',
     ResponseDesc: 'success',
