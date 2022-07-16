@@ -52,6 +52,7 @@ dependencies:
   moment_dart: ^0.7.2
   image_picker: ^0.8.5+3
   modal_bottom_sheet: ^2.1.0
+  omni_datetime_picker: ^0.1.0
   mime: ^1.0.2
   # mapbox_gl: ^0.16.0
   dio: ^4.0.6
