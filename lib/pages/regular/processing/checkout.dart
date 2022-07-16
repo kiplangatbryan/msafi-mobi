@@ -26,8 +26,12 @@ class _CheckOutState extends State<CheckOut> {
   @override
   void initState() {
     super.initState();
-    phoneController.text = "0746613059";
-    datepickController.text = Moment(DateTime.now()).format("ll");
+    print(context.read<Order>().phone);
+    setState(() {
+      datepickController.text =
+          Moment(context.read<Order>().expectedDate).calendar();
+      phoneController.text = context.read<Order>().phone;
+    });
   }
 
   showBottomSheet() {
