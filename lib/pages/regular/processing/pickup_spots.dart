@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/components/snackback_component.dart';
 import 'package:msafi_mobi/pages/regular/components/app_bar.dart';
+import 'package:msafi_mobi/pages/regular/processing/map_view_pickup.dart';
+import 'package:msafi_mobi/pages/regular/processing/payment_options.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
@@ -36,12 +38,13 @@ class _PickUpSpotsState extends State<PickUpSpots> {
     if (_radioVal != null) {
       context.read<Order>().setStation(addresses[_radioVal]);
       Navigator.of(context)
-          .push(CupertinoPageRoute(builder: (_) => const CheckOut()));
+          .push(CupertinoPageRoute(builder: (_) => const PaymentOptions()));
+    } else {
+      customSnackBar(
+          context: context,
+          message: "You have not selected a pick up spot",
+          onPressed: () {});
     }
-    customSnackBar(
-        context: context,
-        message: "You have not selected a pick up spot",
-        onPressed: () {});
   }
 
   @override
@@ -125,7 +128,10 @@ class _PickUpSpotsState extends State<PickUpSpots> {
                   ],
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(CupertinoPageRoute(
+                        builder: (_) => MapViewPickUp(index: index)));
+                  },
                   child: Row(
                     children: [
                       Icon(

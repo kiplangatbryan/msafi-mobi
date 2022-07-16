@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -6,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:msafi_mobi/components/snackback_component.dart';
 import 'package:msafi_mobi/pages/regular/components/app_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -31,28 +34,19 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
     _requestPaymentStk();
   }
 
-  Future _requestPaymentStk() async {
-    setState(() {
-      loading = true;
-    });
+  _verifyTransaction() async {
     final url = Uri.parse('${baseUrl()}/store/stk-push/simulate');
     final token = await checkAndValidateAuthToken();
     final headers = {"Authorization": "Bearer $token"};
-    // ignore: use_build_context_synchronously
-    final amount = context.read<Order>().getAmount;
-    final body = {"phone": "0746613059", "amount": amount.toString()};
-
     try {
       // send data to server
-      final response =
-          await http.post(url, body: body, headers: headers).timeout(
-                const Duration(seconds: 10),
-              );
+      final response = await http.get(url, headers: headers).timeout(
+            const Duration(seconds: 10),
+          );
 
       final data = json.decode(response.body);
 
       if (response.statusCode == 200) {
-        print(data);
       } else {
         setState(() {
           loading = false;
@@ -64,7 +58,10 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
         loading = false;
         processing = 2;
       });
-      // customSnackBar('Could not connect to server');
+      customSnackBar(
+          context: context,
+          message: 'Could not connect to server',
+          onPressed: () {});
     } on TimeoutException catch (e) {
       setState(() {
         loading = false;
@@ -76,7 +73,72 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
         loading = false;
         processing = 2;
       });
-      // customSnackBar("An error ocurred");
+      customSnackBar(
+          context: context,
+          message: 'Could not connect to server',
+          onPressed: () {});
+    }
+  }
+
+  _requestPaymentStk() async {
+    setState(() {
+      loading = true;
+    });
+    final url = Uri.parse('${baseUrl()}/store/stk-push/simulate');
+    final token = await checkAndValidateAuthToken();
+    final headers = {"Authorization": "Bearer $token"};
+    final amount = context.read<Order>().getAmount;
+    final phone = context.read<Order>().phone;
+
+    final body = {"phone": phone, "amount": amount.toString()};
+
+    try {
+      // send data to server
+      final response =
+          await http.post(url, body: body, headers: headers).timeout(
+                const Duration(seconds: 10),
+              );
+
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          stkInit = true;
+        });
+        print(data);
+      } else {
+        customSnackBar(
+            context: context, message: 'Invalid statuscode', onPressed: () {});
+        print(data);
+        setState(() {
+          loading = false;
+          processing = 2;
+        });
+      }
+    } on SocketException {
+      setState(() {
+        loading = false;
+        processing = 2;
+      });
+      customSnackBar(
+          context: context,
+          message: 'Could not connect to server',
+          onPressed: () {});
+    } on TimeoutException catch (e) {
+      setState(() {
+        loading = false;
+        processing = 2;
+      });
+      // customSnackBar("Connection Timeout");
+    } on Error catch (e) {
+      setState(() {
+        loading = false;
+        processing = 2;
+      });
+      customSnackBar(
+          context: context,
+          message: 'Could not connect to server',
+          onPressed: () {});
     }
   }
 
@@ -105,95 +167,104 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
   }
 
   Widget _success() {
-    return Stack(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Container(
-          height: 300,
+        SizedBox(
+          height: 200,
           child: Lottie.asset(
-            'assets/lottie/sent-email-animation.json',
-            width: 150,
+            'assets/lottie/receipt-success.json',
+            repeat: false,
             fit: BoxFit.cover,
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 50,
-              ),
-              Text(
-                "Order Success",
-                style: Theme.of(context).textTheme.headline4!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                "We have sent you a notification via sms containing your basket code. Please show it to the tenant at the pick up spot.",
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              customExtendButton(
-                  ctx: context,
-                  child: Text(
-                    "Go back Home",
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color: kTextLight,
-                        ),
-                  ),
-                  onPressed: () {}),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _failed() {
-    return Stack(
-      children: [
+        const SizedBox(
+          height: 50,
+        ),
         Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Lottie.asset(
-              'assets/lottie/error.json',
-              width: 150,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(
-              height: 80,
-            ),
             Text(
-              textAlign: TextAlign.center,
-              "There was an error processing Transaction",
-              style: Theme.of(context).textTheme.headline6!.copyWith(
-                    color: Colors.red,
+              "Order Success",
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
             ),
             const SizedBox(
               height: 20,
             ),
+            Text(
+              textAlign: TextAlign.center,
+              "We have sent you a notification\nvia sms containing your basket code.",
+              style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                    fontSize: 18,
+                  ),
+            ),
           ],
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: customSmallBtn(
+        const SizedBox(
+          height: 30,
+        ),
+        customExtendButton(
             ctx: context,
             child: Text(
-              "Try Again",
+              "Go  Home",
               style: Theme.of(context).textTheme.headline6!.copyWith(
                     color: kTextLight,
                   ),
             ),
-            onPressed: () async {
-              await _requestPaymentStk();
-            },
+            onPressed: () {})
+      ],
+    );
+  }
+
+  Widget _failed() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Lottie.asset(
+          'assets/lottie/error-face.json',
+          repeat: false,
+          width: 150,
+          fit: BoxFit.cover,
+        ),
+        const SizedBox(
+          height: 80,
+        ),
+        Text(
+          textAlign: TextAlign.center,
+          "There was an error processing your Transaction",
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                color: Colors.red,
+                height: 1.4,
+              ),
+        ),
+        const SizedBox(
+          height: 40,
+        ),
+        TextButton(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Try Again",
+                style: Theme.of(context).textTheme.headline6!.copyWith(
+                      color: Theme.of(context).primaryColor,
+                    ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Icon(
+                Icons.replay_circle_filled,
+                size: 30,
+                color: Theme.of(context).primaryColor,
+              ),
+            ],
           ),
+          onPressed: () async {
+            await _requestPaymentStk();
+          },
         ),
       ],
     );
@@ -210,7 +281,7 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
           horizontal: 30,
           vertical: 50,
         ),
-        child: !confirmed
+        child: confirmed
             ? loading
                 ? _loadingState()
                 : _failed()

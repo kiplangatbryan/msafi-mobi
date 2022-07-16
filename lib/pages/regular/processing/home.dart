@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:google_fonts/google_fonts.dart';
-import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
+import 'package:msafi_mobi/components/snackback_component.dart';
 import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +12,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 
-import '../../../components/form_components.dart';
 import '../../../helpers/http_services.dart';
 import '../../../helpers/size_calculator.dart';
 import '../../../providers/user.provider.dart';
@@ -31,193 +29,137 @@ class _HomePageViewState extends State<HomePageView> {
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.of(context).size.width;
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 20,
-              right: 20,
-              top: 50,
-              bottom: 0,
-            ),
-            child: Column(children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  RichText(
-                    textAlign: TextAlign.left,
-                    text: TextSpan(
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      top: 40,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextSpan(
-                          text: "Good Afternoon\n",
-                          style: GoogleFonts.notoSans(
-                              fontSize: sizeCompute(
-                                  small: 21, large: 24, width: maxWidth),
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                        TextSpan(
-                          text: "Welcome ${context.read<User>().name}",
-                          style: GoogleFonts.notoSans(
-                            fontSize: sizeCompute(
-                                small: 16, large: 17, width: maxWidth),
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.notifications_active_outlined,
-                          size: 30,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.settings_outlined,
-                          size: 30,
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Container(
-                decoration: const BoxDecoration(
-                  color: kTextColor,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(
-                      10.0,
-                    ),
-                  ),
-                ),
-                height: 100,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      child: Container(
-                        width: 55,
-                        height: 55,
-                        decoration: const BoxDecoration(
-                          color: kSpecialAc,
-                          borderRadius: BorderRadius.all(Radius.circular(55.0)),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.location_on,
-                            size: 25,
-                            color: kBackgroundColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 18,
-                        ),
                         RichText(
+                          textAlign: TextAlign.left,
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: "Your Location\n",
+                                text: "Good Afternoon\n",
                                 style: GoogleFonts.notoSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                    fontSize: sizeCompute(
+                                        small: 21, large: 24, width: maxWidth),
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
                               ),
                               TextSpan(
-                                text: "Royal Ln.Mesa New Jersey\n",
+                                text: "Welcome ${context.read<User>().name}",
                                 style: GoogleFonts.notoSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: sizeCompute(
+                                      small: 16, large: 17, width: maxWidth),
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.notifications_active_outlined,
+                                size: 30,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.settings_outlined,
+                                size: 30,
+                              ),
+                            )
+                          ],
+                        )
                       ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Chip(
+                        label: Text(
+                          "Around you",
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    fontSize: 18,
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Chip(
+                        label: Text(
+                          "Popular",
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    fontSize: 18,
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Chip(
+                        label: Text(
+                          "Around you",
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    fontSize: 18,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(
-                height: 30,
+                height: 20,
               ),
-              // const Offers(),
-            ]),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Cleaners",
-                  style: Theme.of(context).textTheme.headline6!.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+              const Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 10,
                 ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    "see all",
-                    style: GoogleFonts.notoSans(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                child: LanderMartsList(),
+              ),
+            ],
           ),
-          const LanderMartsList(),
-          const SizedBox(
-            height: 50,
-          ),
-          // customExtendButton(
-          //     ctx: context,
-          //     child: Text(
-          //       'Logout',
-          //       style: Theme.of(context).textTheme.headline6!.copyWith(
-          //             color: kTextLight,
-          //           ),
-          //     ),
-          //     onPressed: () async {
-          //       final status = await CustomSharedPreferences().logout();
-          //       if (status) {
-          //         // ignore: use_build_context_synchronously
-          //         Navigator.of(context)
-          //             .pushNamedAndRemoveUntil('/login', (route) => false);
-          //       }
-          //     }),
-        ],
+        ),
       ),
     );
   }
@@ -237,31 +179,11 @@ class _LanderMartsListState extends State<LanderMartsList> {
   String snackBarMessage = "";
   bool showSnack = false;
   bool errorState = false;
-  int _sizePreview = 0;
 
   @override
   void initState() {
     super.initState();
     fetchStores();
-  }
-
-  // snack bar
-  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> customSnackBar(
-      String message) {
-    setState(() {
-      snackBarMessage = message;
-    });
-    return ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(snackBarMessage),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            // Some code to undo the change.
-          },
-        ),
-      ),
-    );
   }
 
   Future<void> fetchStores() async {
@@ -280,15 +202,7 @@ class _LanderMartsListState extends State<LanderMartsList> {
 
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
-        if (data.length > 3) {
-          setState(() {
-            _sizePreview = 3;
-          });
-        } else {
-          setState(() {
-            _sizePreview = data.length;
-          });
-        }
+
         // ignore: use_build_context_synchronously
         context.read<Store>().saveStores(data);
 
@@ -303,15 +217,18 @@ class _LanderMartsListState extends State<LanderMartsList> {
         // _postErrors("Email or password is Incorrect");
       }
     } on SocketException {
-      customSnackBar('Could not connect to server');
+      customSnackBar(
+          context: context,
+          message: 'Could not connect to server',
+          onPressed: () {});
     } on TimeoutException catch (e) {
-      customSnackBar("Connection Timeout");
+      customSnackBar(
+          context: context, message: 'Connection Timedout', onPressed: () {});
     } on Error catch (e) {
-      // print(e);
-      setState(() {
-        errorState = true;
-      });
-      customSnackBar("$e");
+      customSnackBar(
+          context: context,
+          message: 'An Error Ocuured ${e.toString()}',
+          onPressed: () {});
     }
     setState(() {
       loading = false;
@@ -320,75 +237,79 @@ class _LanderMartsListState extends State<LanderMartsList> {
 
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? SizedBox(
-            height: 200,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-          )
-        : errorState
-            ? Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
-                height: 300,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      textAlign: TextAlign.center,
-                      "Their was a problem with Your connection.",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          errorState = false;
-                        });
-                        fetchStores();
-                      },
-                      style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                        horizontal: 35,
-                        vertical: 10,
-                      )),
-                      child: Text(
-                        "Try again",
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: kTextLight,
-                            ),
-                      ),
-                    ),
-                  ],
+    return !errorState
+        ? loading
+            ? SizedBox(
+                height: 200,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
               )
-            : SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 20,
-                    horizontal: 20,
-                  ),
-                  child: Row(
-                    children: List.generate(_sizePreview, (index) {
-                      return Hero(
-                        tag: context.read<Store>().stores[index]['id'],
-                        child: StoreItem(
-                          index: index,
-                          title: context.read<Store>().stores[index]['name'],
-                        ),
-                      );
-                    }),
-                  ),
+            : GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 6.0,
+                  crossAxisSpacing: 6.0,
                 ),
-              );
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                // crossAxisCount is the number of columns
+                itemCount: context.read<Store>().stores.length,
+                // This creates two columns with two items in each column
+                itemBuilder: (BuildContext context, index) {
+                  return Hero(
+                    tag: context.read<Store>().stores[index]['id'],
+                    child: StoreItem(
+                      index: index,
+                      title: context.read<Store>().stores[index]['name'],
+                    ),
+                  );
+                })
+        : errorHandler(context);
+  }
+
+  Container errorHandler(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+      ),
+      height: 300,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            textAlign: TextAlign.center,
+            "Their was a problem with Your connection.",
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                errorState = false;
+              });
+              fetchStores();
+            },
+            style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+              horizontal: 35,
+              vertical: 10,
+            )),
+            child: Text(
+              "Try again",
+              style: Theme.of(context).textTheme.headline6!.copyWith(
+                    color: kTextLight,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -408,59 +329,32 @@ class StoreItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(CupertinoPageRoute(
-            builder: (_) => LaunderMartView(
-                tagId: context.read<Store>().stores[index]['id'],
-                index: index)));
-      },
-      child: Container(
-          width: MediaQuery.of(context).size.width,
-          margin: margin,
+    final storeItem = context.read<Store>().stores[index];
+    return Card(
+      elevation: 4,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: InkWell(
+        splashColor: Colors.blue.withAlpha(30),
+        onTap: () {
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (_) =>
+                  LaunderMartView(tagId: storeItem['id'], index: index),
+            ),
+          );
+        },
+        child: Container(
           decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(10),
-                bottomRight: Radius.circular(10),
-              ),
-              color: kTextLight,
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 3,
-                  color: Theme.of(context).colorScheme.secondary,
-                  offset: const Offset(0, 5),
-                  spreadRadius: 1,
-                ),
-              ]),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(
-                        '${baseUrl()}/${context.read<Store>().stores[index]['storeImg'][0]}'),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                ),
-                height: 180,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 20,
-                ),
-                child: Text(
-                  textAlign: TextAlign.start,
-                  title,
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ),
-            ],
-          )),
+            image: DecorationImage(
+              image: NetworkImage('${baseUrl()}/${storeItem["storeImg"][0]}'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
