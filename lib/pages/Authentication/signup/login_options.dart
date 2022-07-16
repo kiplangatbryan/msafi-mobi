@@ -165,190 +165,188 @@ class _SignUpPageState extends State<SignUpPage> {
       return Navigator.of(context).pop();
     }
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          bottomOpacity: .3,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, size: 24),
-            onPressed: _goback,
-            color: kTextColor,
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        bottomOpacity: .3,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 24),
+          onPressed: _goback,
+          color: kTextColor,
         ),
-        body: SingleChildScrollView(
-          child: SizedBox(
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 25,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    textAlign: TextAlign.left,
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "\nCreate an account",
-                          style: GoogleFonts.notoSans(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+      ),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 25,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "\nCreate an account",
+                        style: GoogleFonts.notoSans(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        TextSpan(
-                          text:
-                              "\n\nPlease enter your valid data in order to create an account\n\n",
-                          style: GoogleFonts.notoSans(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        )
-                      ],
-                    ),
+                      ),
+                      TextSpan(
+                        text:
+                            "\n\nPlease enter your valid data in order to create an account\n\n",
+                        style: GoogleFonts.notoSans(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      )
+                    ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          textAlign: TextAlign.left,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "$errors\n",
-                                style: GoogleFonts.notoSans(
-                                  fontSize: 15,
-                                  color: Colors.red,
-                                ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        textAlign: TextAlign.left,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "$errors\n",
+                              style: GoogleFonts.notoSans(
+                                fontSize: 15,
+                                color: Colors.red,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        customTextField(
-                          inputType: TextInputType.name,
-                          icon: const Icon(
-                            Icons.person_outlined,
-                            size: 18,
-                          ),
-                          hint: "Enter a username",
-                          label: "Username",
-                          onChanged: (val) {},
-                          onSubmit: _setName,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter a valid username';
-                            }
-                            return null;
-                          },
+                      ),
+                      customTextField(
+                        inputType: TextInputType.name,
+                        icon: const Icon(
+                          Icons.person_outlined,
+                          size: 18,
                         ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        customTextField(
-                          inputType: TextInputType.emailAddress,
-                          icon: const Icon(Icons.mail_outline, size: 18),
-                          hint: "Enter Email Address",
-                          label: "Email",
-                          onChanged: (val) {},
-                          onSubmit: _setEmail,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter a valid Email';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        customPasswordField(
-                          icon: const Icon(Icons.lock_open_outlined, size: 18),
-                          inputType: TextInputType.visiblePassword,
-                          hint: "Enter Password",
-                          label: "Password",
-                          onChanged: (val) {},
-                          onSubmit: _setPassword,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter a valid password';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        customExtendButton(
-                          ctx: context,
-                          child: !loading
-                              ? Text(
-                                  "Sign Up",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline5!
-                                      .copyWith(
-                                        color: kTextLight,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                )
-                              : const CircularProgressIndicator(
-                                  color: kTextLight,
-                                ),
-                          onPressed: _onSubmit,
-                        ),
-                      ],
-                    ),
+                        hint: "Enter a username",
+                        label: "Username",
+                        onChanged: (val) {},
+                        onSubmit: _setName,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter a valid username';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      customTextField(
+                        inputType: TextInputType.emailAddress,
+                        icon: const Icon(Icons.mail_outline, size: 18),
+                        hint: "Enter Email Address",
+                        label: "Email",
+                        onChanged: (val) {},
+                        onSubmit: _setEmail,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter a valid Email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      customPasswordField(
+                        icon: const Icon(Icons.lock_open_outlined, size: 18),
+                        inputType: TextInputType.visiblePassword,
+                        hint: "Enter Password",
+                        label: "Password",
+                        onChanged: (val) {},
+                        onSubmit: _setPassword,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter a valid password';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      customExtendButton(
+                        ctx: context,
+                        child: !loading
+                            ? Text(
+                                "Sign Up",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline5!
+                                    .copyWith(
+                                      color: kTextLight,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              )
+                            : const CircularProgressIndicator(
+                                color: kTextLight,
+                              ),
+                        onPressed: _onSubmit,
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Already have an account",
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Already have an account",
+                        style: GoogleFonts.notoSans(
+                          fontSize: 16,
+                          letterSpacing: 1.3,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => _navigateToLogin(),
+                        child: Text(
+                          "Sign In",
                           style: GoogleFonts.notoSans(
                             fontSize: 16,
                             letterSpacing: 1.3,
-                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextButton(
-                          onPressed: () => _navigateToLogin(),
-                          child: Text(
-                            "Sign In",
-                            style: GoogleFonts.notoSans(
-                              fontSize: 16,
-                              letterSpacing: 1.3,
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+              ],
             ),
           ),
         ),

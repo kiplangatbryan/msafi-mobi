@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
 import 'package:msafi_mobi/pages/Authentication/signup/login_options.dart';
-import 'package:msafi_mobi/pages/launderMarts/onboarding/pages/location.dart';
 import 'package:msafi_mobi/pages/onboarding/main.dart';
 import 'package:msafi_mobi/pages/regular/home/main.dart';
 import 'package:msafi_mobi/pages/splash/main.dart';
 import 'package:msafi_mobi/providers/basket.providers.dart';
 import 'package:msafi_mobi/providers/map.provider.dart';
+import 'package:msafi_mobi/providers/placed.providers.dart';
 import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/settings.dart';
@@ -34,6 +34,7 @@ Future main() async {
         ChangeNotifierProvider(create: (context) => AppState()),
         ChangeNotifierProvider(create: (context) => Order()),
         ChangeNotifierProvider(create: (context) => Stations()),
+        ChangeNotifierProvider(create: (context) => ExistingOrders()),
       ],
       child: const MyApp(),
     ),

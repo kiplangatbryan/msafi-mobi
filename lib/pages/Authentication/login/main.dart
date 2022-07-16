@@ -170,196 +170,193 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          bottomOpacity: .3,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, size: 22),
-            onPressed: () => Navigator.of(context).pop(),
-            color: kTextColor,
-          ),
-          actions: [],
+    return Scaffold(
+      appBar: AppBar(
+        bottomOpacity: .3,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 22),
+          onPressed: () => Navigator.of(context).pop(),
+          color: kTextColor,
         ),
-        body: SingleChildScrollView(
-          child: SizedBox(
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 25,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  RichText(
-                    textAlign: TextAlign.left,
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "\nSign In!",
-                          style: GoogleFonts.notoSans(
-                            fontSize: 33,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+        actions: [],
+      ),
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 25,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: "\nSign In!",
+                        style: GoogleFonts.notoSans(
+                          fontSize: 33,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        TextSpan(
-                          text:
-                              "\n\nPlease enter your valid data in order to sign in to account\n\n",
-                          style: GoogleFonts.notoSans(
-                              fontSize: 16,
-                              color: Theme.of(context).colorScheme.primary),
-                        )
-                      ],
-                    ),
+                      ),
+                      TextSpan(
+                        text:
+                            "\n\nPlease enter your valid data in order to sign in to account\n\n",
+                        style: GoogleFonts.notoSans(
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.primary),
+                      )
+                    ],
                   ),
-                  const SizedBox(
-                    height: 10,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  errors,
+                  style: GoogleFonts.notoSans(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.error,
                   ),
-                  Text(
-                    errors,
-                    style: GoogleFonts.notoSans(
-                      fontSize: 14,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Form(
-                    key: _formKey,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        customTextField(
-                          inputType: TextInputType.emailAddress,
-                          icon: const Icon(Icons.mail_outline, size: 18),
-                          hint: "Enter Email Address",
-                          label: "Email",
-                          onChanged: (val) {},
-                          onSubmit: _setEmail,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Enter a valid email address';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        customPasswordField(
-                          icon: const Icon(Icons.lock_open_outlined, size: 18),
-                          inputType: TextInputType.visiblePassword,
-                          hint: "Enter Password",
-                          label: "Password",
-                          onChanged: (val) {},
-                          onSubmit: _setPassword,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "password is required";
-                            } else if (RegExp(r'/[a-zA-Z]/')
-                                        .firstMatch(value) !=
-                                    null ||
-                                RegExp(r'/\d/').firstMatch(value) != null) {
-                              return "Password must contain at least one letter and one number";
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        customExtendButton(
-                          ctx: context,
-                          onPressed: _onSubmit,
-                          child: !loading
-                              ? Text(
-                                  "Login",
-                                  style: GoogleFonts.notoSans(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: kTextLight,
-                                  ),
-                                )
-                              : const CircularProgressIndicator(
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      customTextField(
+                        inputType: TextInputType.emailAddress,
+                        icon: const Icon(Icons.mail_outline, size: 18),
+                        hint: "Enter Email Address",
+                        label: "Email",
+                        onChanged: (val) {},
+                        onSubmit: _setEmail,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter a valid email address';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      customPasswordField(
+                        icon: const Icon(Icons.lock_open_outlined, size: 18),
+                        inputType: TextInputType.visiblePassword,
+                        hint: "Enter Password",
+                        label: "Password",
+                        onChanged: (val) {},
+                        onSubmit: _setPassword,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "password is required";
+                          } else if (RegExp(r'/[a-zA-Z]/').firstMatch(value) !=
+                                  null ||
+                              RegExp(r'/\d/').firstMatch(value) != null) {
+                            return "Password must contain at least one letter and one number";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      customExtendButton(
+                        ctx: context,
+                        onPressed: _onSubmit,
+                        child: !loading
+                            ? Text(
+                                "Login",
+                                style: GoogleFonts.notoSans(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                   color: kTextLight,
                                 ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Center(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(CupertinoPageRoute(
-                                  builder: (_) => const EmailReset()));
-                            },
-                            child: Text(
-                              "Forgot password",
-                              style: GoogleFonts.notoSans(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).primaryColor,
+                              )
+                            : const CircularProgressIndicator(
+                                color: kTextLight,
                               ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(CupertinoPageRoute(
+                                builder: (_) => const EmailReset()));
+                          },
+                          child: Text(
+                            "Forgot password",
+                            style: GoogleFonts.notoSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).primaryColor,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: kTextMediumColor.withOpacity(.1),
-                        width: 1,
                       ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: kTextMediumColor.withOpacity(.1),
+                      width: 1,
                     ),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account",
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account",
+                        style: GoogleFonts.notoSans(
+                          fontSize: 16,
+                          letterSpacing: 1.3,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => _navigateToRegister(),
+                        child: Text(
+                          "Sign Up",
                           style: GoogleFonts.notoSans(
                             fontSize: 16,
                             letterSpacing: 1.3,
-                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextButton(
-                          onPressed: () => _navigateToRegister(),
-                          child: Text(
-                            "Sign Up",
-                            style: GoogleFonts.notoSans(
-                              fontSize: 16,
-                              letterSpacing: 1.3,
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+              ],
             ),
           ),
         ),

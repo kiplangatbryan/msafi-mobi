@@ -29,65 +29,68 @@ class _MerchantHomeState extends State<MerchantHome> {
   @override
   Widget build(BuildContext context) {
     final router = context.watch<MerchantRoute>();
-    return Scaffold(
-      body: routes[router.currentPage],
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 50,
-        enableFeedback: true,
-        showUnselectedLabels: true,
-        unselectedLabelStyle: GoogleFonts.notoSans(
-          fontSize: 12,
-          color: kTextMediumColor,
-          height: 1.2,
-          fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Scaffold(
+        body: routes[router.currentPage],
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 50,
+          enableFeedback: true,
+          showUnselectedLabels: true,
+          unselectedLabelStyle: GoogleFonts.notoSans(
+            fontSize: 12,
+            color: kTextMediumColor,
+            height: 1.2,
+            fontWeight: FontWeight.w600,
+          ),
+          unselectedItemColor: kTextMediumColor,
+          selectedLabelStyle: GoogleFonts.notoSans(
+            fontSize: 13,
+            color: Theme.of(context).primaryColor,
+            height: 1.8,
+            fontWeight: FontWeight.w600,
+          ),
+          items: [
+            BottomNavigationBarItem(
+              label: 'Dashboard',
+              icon: Icon(
+                Icons.dashboard_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+                size: iconSize,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Orders',
+              icon: Icon(
+                Icons.track_changes,
+                color: Theme.of(context).colorScheme.secondary,
+                size: iconSize,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Chats',
+              icon: Icon(
+                Icons.notifications_active,
+                color: Theme.of(context).colorScheme.secondary,
+                size: iconSize,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Profile',
+              tooltip: "Profile",
+              icon: Icon(
+                Icons.person_outline_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 28,
+              ),
+            ),
+          ],
+          selectedItemColor: Theme.of(context).primaryColor,
+          showSelectedLabels: true,
+          currentIndex: router.currentPage,
+          selectedIconTheme:
+              IconThemeData(color: Theme.of(context).primaryColor),
+          onTap: router.setCurrentPage,
         ),
-        unselectedItemColor: kTextMediumColor,
-        selectedLabelStyle: GoogleFonts.notoSans(
-          fontSize: 13,
-          color: Theme.of(context).primaryColor,
-          height: 1.8,
-          fontWeight: FontWeight.w600,
-        ),
-        items: [
-          BottomNavigationBarItem(
-            label: 'Dashboard',
-            icon: Icon(
-              Icons.dashboard_outlined,
-              color: Theme.of(context).colorScheme.secondary,
-              size: iconSize,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: 'Orders',
-            icon: Icon(
-              Icons.track_changes,
-              color: Theme.of(context).colorScheme.secondary,
-              size: iconSize,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: 'Chats',
-            icon: Icon(
-              Icons.notifications_active,
-              color: Theme.of(context).colorScheme.secondary,
-              size: iconSize,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: 'Profile',
-            tooltip: "Profile",
-            icon: Icon(
-              Icons.person_outline_outlined,
-              color: Theme.of(context).colorScheme.secondary,
-              size: 28,
-            ),
-          ),
-        ],
-        selectedItemColor: Theme.of(context).primaryColor,
-        showSelectedLabels: true,
-        currentIndex: router.currentPage,
-        selectedIconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-        onTap: router.setCurrentPage,
       ),
     );
   }
