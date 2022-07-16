@@ -8,6 +8,7 @@ import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/merchant.provider.dart';
+import '../processing/orders.dart';
 
 class ClientHomePage extends StatefulWidget {
   const ClientHomePage({Key? key}) : super(key: key);
@@ -20,8 +21,8 @@ class _ClientHomePageState extends State<ClientHomePage> {
   List<Widget> routes = const [
     HomePageView(),
     LaunderView(),
-    SettingsView(),
-    AccountSettings(),
+    OrdersView(),
+    UserSettings(),
   ];
   Widget _currentPage = Container();
   dynamic merchantRoute;
@@ -50,66 +51,70 @@ class _ClientHomePageState extends State<ClientHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: _currentPage,
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 50,
-        enableFeedback: true,
-        showUnselectedLabels: true,
-        unselectedLabelStyle: GoogleFonts.notoSans(
-          fontSize: 13,
-          color: Theme.of(context).colorScheme.secondary,
-          height: 1.2,
-          fontWeight: FontWeight.w600,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: _currentPage,
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 50,
+          enableFeedback: true,
+          showUnselectedLabels: false,
+          // unselectedLabelStyle: GoogleFonts.notoSans(
+          //   fontSize: 13,
+          //   color: Theme.of(context).colorScheme.secondary,
+          //   height: 1.2,
+          //   fontWeight: FontWeight.w600,
+          // ),
+          unselectedItemColor: Theme.of(context).colorScheme.primary,
+          selectedItemColor: Theme.of(context).primaryColor,
+          showSelectedLabels: false,
+          currentIndex: _count,
+          selectedIconTheme:
+              IconThemeData(color: Theme.of(context).primaryColor),
+
+          onTap: _handleNavigation,
+          // selectedLabelStyle: GoogleFonts.notoSans(
+          //   fontSize: 16,
+          //   color: Theme.of(context).primaryColor,
+          //   height: 1.8,
+          //   fontWeight: FontWeight.w600,
+          // ),
+          items: [
+            BottomNavigationBarItem(
+              label: 'Dashboard',
+              icon: Icon(
+                Icons.dashboard_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 25,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'My orders',
+              icon: Icon(
+                Icons.track_changes,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 25,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Notifications',
+              icon: Icon(
+                Icons.notifications_active,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 25,
+              ),
+            ),
+            BottomNavigationBarItem(
+              label: 'Profile',
+              tooltip: "Profile",
+              icon: Icon(
+                Icons.person_outline_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+                size: 25,
+              ),
+            ),
+          ],
         ),
-        unselectedItemColor: Theme.of(context).colorScheme.primary,
-        selectedItemColor: Theme.of(context).primaryColor,
-        showSelectedLabels: true,
-        currentIndex: _count,
-        selectedIconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-        onTap: _handleNavigation,
-        selectedLabelStyle: GoogleFonts.notoSans(
-          fontSize: 16,
-          color: Theme.of(context).primaryColor,
-          height: 1.8,
-          fontWeight: FontWeight.w600,
-        ),
-        items: [
-          BottomNavigationBarItem(
-            label: 'Dashboard',
-            icon: Icon(
-              Icons.dashboard_outlined,
-              color: Theme.of(context).colorScheme.secondary,
-              size: 25,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: 'Launders',
-            icon: Icon(
-              Icons.track_changes,
-              color: Theme.of(context).colorScheme.secondary,
-              size: 25,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: 'Chats',
-            icon: Icon(
-              Icons.notifications_active,
-              color: Theme.of(context).colorScheme.secondary,
-              size: 25,
-            ),
-          ),
-          BottomNavigationBarItem(
-            label: 'Profile',
-            tooltip: "Profile",
-            icon: Icon(
-              Icons.person_outline_outlined,
-              color: Theme.of(context).colorScheme.secondary,
-              size: 25,
-            ),
-          ),
-        ],
       ),
     );
   }

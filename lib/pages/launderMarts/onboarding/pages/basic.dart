@@ -8,7 +8,6 @@ import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../providers/merchant.provider.dart';
-import 'customize.dart';
 
 class BasicInformation extends StatefulWidget {
   const BasicInformation({Key? key}) : super(key: key);
