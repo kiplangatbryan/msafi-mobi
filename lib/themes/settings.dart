@@ -27,7 +27,7 @@ ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
     primaryColor: kTextColor,
     scaffoldBackgroundColor: kTextColor,
-    textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme),
+    textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
     iconTheme: const IconThemeData(
       color: kTextLight,
     ),

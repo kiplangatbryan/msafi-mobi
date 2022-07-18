@@ -83,14 +83,14 @@ class _BasicInformationState extends State<BasicInformation> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 RichText(
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.center,
                   text: TextSpan(
                     children: [
                       TextSpan(
                         text:
-                            "\n\nWelcome ${context.read<User>().name} Let's Build Together!",
+                            "\n\nWelcome ${context.read<User>().name}\n Let's Build Together",
                         style: Theme.of(context).textTheme.headline5!.copyWith(
-                              fontSize: 28,
+                              fontSize: 30,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -133,7 +133,7 @@ class _BasicInformationState extends State<BasicInformation> {
                   hint: "0700 000 000",
                   label: "Business Contact",
                   validator: (value) {
-                    final pattern = RegExp(r'^0[0-9]+');
+                    final pattern = RegExp(r'^0[0-9]+$');
                     if (value.length < 10 ||
                         value.length > 10 ||
                         !pattern.hasMatch(value)) {
@@ -158,7 +158,7 @@ class _BasicInformationState extends State<BasicInformation> {
                 ),
                 customTextField(
                   hint: "Business Address",
-                  label: "Where can clients Find You?",
+                  label: "Where is your Business located ?",
                   inputType: TextInputType.streetAddress,
                   validator: (value) {
                     if (value.length < 5 || value.isEmpty) {

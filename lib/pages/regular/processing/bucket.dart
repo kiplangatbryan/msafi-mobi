@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:msafi_mobi/pages/regular/processing/checkout.dart';
-import 'package:msafi_mobi/pages/regular/processing/payment_options.dart';
 import 'package:msafi_mobi/pages/regular/processing/pickup_spots.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -14,8 +12,8 @@ import '../../../themes/main.dart';
 import '../components/laundry_box.dart';
 
 class Bucket extends StatefulWidget {
-  int index;
-  Bucket({required this.index, Key? key}) : super(key: key);
+  final int index;
+  const Bucket({required this.index, Key? key}) : super(key: key);
 
   @override
   State<Bucket> createState() => _BucketState();
@@ -24,6 +22,7 @@ class Bucket extends StatefulWidget {
 class _BucketState extends State<Bucket> {
   // fetch images from localstore
   List storeClothes = [];
+  Map storeInf = {};
 
   @override
   void initState() {
@@ -32,9 +31,9 @@ class _BucketState extends State<Bucket> {
   }
 
   _initStore() {
-    final storeInf = context.read<Store>().stores;
     setState(() {
-      storeClothes = storeInf[widget.index]['pricing'];
+      storeInf = context.read<Store>().stores[widget.index];
+      storeClothes = storeInf['pricing'];
     });
   }
 
@@ -43,6 +42,8 @@ class _BucketState extends State<Bucket> {
     final clothes = context.read<Basket>().listOfClothes();
     context.read<Order>().setAmount(amount);
     context.read<Order>().setClothes(clothes);
+    context.read<Order>().setStore(storeInf['id']);
+
     Navigator.of(context)
         .push(CupertinoPageRoute(builder: (_) => const PickUpSpots()));
   }
@@ -142,7 +143,7 @@ class _BucketState extends State<Bucket> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            "Checkout",
+                            "Proceed",
                             style:
                                 Theme.of(context).textTheme.headline6!.copyWith(
                                       color: kTextLight,

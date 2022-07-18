@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/pages/Authentication/login/main.dart';
+import 'package:msafi_mobi/providers/merchant.provider.dart';
+import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
@@ -53,13 +55,13 @@ class _SplashScreenState extends State<SplashScreen> {
           // () => _navigateTologin(),
           () async {
         final data = json.decode(res);
-        print(data);
 
         await context.read<User>().createUser(data);
         if (data['user']['role'] == 'user') {
           Navigator.of(context)
               .pushNamedAndRemoveUntil('/default-home', (route) => false);
         } else if (data['stores'].length > 0) {
+          context.read<MartConfig>().populateStore(data['stores'][0]);
           Navigator.of(context)
               .pushNamedAndRemoveUntil('/mart-home', (route) => false);
         } else {

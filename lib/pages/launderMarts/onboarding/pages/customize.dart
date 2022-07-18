@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:mime/mime.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -17,6 +20,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../helpers/http_services.dart';
+import '../../../../providers/user.provider.dart';
 
 class CustomizeStore extends StatefulWidget {
   const CustomizeStore({Key? key}) : super(key: key);
@@ -35,10 +39,12 @@ class _CustomizeStoreState extends State<CustomizeStore> {
   _displayPickImageDialog() async {
     try {
       final List<XFile>? pickedFileList = await _picker.pickMultiImage();
-      setState(() {
-        imageFileList = pickedFileList;
-        selectedImageState = true;
-      });
+      if (pickedFileList != null) {
+        setState(() {
+          imageFileList = pickedFileList;
+          selectedImageState = true;
+        });
+      }
     } catch (e) {
       customSnackBar(context: context, message: e.toString(), onPressed: () {});
     }
@@ -53,58 +59,12 @@ class _CustomizeStoreState extends State<CustomizeStore> {
 
   Future<void> getLostData() async {}
 
-  showBottomSheet() {
-    showMaterialModalBottomSheet(
-      context: context,
-      builder: (context) => SingleChildScrollView(
-        controller: ModalScrollController.of(context),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 30,
-            vertical: 50,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              loading
-                  ? Lottie.asset("assets/lottie/circular-loading.json",
-                      fit: BoxFit.cover)
-                  : Container(),
-              if (!success)
-                customExtendButton(
-                  ctx: context,
-                  child: Text(
-                    "Retry",
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color: kTextLight,
-                        ),
-                  ),
-                  onPressed: () async {
-                    await createOrUpdateStore();
-                  },
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<int> createOrUpdateStore() async {
-    // showBottomSheet();
+  createOrUpdateStore() async {
     setState(() {
       loading = true;
     });
-    var url = Uri.parse('');
     final store = context.read<MartConfig>();
     final token = await checkAndValidateAuthToken();
-
-    // print(data);
-    // return 1;
-    // final body = json.encode(data);
 
     final dio = Dio();
     FormData formData = FormData();
@@ -142,35 +102,70 @@ class _CustomizeStoreState extends State<CustomizeStore> {
 
     try {
       // send data to server
-      Response resp = await dio
-          .post('${baseUrl()}/store/createStore',
-              data: formData,
-              options: Options(headers: {
-                "Accept": "application/json",
-                "Content-Type":
-                    "multipart/form-data; boundary=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MmM2NWU0M2FlOWZmNDM5ZjBiZDcxMGIiLCJpYXQiOjE2NTc4MTQxMjksImV4cCI6MTY1NzgxNTkyOSwidHlwZSI6ImFjY2VzcyJ9.IqrkKLUREzNV8JaXabWk3HYweh12PHZ5kpDgoZq_kio",
-                "Authorization": "Bearer $token"
-              }))
-          .then(((value) {
-        Navigator.of(context).pushNamed("/mart-home");
-        return value;
-      }));
+      Response resp = await dio.post('${baseUrl()}/store/createStore',
+          data: formData,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type":
+                "multipart/form-data; boundary=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MmM2NWU0M2FlOWZmNDM5ZjBiZDcxMGIiLCJpYXQiOjE2NTc4MTQxMjksImV4cCI6MTY1NzgxNTkyOSwidHlwZSI6ImFjY2VzcyJ9.IqrkKLUREzNV8JaXabWk3HYweh12PHZ5kpDgoZq_kio",
+            "Authorization": "Bearer $token"
+          }));
 
-      setState(() {
-        loading = false;
-        success = true;
-      });
-
+      if (resp.statusCode == 201) {
+        setState(() {
+          loading = false;
+          success = true;
+        });
+        await _proceed();
+      } else {
+        setState(() {
+          loading = false;
+          success = false;
+        });
+      }
       // if (response) {}
     } catch (err) {
-      print(err);
       setState(() {
         loading = false;
         success = false;
       });
     }
+  }
 
-    return 1;
+  fetchUser() async {
+    final token = await checkAndValidateAuthToken();
+    final dio = Dio();
+    try {
+      Response response = await dio.get('${baseUrl()}/auth/fetch-user',
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        customSnackBar(
+            context: context, message: "Invalid response", onPressed: () {});
+      }
+    } catch (err) {
+      customSnackBar(
+          context: context, message: "Server comms failed", onPressed: () {});
+    }
+  }
+
+  _proceed() async {
+    // fetch user data
+    final user = await fetchUser();
+
+    if (user != null) {
+      await context.read<User>().createUser(user);
+      context.read<MartConfig>().populateStore(user['stores'][0]);
+
+      return Navigator.of(context)
+          .pushNamedAndRemoveUntil('/mart-home', (route) => false);
+    }
+    customSnackBar(
+        context: context,
+        message: "There was a problem try again",
+        onPressed: () {});
+    // naviagate to home
   }
 
   @override
@@ -198,26 +193,94 @@ class _CustomizeStoreState extends State<CustomizeStore> {
           color: Theme.of(context).colorScheme.primary,
         ),
       ),
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 20,
-            vertical: 30,
           ),
-          child: selectedImageState
-              ? SingleChildScrollView(
-                  child: afterImages(
-                    onSubmit: createOrUpdateStore,
-                    onPressed: _resetAndPickImages,
-                    imageFileList: imageFileList,
-                  ),
-                )
-              : SingleChildScrollView(
-                  child: beforeImages(
-                    onPressed: _displayPickImageDialog,
-                  ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 30,
                 ),
+                selectedImageState
+                    ? afterImages(
+                        onPressed: _resetAndPickImages,
+                        imageFileList: imageFileList,
+                      )
+                    : beforeImages(
+                        onPressed: _displayPickImageDialog,
+                      ),
+                selectedImageState
+                    ? customExtendButton(
+                        background: Colors.red,
+                        ctx: context,
+                        child: !loading
+                            ? !success
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Retry",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6!
+                                            .copyWith(color: kTextLight),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      const Icon(Icons.redo_rounded),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Upload and Finish",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline6!
+                                            .copyWith(color: kTextLight),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      const Icon(Icons.check),
+                                    ],
+                                  )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Creating ...   ",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6!
+                                        .copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: kTextLight,
+                                        ),
+                                  ),
+                                  const SizedBox(width: 20),
+                                  const CircularProgressIndicator(
+                                    color: kTextLight,
+                                  ),
+                                ],
+                              ),
+                        onPressed: () async {
+                          await createOrUpdateStore();
+                        },
+                      )
+                    : Container(),
+                const SizedBox(
+                  height: 50,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -226,10 +289,8 @@ class _CustomizeStoreState extends State<CustomizeStore> {
 
 class afterImages extends StatelessWidget {
   Function onPressed;
-  Function onSubmit;
   afterImages({
     required this.onPressed,
-    required this.onSubmit,
     Key? key,
     required this.imageFileList,
   }) : super(key: key);
@@ -281,7 +342,9 @@ class afterImages extends StatelessWidget {
         Text(
           textAlign: TextAlign.center,
           "These images will be your Frontier.\nTo reset the selection? click reset button",
-          style: Theme.of(context).textTheme.headline6,
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                fontSize: 18,
+              ),
         ),
         const SizedBox(
           height: 20,
@@ -296,25 +359,7 @@ class afterImages extends StatelessWidget {
           ),
         ),
         const SizedBox(
-          height: 50,
-        ),
-        customExtendButton(
-          ctx: context,
-          child: Text(
-            "Upload and Finish",
-            style: Theme.of(context)
-                .textTheme
-                .headline6!
-                .copyWith(color: kTextLight),
-          ),
-          onPressed: () async {
-            // Navigator.of(context).push(
-            //   CupertinoPageRoute(
-            //     builder: (_) => const ProductSelection(),
-            //   ),
-            // );
-            await onSubmit();
-          },
+          height: 30,
         ),
       ],
     );
@@ -322,9 +367,9 @@ class afterImages extends StatelessWidget {
 }
 
 class beforeImages extends StatelessWidget {
-  Function onPressed;
+  final Function onPressed;
 
-  beforeImages({
+  const beforeImages({
     required this.onPressed,
     Key? key,
   }) : super(key: key);

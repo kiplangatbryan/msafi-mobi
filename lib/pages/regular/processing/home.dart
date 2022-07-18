@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:msafi_mobi/components/snackback_component.dart';
 import 'package:msafi_mobi/providers/store.providers.dart';
 import 'package:msafi_mobi/themes/main.dart';
@@ -179,6 +180,7 @@ class _LanderMartsListState extends State<LanderMartsList> {
   String snackBarMessage = "";
   bool showSnack = false;
   bool errorState = false;
+  List storesArr = [];
 
   @override
   void initState() {
@@ -205,16 +207,13 @@ class _LanderMartsListState extends State<LanderMartsList> {
 
         // ignore: use_build_context_synchronously
         context.read<Store>().saveStores(data);
-
-        Future.delayed(
-            const Duration(seconds: 1),
-            () => {
-                  setState(() {
-                    loading = false;
-                  })
-                });
+        setState(() {
+          loading = false;
+          storesArr = data;
+        });
       } else {
-        // _postErrors("Email or password is Incorrect");
+        customSnackBar(
+            context: context, message: 'Something happened', onPressed: () {});
       }
     } on SocketException {
       customSnackBar(
@@ -247,26 +246,47 @@ class _LanderMartsListState extends State<LanderMartsList> {
                   ),
                 ),
               )
-            : GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 6.0,
-                  crossAxisSpacing: 6.0,
-                ),
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                // crossAxisCount is the number of columns
-                itemCount: context.read<Store>().stores.length,
-                // This creates two columns with two items in each column
-                itemBuilder: (BuildContext context, index) {
-                  return Hero(
-                    tag: context.read<Store>().stores[index]['id'],
-                    child: StoreItem(
-                      index: index,
-                      title: context.read<Store>().stores[index]['name'],
+            : storesArr.isEmpty
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Lottie.asset(
+                        'assets/lottie/coffie-sleeping.json',
+                        repeat: false,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Text(
+                        "Sorry no stores Available. They will be available soon",
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                    ],
+                  )
+                : GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      mainAxisExtent: 250,
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 6.0,
+                      crossAxisSpacing: 6.0,
                     ),
-                  );
-                })
+                    physics: const BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    // crossAxisCount is the number of columns
+                    itemCount: storesArr.length,
+                    // This creates two columns with two items in each column
+                    itemBuilder: (BuildContext context, index) {
+                      final store = storesArr[index];
+                      return Hero(
+                        tag: store['id'],
+                        child: StoreItem(
+                          index: index,
+                          title: store['name'],
+                        ),
+                      );
+                    })
         : errorHandler(context);
   }
 
@@ -330,31 +350,44 @@ class StoreItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storeItem = context.read<Store>().stores[index];
-    return Card(
-      elevation: 4,
-      clipBehavior: Clip.hardEdge,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
-        onTap: () {
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (_) =>
-                  LaunderMartView(tagId: storeItem['id'], index: index),
-            ),
-          );
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage('${baseUrl()}/${storeItem["storeImg"][0]}'),
-              fit: BoxFit.cover,
+    return Column(
+      children: [
+        Card(
+          elevation: 4,
+          clipBehavior: Clip.hardEdge,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: InkWell(
+            splashColor: Colors.blue.withAlpha(30),
+            onTap: () {
+              Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (_) =>
+                      LaunderMartView(tagId: storeItem['id'], index: index),
+                ),
+              );
+            },
+            child: Container(
+              height: 160,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image:
+                      NetworkImage('${baseUrl()}/${storeItem["storeImg"][0]}'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            storeItem['name'],
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -29,9 +29,9 @@ class MapServices {
       return results;
     } on SocketException {
       return 2;
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       return 4;
-    } on Error catch (e) {
+    } on Error {
       return 5;
     }
   }

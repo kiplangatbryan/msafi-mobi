@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 class Order extends ChangeNotifier {
   List clothes = [];
   double amount = 0;
-  String stationId = "";
   Map stationAdress = {};
   late DateTime expectedDate;
   late String paymentId;

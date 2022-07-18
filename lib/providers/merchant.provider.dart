@@ -12,7 +12,7 @@ class MartConfig extends ChangeNotifier {
   late String description;
   late String address;
   late String bsphone;
-  late List<Map> locations;
+  List<Map> locations = [];
   late List pricing;
   late List storeImg;
   List<Map> selectedClothes = [];

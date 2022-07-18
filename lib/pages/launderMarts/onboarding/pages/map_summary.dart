@@ -20,7 +20,7 @@ class MapIntro extends StatelessWidget {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          "Choose pick-ups Intro",
+          "Choose pickups Introduction",
           style: Theme.of(context).textTheme.headline6!.copyWith(
                 fontSize: 18,
               ),
@@ -37,8 +37,11 @@ class MapIntro extends StatelessWidget {
           Positioned(
             child: SizedBox(
               height: 500,
-              child: Lottie.asset("assets/lottie/map-location.json",
-                  fit: BoxFit.cover),
+              child: Lottie.asset(
+                "assets/lottie/map-location.json",
+                fit: BoxFit.cover,
+                repeat: false,
+              ),
             ),
           ),
           Padding(
@@ -57,18 +60,13 @@ class MapIntro extends StatelessWidget {
                             "Make it easy for clients to find you\n\n\n\n\n\n\n\n\n",
                         style: Theme.of(context).textTheme.headline3!.copyWith(
                               fontWeight: FontWeight.bold,
-                              height: 1.5,
+                              height: 1.2,
                             ),
                       ),
                       TextSpan(
                         text:
-                            "Please select a\nlocation on the map,\nthat best describes the\nexact location your drop\noff point will be",
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(.6),
-                            ),
+                            "Choose a location on the map,\nthat best describes the exact location your drop off point will be",
+                        style: Theme.of(context).textTheme.subtitle1,
                       )
                     ],
                   ),

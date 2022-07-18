@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
 import 'package:msafi_mobi/pages/regular/processing/home.dart';
-import 'package:msafi_mobi/pages/regular/processing/launder_view.dart';
+import 'package:msafi_mobi/pages/regular/processing/notifications.dart';
 import 'package:msafi_mobi/pages/regular/processing/settings.dart';
-import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/merchant.provider.dart';
@@ -20,8 +17,8 @@ class ClientHomePage extends StatefulWidget {
 class _ClientHomePageState extends State<ClientHomePage> {
   List<Widget> routes = const [
     HomePageView(),
-    LaunderView(),
     OrdersView(),
+    AppNotifications(),
     UserSettings(),
   ];
   Widget _currentPage = Container();
