@@ -26,7 +26,6 @@ class _CheckOutState extends State<CheckOut> {
   @override
   void initState() {
     super.initState();
-    print(context.read<Order>().phone);
     setState(() {
       datepickController.text =
           Moment(context.read<Order>().expectedDate).calendar();
@@ -347,7 +346,7 @@ class _ProductsSummaryState extends State<ProductsSummary> {
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           width: 1.5,
-          color: Color(0xFFC7C7C7),
+          color: const Color(0xFFC7C7C7),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

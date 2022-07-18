@@ -124,19 +124,22 @@ class _MerchantOrdersState extends State<MerchantOrders> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).canvasColor,
-        elevation: 2,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: Icon(
-            Icons.arrow_back_ios_outlined,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+        backgroundColor: Theme.of(context).backgroundColor,
+        elevation: 1,
+        title: Text(
+          'My Orders',
+          style: Theme.of(context).textTheme.headline6,
         ),
-        title: searchBar(),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.search,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
@@ -149,91 +152,39 @@ class _MerchantOrdersState extends State<MerchantOrders> {
           ),
           child: Column(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color:
-                      Theme.of(context).colorScheme.secondary.withOpacity(.3),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                  vertical: 3,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            active = 0;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: active == 0
-                                ? Theme.of(context).colorScheme.background
-                                : null,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 13,
-                          ),
-                          child: Text(
-                            "Pending",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.notoSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: active == 0
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(.5),
-                            ),
-                          ),
+              if (orderList.isNotEmpty)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Chip(
+                        label: Text(
+                          "completed",
+                          style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            active = 1;
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: active == 1 ? kBackgroundColor : null,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 9,
-                            vertical: 13,
-                          ),
-                          child: Text(
-                            "Completed",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.notoSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: active == 1
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withOpacity(.5),
-                            ),
-                          ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      Chip(
+                        label: Text(
+                          "completed",
+                          style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      Chip(
+                        label: Text(
+                          "completed",
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               loading
@@ -246,25 +197,40 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                         ),
                       ),
                     )
-                  : ListView.builder(
-                      physics: const ScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: orderList.length,
-                      itemBuilder: (context, index) {
-                        final order = orderList[index];
-                        return SingleOrderComponent(
-                          margin: const EdgeInsets.only(
-                            bottom: 10,
-                          ),
-                          order: order,
-                          customerName: order['userId']['name'],
-                          status: order['status'],
-                          orderId: order['id'],
-                          stationName: order['stationId']['name'],
-                          expectedDate: order['expectedPickUp'],
-                        );
-                      },
-                    ),
+                  : orderList.isEmpty
+                      ? Column(
+                          children: [
+                            Lottie.asset(
+                              'assets/lottie/empty-orders.json',
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            Text(
+                              "You have no orders right now ):",
+                              style: Theme.of(context).textTheme.subtitle1,
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          physics: const ScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: orderList.length,
+                          itemBuilder: (context, index) {
+                            final order = orderList[index];
+                            return SingleOrderComponent(
+                              margin: const EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              order: order,
+                              customerName: order['userId']['name'],
+                              status: order['status'],
+                              orderId: order['id'],
+                              stationName: order['stationId']['name'],
+                              expectedDate: order['expectedPickUp'],
+                            );
+                          },
+                        ),
             ],
           ),
         ),

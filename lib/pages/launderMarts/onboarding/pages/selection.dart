@@ -84,22 +84,20 @@ class _ProductSelectionState extends State<ProductSelection> {
             child: Column(
               children: [
                 RichText(
+                  textAlign: TextAlign.center,
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "\nTime To Pick Your Poison",
-                        style: GoogleFonts.notoSans(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
+                          text: "\n\nChoose your business product",
+                          style:
+                              Theme.of(context).textTheme.headline6!.copyWith(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  )),
                       TextSpan(
-                        text: "\n\n' ✨ 'Tap on clothing items that you wash",
-                        style: GoogleFonts.notoSans(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                        text:
+                            "\n\n' ✨ 'Tap on clothing items that you wash, you can choose more than one",
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
                     ],
                   ),
@@ -143,68 +141,67 @@ class _ProductSelectionState extends State<ProductSelection> {
   }
 
   GridView clothSelect() {
-    return GridView(
+    final count = fetchClothes().length;
+    return GridView.builder(
       shrinkWrap: true,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 180,
         mainAxisSpacing: 6.0,
         crossAxisSpacing: 6.0,
       ),
-      physics: const ScrollPhysics(),
-      children: List.generate(
-        fetchClothes().length,
-        (index) {
-          return InkWell(
-            onTap: () {
-              setState(() {
-                selected[index] = selected[index] == null ? true : null;
-              });
-            },
-            child: Container(
-              height: 100,
-              decoration: BoxDecoration(
-                color: selected[index] != null
-                    ? Theme.of(context).indicatorColor
-                    : kTextLight,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(5),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).primaryColor.withOpacity(.2),
-                    blurRadius: 2,
-                    offset: const Offset(2, 6),
-                  )
-                ],
+      physics: const BouncingScrollPhysics(),
+      itemCount: count,
+      itemBuilder: (BuildContext context, index) {
+        return InkWell(
+          onTap: () {
+            setState(() {
+              selected[index] = selected[index] == null ? true : null;
+            });
+          },
+          child: Container(
+            height: 100,
+            decoration: BoxDecoration(
+              color: selected[index] != null
+                  ? Theme.of(context).indicatorColor
+                  : kTextLight,
+              borderRadius: const BorderRadius.all(
+                Radius.circular(5),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image(
-                    image: AssetImage(
-                      fetchClothes()[index]['imagePath'].toString(),
-                    ),
-                    height: 70,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    fetchClothes()[index]['title'].toString(),
-                    style: GoogleFonts.notoSans(
-                      fontSize: 16,
-                      color: selected[index] != null
-                          ? Theme.of(context).scaffoldBackgroundColor
-                          : Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).primaryColor.withOpacity(.2),
+                  blurRadius: 2,
+                  offset: const Offset(2, 6),
+                )
+              ],
             ),
-          );
-        },
-      ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image(
+                  image: AssetImage(
+                    fetchClothes()[index]['imagePath'].toString(),
+                  ),
+                  height: 50,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  fetchClothes()[index]['title'].toString(),
+                  style: GoogleFonts.notoSans(
+                    fontSize: 16,
+                    color: selected[index] != null
+                        ? Theme.of(context).scaffoldBackgroundColor
+                        : Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

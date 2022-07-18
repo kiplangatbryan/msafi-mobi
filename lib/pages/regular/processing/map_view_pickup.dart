@@ -79,9 +79,6 @@ class _MapViewPickUpState extends State<MapViewPickUp> {
       destination = LatLng(latitude, longitude);
     });
 
-    print(coords);
-    print(userCoords.latitude);
-
     setState(() {
       sourceLocation = LatLng(latitude, longitude);
     });

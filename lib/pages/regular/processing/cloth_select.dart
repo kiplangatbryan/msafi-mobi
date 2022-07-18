@@ -73,25 +73,24 @@ class _LaundrySelectionState extends State<LaundrySelection> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              showBottomSheet(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                      padding: EdgeInsets.all(20),
-                      child: Text("Hey Now",
-                          style: Theme.of(context).textTheme.headline2),
-                    );
-                  });
-            },
+            onPressed: () {},
+            icon: Icon(
+              Icons.search,
+              size: 30,
+              color: Theme.of(context).colorScheme.primary.withOpacity(.7),
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
             icon: Icon(
               Icons.shopping_bag_outlined,
               size: 30,
               color: Theme.of(context).colorScheme.primary.withOpacity(.7),
             ),
-          )
+          ),
         ],
-        title: searchBar(),
+        title: Text("Select clothes",
+            style: Theme.of(context).textTheme.headline6),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -103,25 +102,25 @@ class _LaundrySelectionState extends State<LaundrySelection> {
             top: 20,
           ),
           child: ListView.builder(
-            shrinkWrap: true,
-            physics: const ScrollPhysics(),
-            itemCount: storeClothes.length,
-            itemBuilder: ((context, index) {
-              return LaundryBox(
-                  decreament: () {
-                    context.read<Basket>().decreament(index: index);
-                  },
-                  increament: () {
-                    context.read<Basket>().increament(index: index);
-                  },
-                  value: context.watch<Basket>().basket[index],
-                  price: storeClothes[index]['price'].toString(),
-                  title: storeClothes[index]['id'],
-                  image: storeClothes[index]['imagePath']);
-            }),
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              itemCount: storeClothes.length,
+              itemBuilder: (context, index) {
+                print(storeClothes);
+                return LaundryBox(
+                    decreament: () {
+                      context.read<Basket>().decreament(index: index);
+                    },
+                    increament: () {
+                      context.read<Basket>().increament(index: index);
+                    },
+                    value: context.watch<Basket>().basket[index],
+                    price: storeClothes[index]['price'].toString(),
+                    title: storeClothes[index]['id'],
+                    image: storeClothes[index]['imagePath']);
+              }),
 
-            // return Container();
-          ),
+          // return Container();
         ),
       ),
       bottomNavigationBar: BottomAppBar(
