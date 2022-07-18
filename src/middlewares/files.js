@@ -6,10 +6,8 @@ const path = require('path');
 const logger = require('../config/logger');
 
 function createDirectories(pathname) {
-  const __dirname = path.resolve();
-  // eslint-disable-next-line no-useless-escape
-  const fullPath = pathname.replace(/^\.*\/|\/?[^\/]+\.[a-z]+|\/$/g, ''); // Remove leading directory markers, and remove ending /file-name.extension
-  fs.mkdir(path.resolve(__dirname, fullPath), { recursive: true }, (e) => {
+  // Remove leading directory markers, and remove ending /file-name.extension
+  fs.mkdir(path.join(__dirname, '..', '..', pathname.split('/')[0], pathname.split('/')[1]), { recursive: true }, (e) => {
     if (e) {
       logger.error(e);
     } else {
@@ -18,8 +16,8 @@ function createDirectories(pathname) {
   });
 }
 const storage = (folder) => {
-  createDirectories('../../uploads/profileImgs');
-  createDirectories('../../uploads/stores');
+  createDirectories('uploads/profileImgs');
+  createDirectories('uploads/stores');
 
   return multer.diskStorage({
     destination(req, file, cb) {
