@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/components/snackback_component.dart';
@@ -42,6 +43,11 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
   int markIdCounter = 0;
   // hold the info of selected location
   Map selectedLocation = {};
+  // initiak user pos
+  CameraPosition _kUserLocation = const CameraPosition(
+    target: LatLng(-1.2843319182232078, 36.81209195256612),
+    zoom: 14,
+  );
 
   //  searchToggle = true;
   //               radiusSlider = false;
@@ -60,18 +66,6 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
   Set<Marker> _markers = Set<Marker>();
 
 // initialize map coordinates
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(-1.2998511640066677, 36.80207174296653),
-    zoom: 17.4746,
-  );
-
-  static const CameraPosition _kLake = CameraPosition(
-    bearing: 192.8334901395799,
-    target: LatLng(0.28927317965072585, 35.29253462041064),
-    tilt: 59.440717697143555,
-    zoom: 19.151926040649414,
-  );
-
   // zooms the focus to the selected location
   Future<void> goToLocation({required LatLng coords}) async {
     final GoogleMapController controller = await _controller.future;
@@ -86,7 +80,12 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
   }
 
   _onUserDragEnd(LatLng updatedCoords) {
-    print(updatedCoords);
+    setState(() {
+      selectedLocation = {
+        "lat": updatedCoords.latitude,
+        "long": updatedCoords.longitude,
+      };
+    });
   }
 
   // set marker on tapped location
@@ -143,21 +142,22 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                 height: 15,
               ),
               customExtendButton(
-                  ctx: context,
-                  child: Text(
-                    "Let's go",
-                    style: Theme.of(context).textTheme.headline6!.copyWith(
-                          color: kTextLight,
-                        ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      CupertinoPageRoute(
-                        builder: (_) =>
-                            SelectedSpots(description: selectedLocation),
+                ctx: context,
+                child: Text(
+                  "Let's go",
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: kTextLight,
                       ),
-                    );
-                  }),
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    CupertinoPageRoute(
+                      builder: (_) =>
+                          SelectedSpots(description: selectedLocation),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -167,7 +167,70 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
 
   // handle taps on map
   _onMapTap(LatLng coords) {
-    print(coords);
+    // remove the previous marker
+    setState(() {
+      _markers = {};
+    });
+    setState(() {
+      selectedLocation = {
+        "lat": coords.latitude,
+        "long": coords.longitude,
+      };
+    });
+    _setMarker(coords);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _startService();
+  }
+
+  _startService() async {
+    final userCoords = await _getUserLocation();
+    print(userCoords);
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(userCoords.latitude, userCoords.longitude),
+          zoom: 16.151926040649414,
+        ),
+      ),
+    );
+  }
+
+  Location location = new Location();
+
+  _getUserLocation() async {
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        customSnackBar(
+            context: context,
+            message: "location not enabled",
+            onPressed: () {});
+        return Navigator.of(context).pop();
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        customSnackBar(
+            context: context,
+            message: "Grant location access",
+            onPressed: () {});
+        return Navigator.of(context).pop();
+      }
+    }
+
+    return location.getLocation();
   }
 
   // fetch results
@@ -191,11 +254,11 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
               child: GoogleMap(
                 mapType: MapType.normal,
                 markers: _markers,
-                initialCameraPosition: _kGooglePlex,
+                initialCameraPosition: _kUserLocation,
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
                 },
-                onTap: _setMarker,
+                onTap: _onMapTap,
               ),
             ),
             if (searchToggle)
