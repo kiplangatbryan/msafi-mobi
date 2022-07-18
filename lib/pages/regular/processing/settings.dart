@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../components/form_components.dart';
 import '../../../helpers/custom_shared_pf.dart';
+import '../../../providers/user.provider.dart';
 import '../../../providers/user.provider.dart';
 import '../../../themes/main.dart';
 
@@ -15,6 +17,14 @@ class UserSettings extends StatefulWidget {
 }
 
 class _UserSettingsState extends State<UserSettings> {
+  Person? userInfo;
+
+  @override
+  void initState() {
+    userInfo = context.read<User>().user;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,13 +54,40 @@ class _UserSettingsState extends State<UserSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const NavigateToProfile(),
+              Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: const [
+                    ClipOval(
+                      child: Image(
+                        image: AssetImage('assets/app/user.png'),
+                        width: 180,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: CircleAvatar(
+                        minRadius: 20,
+                        maxRadius: 28,
+                        child: Icon(
+                          Icons.camera_outlined,
+                          size: 35,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 25,
                 ),
                 child: Text(
-                  'Settings',
+                  'Account',
                   style: Theme.of(context).textTheme.headline6!.copyWith(
                         fontSize: 16,
                       ),
@@ -58,13 +95,46 @@ class _UserSettingsState extends State<UserSettings> {
               ),
               CustomBtnLink(
                 callback: () {},
-                title: "Business Name",
-                subtitle: "",
+                title: userInfo!.name,
+                subtitle: "Tap to change username",
+              ),
+              const SizedBox(
+                height: 10,
               ),
               CustomBtnLink(
                 callback: () {},
-                title: "Password",
+                title: userInfo!.email,
+                subtitle: "Tap to change email",
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomBtnLink(
+                callback: () {},
+                title: userInfo!.role,
                 subtitle: "Tap to change password",
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25,
+                ),
+                child: Text(
+                  'Preferences',
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        fontSize: 16,
+                      ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              CustomBtnLink(
+                callback: () {},
+                title: "Dark Mode",
+                subtitle: "Switch to dark theme",
               ),
               const SizedBox(
                 height: 30,
