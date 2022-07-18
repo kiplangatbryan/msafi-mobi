@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
+const shortId = require('shortid32');
 const catchAsync = require('../utils/catchAsync');
-const { stationService, launderService } = require('../services');
+const { stationService, launderService, smsService, authService } = require('../services');
 
 const createStore = catchAsync(async (req, res) => {
   const { locations } = req.body;
@@ -22,7 +23,12 @@ const fetchAllStores = catchAsync(async (req, res) => {
 
 const createOrder = catchAsync(async (req, res) => {
   const { body } = req;
-  const order = await launderService.createOrder(body, req.user.id);
+  const alias = shortId.generate();
+  const order = await launderService.createOrder(body, alias, req.user.id);
+  // create  a short id
+  // send a confirmation message
+  const user = await authService.fetchUser(req.user.id);
+  await smsService.createAndSendNotification(body.phone, alias, body.amount, user.name);
   res.status(httpStatus.CREATED).send(order);
 });
 
@@ -44,6 +50,16 @@ const changeState = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send();
 });
 
+const getUserOrders = catchAsync(async (req, res) => {
+  const orders = await launderService.fetchUserOrders(req.user.id);
+  res.status(httpStatus.OK).send(orders);
+});
+
+const sendSms = catchAsync(async (req, res) => {
+  await smsService.createAndSendNotification();
+  res.status(httpStatus.OK).send();
+});
+
 module.exports = {
   createStore,
   fetchStore,
@@ -52,4 +68,6 @@ module.exports = {
   fetchOrders,
   search,
   changeState,
+  getUserOrders,
+  sendSms,
 };
