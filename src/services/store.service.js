@@ -59,12 +59,12 @@ const fetchAllStores = async () => {
  * @returns {Promise}
  */
 
-const createOrder = async ({ stationId, storeId, clothes, expectedPickUp }, userId) => {
+const createOrder = async ({ stationId, storeId, clothes, expectedPickUp, amount, paymentId }, alias, userId) => {
   const user = await getUserById(userId);
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
   }
-  return Orders.create({ stationId, storeId, clothes, expectedPickUp, userId });
+  return Orders.create({ stationId, storeId, clothes, amount, alias, paymentId, expectedPickUp, userId });
 };
 
 /**
@@ -110,7 +110,13 @@ const changeState = async (userId, storeId, orderId) => {
   order = { ...result };
   return order.save();
 };
-
+const fetchUserOrders = async (userId) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
+  }
+  return Orders.find({ userId }).populate({ path: 'storeId', select: 'name expectedPickUp' }).populate('stationId').exec();
+};
 module.exports = {
   create,
   fetchStore,
@@ -119,4 +125,5 @@ module.exports = {
   fetchOrders,
   search,
   changeState,
+  fetchUserOrders,
 };

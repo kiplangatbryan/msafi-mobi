@@ -4,6 +4,7 @@ const launderValidation = require('../../validations/store.validation');
 const launderController = require('../../controllers/launder.controller');
 const stationController = require('../../controllers/stations.controller');
 const paymentController = require('../../controllers/payment.controller');
+const paymentValidation = require('../../validations/payment.validation');
 
 const auth = require('../../middlewares/auth');
 const { fileHandler } = require('../../middlewares/files');
@@ -23,11 +24,13 @@ router.route('/createOrder').post(auth(), validate(launderValidation.createOrder
 router
   .route('/fetchOrders/:storeId')
   .get(auth('fetchOrders'), validate(launderValidation.fetchOrders), launderController.fetchOrders);
+router.route('/fetch-user-orders').get(auth(), launderController.getUserOrders);
 
 router.route('/changeState').post(auth('manageStore'), launderController.changeState);
 router.route('/search').get(launderController.search);
-router.route('/stk-push/simulate').post(paymentController.mpesaExpress);
-// router.route('stk-push/query').get(auth(), paymentController.mpesaQuery)
+router.route('/stk-push/simulate').post(validate(paymentValidation.simulateStk), auth(), paymentController.mpesaExpress);
+router.route('/stk-push/query').post(validate(paymentValidation.mpesaQuery), auth(), paymentController.mpesaQuery);
 router.route('/stk-push/callback').post(paymentController.transactionCallback);
+router.route('/sms').get(launderController.sendSms);
 
 module.exports = router;
