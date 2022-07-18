@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:msafi_mobi/components/form_components.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -207,7 +206,7 @@ class _LaunderMartViewState extends State<LaunderMartView> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+                  horizontal: 35,
                 ),
                 child: Column(
                   children: [
@@ -219,7 +218,11 @@ class _LaunderMartViewState extends State<LaunderMartView> {
                       phoneNumber: store['userId']['email'],
                     ),
                     const SizedBox(
-                      height: 15,
+                      height: 25,
+                    ),
+                    StoreInformation(description: store['description']),
+                    const SizedBox(
+                      height: 25,
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -254,25 +257,49 @@ class _LaunderMartViewState extends State<LaunderMartView> {
                       height: 20,
                     ),
                     customExtendButton(
-                        ctx: context,
-                        child: Text(
-                          "Launder Now",
-                          style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
-                                    color: kTextLight,
-                                  ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).push(CupertinoPageRoute(
-                              builder: (_) =>
-                                  LaundrySelection(index: widget.index)));
-                        })
+                      ctx: context,
+                      child: Text(
+                        "View Store",
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                              color: kTextLight,
+                            ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(CupertinoPageRoute(
+                            builder: (_) =>
+                                LaundrySelection(index: widget.index)));
+                      },
+                    )
                   ],
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class StoreInformation extends StatelessWidget {
+  const StoreInformation({
+    Key? key,
+    required this.description,
+  }) : super(key: key);
+
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+              text: "Information\n\n",
+              style: Theme.of(context).textTheme.headline6),
+          TextSpan(
+              text: description, style: Theme.of(context).textTheme.subtitle1),
+        ],
       ),
     );
   }
@@ -316,26 +343,7 @@ class StationItem extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "$name\n",
-                            style:
-                                Theme.of(context).textTheme.headline6!.copyWith(
-                                      fontSize: 17,
-                                    ),
-                          ),
-                          TextSpan(
-                            text: "Tap to view on map",
-                            style:
-                                Theme.of(context).textTheme.subtitle1!.copyWith(
-                                      height: 1.4,
-                                    ),
-                          )
-                        ],
-                      ),
-                    ),
+                    Description(name: name),
                   ],
                 ),
                 IconButton(
@@ -354,6 +362,37 @@ class StationItem extends StatelessWidget {
   }
 }
 
+class Description extends StatelessWidget {
+  const Description({
+    Key? key,
+    required this.name,
+  }) : super(key: key);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: "$name\n",
+            style: Theme.of(context).textTheme.headline6!.copyWith(
+                  fontSize: 17,
+                ),
+          ),
+          TextSpan(
+            text: "Tap to view on map",
+            style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                  height: 1.4,
+                ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class ContactInfo extends StatelessWidget {
   String name;
   String phoneNumber;
@@ -366,68 +405,58 @@ class ContactInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(.02),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.symmetric(
-        vertical: 15,
-        horizontal: 20,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                maxRadius: 25,
-                minRadius: 20,
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
-                child: Text("A", style: Theme.of(context).textTheme.headline6),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "$name\n",
-                      style: Theme.of(context).textTheme.headline6!.copyWith(
-                            fontSize: 18,
-                          ),
-                    ),
-                    TextSpan(
-                      text: "Owner",
-                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                            height: 1.4,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.only(
-                top: 8,
-                bottom: 8,
-              ),
-              primary: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              maxRadius: 22,
+              minRadius: 18,
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
+              child: Text("A", style: Theme.of(context).textTheme.headline6),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: "$name\n",
+                    style: Theme.of(context).textTheme.headline6!.copyWith(
+                          fontSize: 18,
+                        ),
+                  ),
+                  TextSpan(
+                    text: "Owner",
+                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          height: 1.4,
+                        ),
+                  ),
+                ],
               ),
             ),
-            onPressed: () {},
-            child: const Icon(
-              Icons.phone_outlined,
-              size: 25,
+          ],
+        ),
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.only(
+              top: 18,
+              bottom: 18,
+              left: 18,
+              right: 18,
             ),
+            primary: Theme.of(context).primaryColor,
+            shape: const CircleBorder(),
           ),
-        ],
-      ),
+          onPressed: () {},
+          child: const Icon(
+            Icons.phone_outlined,
+            size: 25,
+          ),
+        ),
+      ],
     );
   }
 }

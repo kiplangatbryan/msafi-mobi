@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -25,8 +26,9 @@ class ProcessingOrder extends StatefulWidget {
 }
 
 class _ProcessingOrderState extends State<ProcessingOrder> {
-  bool loading = false, stkInit = false, confirmed = true;
+  bool loading = false, stkInit = false, confirmed = true, completed = false;
   int processing = 0;
+  String code = "";
 
   @override
   void initState() {
@@ -34,49 +36,101 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
     _requestPaymentStk();
   }
 
-  _verifyTransaction() async {
-    final url = Uri.parse('${baseUrl()}/store/stk-push/simulate');
+  _processOrder(String paymentId) async {
+    final url = Uri.parse('${baseUrl()}/store/createOrder');
+    final token = await checkAndValidateAuthToken();
+    final headers = {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json"
+    };
+    final order = context.read<Order>();
+
+    final body = {
+      "paymentId": paymentId,
+      "clothes": order.clothesArray,
+      "storeId": order.storeId,
+      "stationId": order.stationAdress['id'],
+      "expectedPickUp": order.expectedDate.toString(),
+      "amount": order.amount,
+      "phone": order.phone,
+    };
+
+    final orderData = json.encode(body);
+
+    try {
+      final response =
+          await http.post(url, body: orderData, headers: headers).timeout(
+                const Duration(seconds: 10),
+              );
+      final data = json.decode(response.body);
+
+      if (response.statusCode == 201) {
+        print(data);
+        setState(() {
+          loading = false;
+          processing = 0;
+          completed = true;
+          code = data['alias'];
+        });
+      } else {
+        processing = 2;
+        loading = false;
+        confirmed = false;
+      }
+    } catch (err) {
+      customSnackBar(
+          context: context,
+          message: "could not create order",
+          onPressed: () {});
+    }
+  }
+
+  _verifyTransaction({required String CheckoutRequestID, int? count}) async {
+    const retries = 5;
+    var counter = count ?? 0;
+    final url = Uri.parse('${baseUrl()}/store/stk-push/query');
     final token = await checkAndValidateAuthToken();
     final headers = {"Authorization": "Bearer $token"};
+
     try {
       // send data to server
-      final response = await http.get(url, headers: headers).timeout(
+      final response = await http
+          .post(url,
+              body: {
+                "CheckoutRequestID": CheckoutRequestID,
+              },
+              headers: headers)
+          .timeout(
             const Duration(seconds: 10),
           );
 
       final data = json.decode(response.body);
 
       if (response.statusCode == 200) {
-      } else {
+        print(data);
         setState(() {
-          loading = false;
-          processing = 2;
+          confirmed = true;
         });
+        return _processOrder(data['_doc']['paymentId']);
+      } else {
+        if (data.isEmpty && counter <= retries) {
+          print("retring ... ${counter + 1}");
+
+          Future.delayed(const Duration(seconds: 8), () async {
+            counter = counter + 1;
+            await _verifyTransaction(
+                CheckoutRequestID: CheckoutRequestID, count: counter);
+          });
+        } else {
+          setState(() {
+            stkInit = false;
+            processing = 2;
+            loading = false;
+          });
+        }
       }
-    } on SocketException {
-      setState(() {
-        loading = false;
-        processing = 2;
-      });
-      customSnackBar(
-          context: context,
-          message: 'Could not connect to server',
-          onPressed: () {});
-    } on TimeoutException catch (e) {
-      setState(() {
-        loading = false;
-        processing = 2;
-      });
-      // customSnackBar("Connection Timeout");
-    } on Error catch (e) {
-      setState(() {
-        loading = false;
-        processing = 2;
-      });
-      customSnackBar(
-          context: context,
-          message: 'Could not connect to server',
-          onPressed: () {});
+    } catch (err) {
+      rethrow;
     }
   }
 
@@ -105,11 +159,10 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
         setState(() {
           stkInit = true;
         });
-        print(data);
+        await _verifyTransaction(CheckoutRequestID: data['CheckoutRequestID']);
       } else {
         customSnackBar(
             context: context, message: 'Invalid statuscode', onPressed: () {});
-        print(data);
         setState(() {
           loading = false;
           processing = 2;
@@ -156,9 +209,12 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
             : Container(),
         loading
             ? loading && stkInit
-                ? statusUpdate(
-                    context: context,
-                    status: "Waiting for payment confirmation")
+                ? loading && stkInit && confirmed
+                    ? statusUpdate(
+                        context: context, status: "confirmed! processing order")
+                    : statusUpdate(
+                        context: context,
+                        status: "Waiting for payment confirmation")
                 : statusUpdate(
                     context: context, status: "Initiating transaction")
             : statusUpdate(context: context, status: ""),
@@ -195,7 +251,7 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
             ),
             Text(
               textAlign: TextAlign.center,
-              "We have sent you a notification\nvia sms containing your basket code.",
+              "We have sent you a notification\nvia sms containing your basket code. use $code to trade.",
               style: Theme.of(context).textTheme.subtitle1!.copyWith(
                     fontSize: 18,
                   ),
@@ -281,7 +337,7 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
           horizontal: 30,
           vertical: 50,
         ),
-        child: confirmed
+        child: !completed
             ? loading
                 ? _loadingState()
                 : _failed()
