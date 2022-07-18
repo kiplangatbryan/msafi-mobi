@@ -2,6 +2,8 @@
 const axios = require('axios');
 const httpStatus = require('http-status');
 const moment = require('moment');
+const Meta = require('../models/meta.model');
+const Payments = require('../models/payments.model');
 const ApiError = require('../utils/ApiError');
 const config = require('../config/config');
 
@@ -34,8 +36,6 @@ const getAccessToken = async () => {
 
 const mpesaExpress = async (MSSID) => {
   const timestamp = moment().format('YYYYMMDDHHmmss');
-  // console.log(process.env.shortcode);
-  // eslint-disable-next-line new-cap
   const blobText = Buffer.from(config.mpesaPay.shortcode + config.mpesaPay.passkey + timestamp);
   const Password = blobText.toString('base64');
 
@@ -53,8 +53,8 @@ const mpesaExpress = async (MSSID) => {
         PartyA: parseInt(MSSID, 10),
         PhoneNumber: parseInt(MSSID, 10),
         PartyB: config.mpesaPay.shortcode,
-        // callBackURL: 'https://9360-41-89-160-19.eu.ngrok.io/v1/store/stk-push/callback',
-        CallBackURL: 'https://wasafi.onrender.com/v1/store/stk-push/callback',
+        // CallBackURL: 'https://wasafi.onrender.com/v1/store/stk-push/callback',
+        CallBackURL: 'https://wasafi.pagekite.me/v1/store/stk-push/callback',
         AccountReference: 'CompanyX',
         TransactionDesc: 'Payment for Laundry Service',
       },
@@ -76,20 +76,30 @@ const mpesaExpress = async (MSSID) => {
  */
 
 const callback = async (response) => {
-  // eslint-disable-next-line no-console
-  console.table(response);
-  // eslint-disable-next-line no-console
-  console.table(response.data.Body);
-  // eslint-disable-next-line no-console
-  console.table(response.data.Body.CallbackMetadata);
+  const body = response.Body;
+  if (body.stkCallback.ResultCode === 0) {
+    // eslint-disable-next-line no-console
+    // save my payment
+    const { CallbackMetadata } = body.stkCallback;
+    const res = await Payments.create({
+      ...body.stkCallback,
+      Amount: CallbackMetadata.Item[0].Value,
+      MpesaReceiptNumber: CallbackMetadata.Item[1].Value,
+      PhoneNumber: CallbackMetadata.Item[2].Value,
+      TransactionDate: CallbackMetadata.Item[3].Value,
+    });
 
-  await axios.post(
-    'https://41bf-102-167-105-254.eu.ngrok.io/v1/store/stk-push/callback',
-
-    {
-      response,
-    }
-  );
+    await Meta.create({
+      confirmed: true,
+      paymentId: res.id,
+      info: body.stkCallback,
+    });
+  } else {
+    await Meta.create({
+      confirmed: false,
+      info: body.stkCallback,
+    });
+  }
 
   const message = {
     ResponseCode: '00000000',
@@ -99,7 +109,32 @@ const callback = async (response) => {
   return message;
 };
 
+const query = async (CheckoutRequestID) => {
+  const result = await Meta.find({ 'info.CheckoutRequestID': CheckoutRequestID });
+
+  let response = null;
+  if (result.length > 0) {
+    const paySlip = result[0];
+    if (paySlip.confirmed && paySlip.paymentId) {
+      response = {
+        ResultCode: 0,
+        ...paySlip,
+      };
+    } else {
+      response = {
+        ResultCode: 1,
+        ...paySlip,
+      };
+    }
+    await Meta.findByIdAndDelete(paySlip._id);
+
+    return response;
+  }
+  return {};
+};
+
 module.exports = {
   mpesaExpress,
   callback,
+  query,
 };
