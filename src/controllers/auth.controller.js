@@ -52,6 +52,13 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const fetchUser = catchAsync(async (req, res) => {
+  const user = await authService.fetchUser(req.user.id);
+  const stores = await launderService.fetchStore(user._id);
+  const tokens = await tokenService.generateAuthTokens(user);
+  res.status(httpStatus.OK).send({ user, tokens, stores });
+});
+
 module.exports = {
   register,
   login,
@@ -62,4 +69,5 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   verifyToken,
+  fetchUser,
 };
