@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lottie/lottie.dart';
 import 'package:msafi_mobi/components/form_components.dart';
+import 'package:msafi_mobi/components/snackback_component.dart';
 import 'package:msafi_mobi/providers/merchant.provider.dart';
 import 'package:provider/provider.dart';
 
@@ -19,36 +21,27 @@ class SelectedSpots extends StatefulWidget {
 
 class _SelectedSpotsState extends State<SelectedSpots> {
   final TextEditingController titleController = TextEditingController();
-
   final TextEditingController cursor = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
 
-  final ImagePicker _picker = ImagePicker();
-  bool isSelected = false;
-  XFile? selectedImage;
-
-  imageSelector() async {
-    try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-      );
-      setState(() {
-        selectedImage = pickedFile;
-        isSelected = true;
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-  }
+  bool disabled = false;
+  List<Map> pickUps = [];
+  bool showInput = true;
 
   _updateLocations() {
     final form = _formKey.currentState;
-    final List<Map<dynamic, dynamic>> locations = [];
     if (form!.validate()) {
-      locations.add({...widget.description, "name": titleController.text});
-      context.read<MartConfig>().setLocations(locations);
+      setState(() {
+        disabled = true;
+        pickUps.add({...widget.description, "name": titleController.text});
+        showInput = false;
+      });
     }
+  }
+
+  syncChanges() {
+    final storeLocs = context.read<MartConfig>();
+    storeLocs.setLocations(pickUps);
   }
 
   @override
@@ -56,6 +49,13 @@ class _SelectedSpotsState extends State<SelectedSpots> {
     super.initState();
     final username = context.read<User>().name;
     titleController.text = "$username site 1";
+    final storeLocs = context.read<MartConfig>().locations;
+
+    if (storeLocs.isNotEmpty) {
+      setState(() {
+        pickUps = storeLocs;
+      });
+    }
   }
 
   @override
@@ -83,142 +83,218 @@ class _SelectedSpotsState extends State<SelectedSpots> {
             horizontal: 20,
             vertical: 30,
           ),
-          child: Column(
-            children: [
-              Text(
-                "Phew! Congrats, now Lets Customize your pick up",
-                style: Theme.of(context).textTheme.headline5!.copyWith(
-                      height: 1.6,
-                      fontWeight: FontWeight.bold,
+          child: pickUps.isEmpty && !showInput
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Lottie.asset(
+                      'assets/lottie/map-location.json',
+                      height: 300,
                     ),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Form(
-                key: _formKey,
-                child: customTextFieldInput(
-                  hint: "Name It",
-                  icon: const Icon(Icons.store_outlined),
-                  inputType: TextInputType.text,
-                  label: "Enter a catchy name",
-                  onChanged: (val) {},
-                  onSubmit: (val) {},
-                  validator: (val) {
-                    if (val == "") {
-                      return "field cannot be blank!";
-                    }
-                    return null;
-                  },
-                  textController: titleController,
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              // Text(
-              //   "Choose an Image that will allow users to easily Idenity your location",
-              //   style: Theme.of(context).textTheme.headline6!.copyWith(
-              //         height: 1.6,
-              //       ),
-              // ),
-              // const SizedBox(
-              //   height: 20,
-              // ),
-              // if (isSelected)
-              //   Container(
-              //     height: 200,
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(10),
-              //       image: DecorationImage(
-              //         image: FileImage(
-              //           File(selectedImage!.path),
-              //         ),
-              //         fit: BoxFit.cover,
-              //       ),
-              //     ),
-              //   ),
-              // !isSelected
-              //     ? TextButton(
-              //         onPressed: () {
-              //           imageSelector();
-              //         },
-              //         child: Row(
-              //           children: [
-              //             Icon(
-              //               Icons.image,
-              //               size: 22,
-              //               color: Theme.of(context).primaryColor,
-              //             ),
-              //             const SizedBox(
-              //               width: 20,
-              //             ),
-              //             Text(
-              //               "Choose image",
-              //               style:
-              //                   Theme.of(context).textTheme.headline6!.copyWith(
-              //                         color: Theme.of(context).primaryColor,
-              //                       ),
-              //             )
-              //           ],
-              //         ))
-              //     : TextButton(
-              //         onPressed: () {
-              //           setState(() {
-              //             selectedImage = null;
-              //           });
-              //           imageSelector();
-              //         },
-              //         child: Row(
-              //           children: [
-              //             Icon(
-              //               Icons.image,
-              //               size: 22,
-              //               color: Theme.of(context).primaryColor,
-              //             ),
-              //             const SizedBox(
-              //               width: 20,
-              //             ),
-              //             Text(
-              //               "Tap to reset",
-              //               style:
-              //                   Theme.of(context).textTheme.headline6!.copyWith(
-              //                         color: Theme.of(context).primaryColor,
-              //                       ),
-              //             )
-              //           ],
-              //         ),
-              //       ),
-              const SizedBox(
-                height: 60,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                "Only press this button after you have added all the locations needed",
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              customExtendButton(
-                ctx: context,
-                child: Text(
-                  "Let's proceed",
-                  style: Theme.of(context).textTheme.headline6!.copyWith(
-                        color: kTextLight,
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Text(
+                      "Tap the button to select pick ups",
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    OutlinedButton(
+                      onPressed: () {
+                        // save current changes
+                        syncChanges();
+                        // go back to map
+                        Navigator.of(context).pop();
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.add),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Add Location",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                        ],
                       ),
-                ),
-                onPressed: () {
-                  _updateLocations();
-                  Navigator.of(context).push(
-                    CupertinoPageRoute(
-                      builder: (context) => const CustomizeStore(),
                     ),
-                  );
-                },
-              ),
-            ],
-          ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    showInput
+                        ? Text(
+                            "Phew! Congrats, now Lets Customize your pick up",
+                            style:
+                                Theme.of(context).textTheme.headline5!.copyWith(
+                                      height: 1.6,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          )
+                        : Text(
+                            "These are your designated spots",
+                            style:
+                                Theme.of(context).textTheme.headline5!.copyWith(
+                                      height: 1.6,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    if (pickUps.isNotEmpty)
+                      LimitedBox(
+                        maxHeight: 800,
+                        child: ListView.builder(
+                            physics: const ScrollPhysics(),
+                            itemCount: pickUps.length,
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, index) {
+                              final pickup = pickUps[index];
+                              return Dismissible(
+                                key: Key('key_$index'),
+                                onDismissed: (direction) {
+                                  print(direction);
+                                  setState(() {
+                                    pickUps.removeAt(index);
+                                  });
+                                  customSnackBar(
+                                      context: context,
+                                      message: "location data deleted",
+                                      onPressed: () {});
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        width: 1.5,
+                                        color: const Color(0xFFDDDDDD),
+                                      )),
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: Text(
+                                    pickup['name'],
+                                    style:
+                                        Theme.of(context).textTheme.headline6,
+                                  ),
+                                ),
+                              );
+                            }),
+                      ),
+                    if (pickUps.isNotEmpty)
+                      OutlinedButton(
+                        onPressed: () {
+                          // save current changes
+                          syncChanges();
+                          // go back to map
+                          Navigator.of(context).pop();
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.add),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "Add Location",
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (showInput)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Form(
+                            key: _formKey,
+                            child: customTextFieldInput(
+                              hint: "Name It",
+                              icon: const Icon(Icons.store_outlined),
+                              inputType: TextInputType.text,
+                              label: "Enter a catchy name",
+                              onChanged: (val) {},
+                              onSubmit: (val) {},
+                              validator: (val) {
+                                if (val == "") {
+                                  return "field cannot be blank!";
+                                }
+                                return null;
+                              },
+                              textController: titleController,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          OutlinedButton(
+                            onPressed: () {
+                              _updateLocations();
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.save),
+                                const SizedBox(width: 10),
+                                Text(
+                                  "Save Location",
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const SizedBox(
+                      height: 60,
+                    ),
+                    Text(
+                      textAlign: TextAlign.center,
+                      "Only press this button after you have added all the locations needed",
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    customExtendButton(
+                      ctx: context,
+                      child: Text(
+                        "Let's proceed",
+                        style: Theme.of(context).textTheme.headline6!.copyWith(
+                              color: kTextLight,
+                            ),
+                      ),
+                      onPressed: () {
+                        if (pickUps.isNotEmpty) {
+                          syncChanges();
+                          Navigator.of(context).push(
+                            CupertinoPageRoute(
+                              builder: (context) => const CustomizeStore(),
+                            ),
+                          );
+                        } else {
+                          customSnackBar(
+                              context: context,
+                              message: "pickups cannot be empty",
+                              onPressed: () {});
+                        }
+                      },
+                    ),
+                  ],
+                ),
         ),
       ),
     );
