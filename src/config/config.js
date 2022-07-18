@@ -29,6 +29,8 @@ const envVarsSchema = Joi.object()
     ONLINE_PROCESS_URL: Joi.string().description('safaricom sandbox url to initiate payment'),
     passkey: Joi.string().description('safaricom sandbox passkety'),
     shortcode: Joi.string().description('safaricom sandbox shortcode'),
+    CLICKSEND_MAIL: Joi.string().description('clicksend user mail'),
+    CLICKSEND_KEY: Joi.string().description('clicksend api key'),
   })
   .unknown();
 
@@ -74,5 +76,9 @@ module.exports = {
     simulateMpesaUri: envVars.ONLINE_PROCESS_URL,
     passkey: envVars.passkey,
     shortcode: envVars.shortcode,
+  },
+  clicksend: {
+    apiKey: envVars.CLICKSEND_KEY,
+    user: envVars.CLICKSEND_MAIL,
   },
 };
