@@ -12,7 +12,17 @@ const transactionCallback = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(response);
 });
 
+const mpesaQuery = catchAsync(async (req, res) => {
+  const { CheckoutRequestID } = req.body;
+  const response = await paymentService.query(CheckoutRequestID);
+  if (response.ResultCode === 0) {
+    return res.status(httpStatus.OK).send(response);
+  }
+  res.status(httpStatus.EXPECTATION_FAILED).send(response);
+});
+
 module.exports = {
   mpesaExpress,
   transactionCallback,
+  mpesaQuery,
 };

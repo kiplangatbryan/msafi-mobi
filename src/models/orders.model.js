@@ -8,11 +8,6 @@ const ordersSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Payment',
     },
-    paid: {
-      required: true,
-      type: Boolean,
-      default: false,
-    },
     stationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Station',
@@ -41,6 +36,10 @@ const ordersSchema = mongoose.Schema(
     expectedPickUp: {
       required: true,
       type: Date,
+    },
+    alias: {
+      type: String,
+      required: true,
     },
     clothes: {
       required: true,
