@@ -4,23 +4,19 @@ const { toJSON } = require('./plugins');
 
 const paymentSchema = mongoose.Schema(
     {
-    amount: {
+    CheckoutRequestID: {
         type: String,
-        required: true,
     },
-    confirmed: {
-        type: Boolean,
-        default: false,
-        required: true,
+    Amount: {
+        type: Number,
     },
-    transactionId: {
+    MerchantRequestID: {
         type: String,
-        require: true
     },
-    phone: {
-        type: String,
-        required: true,
-    },
+    MpesaReceiptNumber: {type: String},
+    TransactionDate: {type: String},
+    PhoneNumber: {type: String},
+
     },
   {
     timestamps: true,
