@@ -30,10 +30,18 @@ const checkObject = (value, helpers) => {
   }
   return obj;
 };
+const phoneNumber = (value, helpers) => {
+  const pattern = /^254[0-9]+/;
+  if (!pattern.test(value)) {
+    return helpers.message('{{#label}} is invalid must be 254 * pattern');
+  }
+  return value;
+};
 
 module.exports = {
   objectId,
   password,
   arrayCheck,
   checkObject,
+  phoneNumber,
 };

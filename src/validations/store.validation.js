@@ -25,10 +25,14 @@ const createOrder = {
     stationId: Joi.string().required().custom(objectId),
     storeId: Joi.string().required().custom(objectId),
     expectedPickUp: Joi.date().required(),
+    phone: Joi.number().required(),
+    paymentId: Joi.string().required().custom(objectId),
+    amount: Joi.number().required(),
     clothes: Joi.array().items({
       id: Joi.string().required(),
+      imagePath: Joi.string().required(),
       count: Joi.number().required(),
-      total: Joi.number().required(),
+      price: Joi.number().required(),
     }),
   }),
 };
