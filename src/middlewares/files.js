@@ -22,6 +22,7 @@ const storage = (folder) => {
   return multer.diskStorage({
     destination(req, file, cb) {
       // eslint-disable-next-line no-console
+
       const fileType = file.mimetype.split('/')[0];
       if (fileType === 'image') {
         cb(null, `uploads/${folder}/`);

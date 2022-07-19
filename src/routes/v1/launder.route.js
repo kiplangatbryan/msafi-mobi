@@ -11,9 +11,15 @@ const { fileHandler } = require('../../middlewares/files');
 
 const router = express.Router();
 
-router
-  .route('/createStore')
-  .post(auth('manageStore'), fileHandler('store'), validate(launderValidation.createStore), launderController.createStore);
+//
+
+router.route('/createStore').post(
+  auth('fetchOrders'),
+  fileHandler('store'),
+  validate(launderValidation.createStore),
+
+  launderController.createStore
+);
 router.route('/fetchStore').get(auth('manageStore'), launderController.fetchStore);
 router.route('/fetchStores').get(launderController.fetchAllStores);
 router.route('/fetchStations/:storeId').get(auth(), validate(launderValidation.fetchStore), stationController.fetchStations);
@@ -31,6 +37,5 @@ router.route('/search').get(launderController.search);
 router.route('/stk-push/simulate').post(validate(paymentValidation.simulateStk), auth(), paymentController.mpesaExpress);
 router.route('/stk-push/query').post(validate(paymentValidation.mpesaQuery), auth(), paymentController.mpesaQuery);
 router.route('/stk-push/callback').post(paymentController.transactionCallback);
-router.route('/sms').get(launderController.sendSms);
 
 module.exports = router;
