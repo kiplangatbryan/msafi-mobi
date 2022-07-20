@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,6 +12,16 @@ String baseUrl() {
 
   return "http://192.168.43.165:3000/v1";
   // return "https://wasafi.onrender.com/v1";
+}
+
+Dio httHelper() {
+  BaseOptions options = BaseOptions(
+      baseUrl: baseUrl(),
+      receiveDataWhenStatusError: true,
+      connectTimeout: 60 * 1000, // 60 seconds
+      receiveTimeout: 60 * 1000 // 60 seconds
+      );
+  return new Dio(options);
 }
 
 Future<String> checkAndValidateAuthToken() async {

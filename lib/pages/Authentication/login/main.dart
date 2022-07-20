@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -115,32 +116,22 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
       setState(() {
         loading = true;
       });
-      var url = Uri.parse('${baseUrl()}/auth/login');
 
       try {
-        // send data to server
-        final response = await http
-            .post(
-              url,
-              body: user,
-            )
-            .timeout(
-              const Duration(seconds: 10),
-            );
-
-        final data = json.decode(response.body);
-
+        Response response =
+            await httHelper().post('${baseUrl()}/auth/login', data: user);
         if (response.statusCode == 200) {
+          final data = response.data;
+
           return await _handleUserSignIn(data);
         } else {
-          _postErrors(data['message']);
+          // _postErrors(data['message']);
         }
-      } on SocketException {
-        customSnackBar('Could not connect to server');
-      } on TimeoutException catch (e) {
-        customSnackBar("Connection Timeout");
-      } on Error catch (e) {
-        customSnackBar("An error ocurred");
+      } on DioError catch (ex) {
+        if (ex.type == DioErrorType.connectTimeout) {
+          customSnackBar("Connection  Timeout Exception");
+        }
+        _postErrors(ex.response?.data['message']);
       }
       setState(() {
         loading = false;
