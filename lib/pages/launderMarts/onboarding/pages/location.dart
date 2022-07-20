@@ -49,13 +49,6 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
     zoom: 14,
   );
 
-  //  searchToggle = true;
-  //               radiusSlider = false;
-  //               pressedNear = false;
-  //               cardTapped = false;
-  //               getDirection = false;
-  //               _markers = {};
-
   // inputcontroller
   TextEditingController searchController = TextEditingController();
 
@@ -183,24 +176,24 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
   @override
   void initState() {
     super.initState();
-    _startService();
   }
 
   _startService() async {
     final userCoords = await _getUserLocation();
-    print(userCoords);
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(userCoords.latitude, userCoords.longitude),
-          zoom: 16.151926040649414,
+    if (userCoords != null) {
+      final GoogleMapController controller = await _controller.future;
+      controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(userCoords.latitude, userCoords.longitude),
+            zoom: 16.151926040649414,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
-  Location location = new Location();
+  Location location = Location();
 
   _getUserLocation() async {
     bool _serviceEnabled;
@@ -269,90 +262,90 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                 ),
                 child: Column(
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.white,
-                      ),
-                      child: TextFormField(
-                        controller: searchController,
-                        style: Theme.of(context).textTheme.headline6,
-                        cursorColor: kTextColor,
-                        cursorHeight: 20,
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          hintStyle: Theme.of(context).textTheme.headline6,
-                          floatingLabelBehavior: FloatingLabelBehavior.auto,
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Colors.transparent,
-                            ),
-                            gapPadding: 10,
+                    TextFormField(
+                      onTap: () {
+                        final slider = fabKey.currentState;
+                        if (slider!.isOpen) {
+                          slider.close();
+                        }
+                      },
+                      controller: searchController,
+                      style: Theme.of(context).textTheme.headline6,
+                      cursorColor: kTextColor,
+                      cursorHeight: 20,
+                      decoration: InputDecoration(
+                        hintText: "Search",
+                        hintStyle: Theme.of(context).textTheme.headline6,
+                        floatingLabelBehavior: FloatingLabelBehavior.auto,
+                        contentPadding:
+                            const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            color: Colors.transparent,
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: BorderSide(
-                              color: kTextMediumColor.withOpacity(.4),
-                            ),
-                            gapPadding: 10,
-                          ),
-                          filled: true,
-                          fillColor: Theme.of(context).backgroundColor,
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                searchToggle = false;
-                                searchController.text = "";
-                                _markers = {};
-                              });
-                            },
-                            icon: const Icon(Icons.close),
-                          ),
+                          gapPadding: 10,
                         ),
-                        onChanged: (val) {
-                          if (_debounce?.isActive ?? false) {
-                            _debounce?.cancel();
-                          }
-                          _debounce = Timer(const Duration(milliseconds: 700),
-                              () async {
-                            if (val.length > 2) {
-                              if (searchFlag.searchToggle) {
-                                searchFlag.toggleSearch();
-                                _markers = {};
-                              }
-                              dynamic results =
-                                  await MapServices().searchPlaces(val);
-                              searchFlag.toggleSearch();
-                              if (results == 2) {
-                                customSnackBar(
-                                    context: context,
-                                    message: "Check your internet connection",
-                                    onPressed: () {});
-                              } else if (results == 4) {
-                                customSnackBar(
-                                    context: context,
-                                    message: "Coonection Timeout",
-                                    onPressed: () async {
-                                      results =
-                                          await MapServices().searchPlaces(val);
-                                    });
-                              } else if (results == 5) {
-                                customSnackBar(
-                                    context: context,
-                                    message: "Server Error",
-                                    onPressed: () {});
-                              } else {
-                                _setResults(results);
-                              }
-                            } else {
-                              _setResults([]);
-                            }
-                          });
-                        },
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: BorderSide(
+                            color: kTextMediumColor.withOpacity(.4),
+                          ),
+                          gapPadding: 10,
+                        ),
+                        filled: true,
+                        fillColor: Theme.of(context).backgroundColor,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              searchToggle = false;
+                              searchController.text = "";
+                              _markers = {};
+                            });
+                          },
+                          icon: const Icon(Icons.close),
+                        ),
                       ),
+                      onChanged: (val) {
+                        if (_debounce?.isActive ?? false) {
+                          _debounce?.cancel();
+                        }
+                        _debounce =
+                            Timer(const Duration(milliseconds: 700), () async {
+                          if (val.length > 2) {
+                            if (searchFlag.searchToggle) {
+                              searchFlag.toggleSearch();
+                              _markers = {};
+                            }
+                            dynamic results =
+                                await MapServices().searchPlaces(val);
+                            searchFlag.toggleSearch();
+                            if (results == 2) {
+                              customSnackBar(
+                                  context: context,
+                                  message: "Check your internet connection",
+                                  onPressed: () {});
+                            } else if (results == 4) {
+                              customSnackBar(
+                                  context: context,
+                                  message: "Coonection Timeout",
+                                  onPressed: () async {
+                                    results =
+                                        await MapServices().searchPlaces(val);
+                                  });
+                            } else if (results == 5) {
+                              customSnackBar(
+                                  context: context,
+                                  message: "Server Error",
+                                  onPressed: () {});
+                            } else {
+                              _setResults(results);
+                            }
+                          } else {
+                            _setResults([]);
+                          }
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -398,42 +391,50 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
           ],
         ),
       ),
-      // floatingActionButton: Builder(builder: (context) {
-      //   return FabCircularMenu(
-      //     alignment: Alignment.bottomLeft,
-      //     fabColor: Colors.blue.shade50,
-      //     fabOpenColor: Colors.red.shade100,
-      //     key: fabKey,
-      //     ringDiameter: 250.0,
-      //     ringWidth: 60.0,
-      //     fabSize: 60.0,
-      //     ringColor: Colors.blue.shade50,
-      //     children: [
-      //       RawMaterialButton(
-      //         onPressed: () {
-      //           setState(() {
-
-      //           });
-      //         },
-      //         child: const Icon(
-      //           Icons.search,
-      //           size: 30,
-      //           color: kTextColor,
-      //         ),
-      //       ),
-      //       RawMaterialButton(
-      //         onPressed: () {},
-      //         shape: const CircleBorder(),
-      //         padding: const EdgeInsets.all(24.0),
-      //         child: const Icon(
-      //           Icons.looks_two,
-      //           color: kTextColor,
-      //           size: 30,
-      //         ),
-      //       ),
-      //     ],
-      //   );
-      // }),
+      floatingActionButton: Builder(builder: (context) {
+        return FabCircularMenu(
+          alignment: Alignment.bottomLeft,
+          fabColor: Colors.blue.shade50,
+          fabOpenColor: Colors.red.shade100,
+          key: fabKey,
+          ringDiameter: 250.0,
+          ringWidth: 60.0,
+          fabSize: 60.0,
+          ringColor: Colors.blue.shade50,
+          children: [
+            RawMaterialButton(
+              onPressed: () {
+                setState(() {
+                  searchToggle = true;
+                  radiusSlider = false;
+                  pressedNear = false;
+                  cardTapped = false;
+                  getDirection = false;
+                  _markers = {};
+                });
+              },
+              child: const Icon(
+                Icons.search,
+                size: 30,
+                color: kTextColor,
+              ),
+            ),
+            RawMaterialButton(
+              onPressed: () async {
+                fabKey.currentState!.close();
+                await _startService();
+              },
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(24.0),
+              child: const Icon(
+                Icons.location_searching_outlined,
+                color: kTextColor,
+                size: 30,
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 
