@@ -58,6 +58,7 @@ class MartConfig extends ChangeNotifier {
   }
 
   void setPricing(List prices) {
+    print(prices);
     pricing = prices;
     notifyListeners();
   }

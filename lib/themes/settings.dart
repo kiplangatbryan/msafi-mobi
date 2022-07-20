@@ -25,13 +25,16 @@ ThemeData lightThemeData(BuildContext context) {
 
 ThemeData darkThemeData(BuildContext context) {
   return ThemeData.dark().copyWith(
-    primaryColor: kTextColor,
+    primaryColor: Color.fromARGB(255, 247, 139, 38),
     scaffoldBackgroundColor: kTextColor,
     textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
     iconTheme: const IconThemeData(
       color: kTextLight,
     ),
     colorScheme: const ColorScheme.dark(
-        primary: kTextColor, secondary: kSecondaryColor, error: Colors.yellow),
+      primary: kTextLight,
+      secondary: kSecondaryColor,
+      error: Color.fromARGB(255, 59, 57, 38),
+    ),
   );
 }
