@@ -49,17 +49,20 @@ class _SetPricingPagestate extends State<SetPricingPage> {
 
     if (form!.validate()) {
       form.save();
-      late String clothid, imagePath;
-      clothid = context.read<MartConfig>().getClothes[0]['title'];
-      imagePath = context.read<MartConfig>().getClothes[0]['imagePath'];
+      final clothMap = context.read<MartConfig>().getClothes[page];
+
       if (id == "") {
         clothPrices[page] = {
-          "id": clothid,
+          "id": clothMap['title'],
           "price": price,
-          "imagePath": imagePath
+          "imagePath": clothMap['imagePath']
         };
       } else {
-        clothPrices[page] = {"id": id, "price": price, "imagePath": imagePath};
+        clothPrices[page] = {
+          "id": id,
+          "price": price,
+          "imagePath": clothMap['imagePath']
+        };
       }
       setState(() {
         _btnText = "Saved";
@@ -91,12 +94,6 @@ class _SetPricingPagestate extends State<SetPricingPage> {
   // persist changes in global provider
   _updateStoreInformation() async {
     context.read<MartConfig>().setPricing(clothPrices);
-    // final authToken = await checkAndValidateAuthToken();
-    // final response =
-    //     // ignore: use_build_context_synchronously
-    //     await context.read<MartConfig>().createOrUpdateStore(authToken);
-
-    // ignore: use_build_context_synchronously
     Navigator.of(context)
         .push(CupertinoPageRoute(builder: (_) => const MapIntro()));
   }
