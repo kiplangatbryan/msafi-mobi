@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:msafi_mobi/pages/launderMarts/profile/main.dart';
+import 'package:msafi_mobi/providers/merchant.provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../components/form_components.dart';
@@ -15,6 +18,16 @@ class MerchantSettings extends StatefulWidget {
 }
 
 class _MerchantSettingsState extends State<MerchantSettings> {
+  dynamic bsData;
+  Person? user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = context.read<User>().user;
+    bsData = context.read<MartConfig>();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,26 +60,22 @@ class _MerchantSettingsState extends State<MerchantSettings> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const NavigateToProfile(),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                ),
-                child: Text(
-                  'Settings',
-                  style: Theme.of(context).textTheme.headline6!.copyWith(
-                        fontSize: 14,
-                      ),
-                ),
-              ),
+              titleSegement(context: context, title: "Account"),
               CustomBtnLink(
                 callback: () {},
                 title: "Business Name",
-                subtitle: "",
+                subtitle: bsData.bsname,
               ),
               CustomBtnLink(
                 callback: () {},
-                title: "Password",
-                subtitle: "Tap to change password",
+                title: "Address",
+                subtitle: bsData.address,
+              ),
+              titleSegement(context: context, title: "Payment"),
+              CustomBtnLink(
+                callback: () {},
+                title: "Payment Options",
+                subtitle: "Tap to configure payment",
               ),
               const SizedBox(
                 height: 30,
@@ -98,6 +107,21 @@ class _MerchantSettingsState extends State<MerchantSettings> {
       ),
     );
   }
+
+  Padding titleSegement(
+      {required BuildContext context, required String title}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 25,
+      ),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.headline6!.copyWith(
+              fontSize: 14,
+            ),
+      ),
+    );
+  }
 }
 
 class NavigateToProfile extends StatelessWidget {
@@ -108,7 +132,13 @@ class NavigateToProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (_) => const AccountSettings(),
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 25,

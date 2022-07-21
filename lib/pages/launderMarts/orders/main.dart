@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:moment_dart/moment_dart.dart';
@@ -44,11 +45,12 @@ class _MerchantOrdersState extends State<MerchantOrders> {
   void initState() {
     super.initState();
     autoFocus = context.read<MerchantRoute>().autoFocusState;
-    _fetchOrders();
+    final storeId = context.read<MartConfig>().id;
+    _fetchOrders(storeId);
   }
 
   _findOrders(val) async {
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
     final response = await StoreService().search(val, token);
 
     if (double.tryParse(response) == null) {
@@ -63,29 +65,23 @@ class _MerchantOrdersState extends State<MerchantOrders> {
     });
   }
 
-  _fetchOrders() async {
-    var url =
-        Uri.parse('${baseUrl()}/store/fetchOrders/62c7aa3a0be196261ce03980');
+  _fetchOrders(String storeId) async {
     setState(() {
       loading = true;
     });
-    String authToken = await checkAndValidateAuthToken();
-    if (authToken == "NaN") {
-      // throw an error
-      customSnackBar(
-          context: context, message: "Invalid refreshToken", onPressed: () {});
-      return;
-    }
+    String authToken = await checkAndValidateAuthToken(context);
 
     try {
       // send data to server
-      final response = await http.get(url, headers: {
-        "Authorization": "Bearer $authToken",
-      }).timeout(
-        const Duration(seconds: 10),
+      Response response = await httHelper().get(
+        '/store/fetchOrders/$storeId',
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $authToken",
+          },
+        ),
       );
-
-      final data = json.decode(response.body);
+      final data = response.data;
 
       if (response.statusCode == 200) {
         setState(() {
@@ -95,17 +91,15 @@ class _MerchantOrdersState extends State<MerchantOrders> {
         customSnackBar(
             context: context, message: "Server Error", onPressed: () {});
       }
-    } on SocketException {
-      customSnackBar(
-          context: context,
-          message: "Could not connect to server!",
-          onPressed: () {});
-    } on TimeoutException catch (e) {
+    } on DioError catch (ex) {
+      if (ex.type == DioErrorType.connectTimeout) {
+        customSnackBar(
+            context: context,
+            message: "Connection timed out!",
+            onPressed: () {});
+      }
       customSnackBar(
           context: context, message: "Connection timed out!", onPressed: () {});
-    } on Error catch (e) {
-      customSnackBar(
-          context: context, message: "An error occurred", onPressed: () {});
     }
     setState(() {
       loading = false;
@@ -159,12 +153,9 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                     children: [
                       Chip(
                         label: Text(
-                          "completed",
+                          "Pending",
                           style: Theme.of(context).textTheme.subtitle1,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 15,
                       ),
                       Chip(
                         label: Text(
@@ -175,12 +166,9 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                       const SizedBox(
                         width: 15,
                       ),
-                      Chip(
-                        label: Text(
-                          "completed",
-                          style: Theme.of(context).textTheme.subtitle1,
-                        ),
-                      )
+                      const SizedBox(
+                        width: 15,
+                      ),
                     ],
                   ),
                 ),
@@ -284,7 +272,7 @@ class _MerchantOrdersState extends State<MerchantOrders> {
         ),
       ),
       onChanged: (val) async {
-        if (val.length > 1) {
+        if (val.length > 2) {
           // throttle the search event
           await Future.delayed(const Duration(seconds: 1));
           await _findOrders(val);

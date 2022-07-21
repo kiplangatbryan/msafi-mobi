@@ -11,7 +11,6 @@ import 'package:msafi_mobi/helpers/http_services.dart';
 import 'package:msafi_mobi/providers/merchant.provider.dart';
 import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../reset/forgot_password.dart';
@@ -24,7 +23,6 @@ class LoginPageOptions extends StatefulWidget {
 }
 
 class _LoginPageOptionsState extends State<LoginPageOptions> {
-// https://aa5a-41-89-160-19.in.ngrok.io
   String errors = "";
   String status = "Login";
   String snackBarMessage = "";
@@ -85,6 +83,10 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
     }
   }
 
+  _checkNaviagator() {
+    return Navigator.canPop(context);
+  }
+
   // snack bar
   ScaffoldFeatureController<SnackBar, SnackBarClosedReason> customSnackBar(
       String message) {
@@ -131,6 +133,9 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
         if (ex.type == DioErrorType.connectTimeout) {
           customSnackBar("Connection  Timeout Exception");
         }
+        if (ex.type == DioErrorType.sendTimeout) {
+          customSnackBar("Unable to reach server");
+        }
         _postErrors(ex.response?.data['message']);
       }
       setState(() {
@@ -166,12 +171,13 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
         bottomOpacity: .3,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 22),
-          onPressed: () => Navigator.of(context).pop(),
-          color: kTextColor,
-        ),
-        actions: [],
+        leading: _checkNaviagator()
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new, size: 22),
+                onPressed: () => Navigator.of(context).pop(),
+                color: kTextColor,
+              )
+            : null,
       ),
       body: SingleChildScrollView(
         child: SizedBox(

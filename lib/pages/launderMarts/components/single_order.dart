@@ -6,16 +6,16 @@ import '../../../themes/main.dart';
 import '../orders/single-order.dart';
 
 class SingleOrderComponent extends StatelessWidget {
-  Map order;
-  String status;
-  String expectedDate;
-  String orderId;
-  String? avatarUrl = "";
-  String stationName;
-  String customerName;
-  EdgeInsets margin;
+  final Map order;
+  final String status;
+  final String expectedDate;
+  final String orderId;
+  final String? avatarUrl;
+  final String stationName;
+  final String customerName;
+  final EdgeInsets margin;
 
-  SingleOrderComponent({
+  const SingleOrderComponent({
     required this.order,
     required this.status,
     required this.expectedDate,
