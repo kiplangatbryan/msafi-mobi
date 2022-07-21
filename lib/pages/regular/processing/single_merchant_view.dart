@@ -67,7 +67,7 @@ class _LaunderMartViewState extends State<LaunderMartView> {
     });
     var storeId = context.read<Store>().stores[widget.index]['id'];
     var url = Uri.parse('${baseUrl()}/store/fetchStations/$storeId');
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
     try {
       // send data to server
       final response = await http

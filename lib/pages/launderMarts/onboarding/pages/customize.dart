@@ -64,7 +64,7 @@ class _CustomizeStoreState extends State<CustomizeStore> {
       loading = true;
     });
     final store = context.read<MartConfig>();
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
 
     final dio = Dio();
     FormData formData = FormData();
@@ -133,7 +133,7 @@ class _CustomizeStoreState extends State<CustomizeStore> {
   }
 
   fetchUser() async {
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
     final dio = Dio();
     try {
       Response response = await dio.get('${baseUrl()}/auth/fetch-user',

@@ -47,7 +47,7 @@ class _OrdersViewState extends State<OrdersView> {
       loading = true;
     });
     final url = Uri.parse('${baseUrl()}/store/fetch-user-orders');
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
     final headers = {"Authorization": "Bearer $token"};
     try {
       // send data to server

@@ -38,7 +38,7 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
 
   _processOrder(String paymentId) async {
     final url = Uri.parse('${baseUrl()}/store/createOrder');
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
     final headers = {
       "Authorization": "Bearer $token",
       "Content-Type": "application/json"
@@ -89,7 +89,7 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
     const retries = 5;
     var counter = count ?? 0;
     final url = Uri.parse('${baseUrl()}/store/stk-push/query');
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
     final headers = {"Authorization": "Bearer $token"};
 
     try {
@@ -139,7 +139,7 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
       loading = true;
     });
     final url = Uri.parse('${baseUrl()}/store/stk-push/simulate');
-    final token = await checkAndValidateAuthToken();
+    final token = await checkAndValidateAuthToken(context);
     final headers = {"Authorization": "Bearer $token"};
     final amount = context.read<Order>().getAmount;
     final phone = context.read<Order>().phone;
