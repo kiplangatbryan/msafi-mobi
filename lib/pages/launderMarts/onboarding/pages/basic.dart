@@ -56,17 +56,28 @@ class _BasicInformationState extends State<BasicInformation> {
 
     return Scaffold(
       appBar: AppBar(
-        bottomOpacity: .3,
-        elevation: 1,
-        backgroundColor: Theme.of(context).canvasColor,
-        centerTitle: true,
-        title: Text(
-          "Getting Started",
-          style: Theme.of(context).textTheme.headline6!.copyWith(
-                fontSize: 18,
+          bottomOpacity: .3,
+          elevation: 1,
+          backgroundColor: Theme.of(context).canvasColor,
+          centerTitle: true,
+          title: Text(
+            "Getting Started",
+            style: Theme.of(context).textTheme.headline6!.copyWith(
+                  fontSize: 18,
+                ),
+          ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/login', (route) => false);
+              },
+              icon: Icon(
+                Icons.exit_to_app,
+                color: Theme.of(context).colorScheme.primary,
               ),
-        ),
-      ),
+            ),
+          ]),
       body: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
         child: Container(
