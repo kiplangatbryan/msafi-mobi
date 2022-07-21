@@ -360,7 +360,7 @@ class _RecentOrdersState extends State<RecentOrders> {
     setState(() {
       loading = true;
     });
-    String authToken = await checkAndValidateAuthToken();
+    String authToken = await checkAndValidateAuthToken(context);
     if (authToken == "NaN") {
       // throw an error
       customSnackBar(
