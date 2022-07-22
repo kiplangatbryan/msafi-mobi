@@ -36,6 +36,7 @@ class _CheckOutState extends State<CheckOut> {
   showBottomSheet() {
     final total = context.read<Order>().getAmount;
     showMaterialModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (context) => SingleChildScrollView(
         controller: ModalScrollController.of(context),
@@ -54,6 +55,7 @@ class _CheckOutState extends State<CheckOut> {
                 textAlign: TextAlign.center,
                 "Dear customer a total of ksh $total will be billed to ${phoneController.text},Please wait for the M-pesa prompt to appear",
                 style: Theme.of(context).textTheme.headline6!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 18,
                     ),
               ),
@@ -161,7 +163,9 @@ class _CheckOutState extends State<CheckOut> {
                     ),
                     label: Text(
                       'Mpesa pay',
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                     ),
                   ),
                 ],
@@ -204,7 +208,7 @@ class _CheckOutState extends State<CheckOut> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Icon(Icons.warning),
+                  const Icon(Icons.info),
                   const SizedBox(
                     width: 5,
                   ),
@@ -212,6 +216,7 @@ class _CheckOutState extends State<CheckOut> {
                     "Total: ksh ${context.watch<Order>().amount}",
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           fontSize: 16,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
                 ],
@@ -551,13 +556,17 @@ class checkOutItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.headline6!.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               TextButton(
                 onPressed: () {},
                 child: Text(
                   btnLabel,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                 ),
               ),
             ],
@@ -569,7 +578,10 @@ class checkOutItem extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: Theme.of(context).textTheme.subtitle1,
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1!
+                    .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
             ],
           ),

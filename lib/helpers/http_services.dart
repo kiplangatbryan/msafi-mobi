@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:msafi_mobi/helpers/custom_shared_pf.dart';
 import 'package:http/http.dart' as http;
 
@@ -7,10 +8,10 @@ import 'dart:async';
 import 'dart:io';
 
 String baseUrl() {
-  // return "http://10.0.2.2:3000/v1";
+  return "http://10.0.2.2:3000/v1";
   // return "http://localhost:3000/v1";
 
-  return "http://192.168.43.165:3000/v1";
+  // return "http://192.168.43.165:3000/v1";
   // return "https://wasafi.onrender.com/v1";
 }
 
@@ -21,10 +22,10 @@ Dio httHelper() {
       connectTimeout: 60 * 1000, // 60 seconds
       receiveTimeout: 60 * 1000 // 60 seconds
       );
-  return new Dio(options);
+  return Dio(options);
 }
 
-Future<String> checkAndValidateAuthToken() async {
+Future checkAndValidateAuthToken(context) async {
   final res = await CustomSharedPreferences().checkOrFetchUser();
   // if (res == null) {
   //   // big issue
@@ -43,7 +44,8 @@ Future<String> checkAndValidateAuthToken() async {
   if (response is String) {
     return response;
   }
-  return "NaN";
+  return Navigator.of(context)
+      .pushNamedAndRemoveUntil('/login', (route) => false);
 }
 
 Future<dynamic> handleRefresh(Map refreshData, Map user) async {

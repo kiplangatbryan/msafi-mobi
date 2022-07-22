@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -16,6 +17,7 @@ import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
 import '../../../helpers/http_services.dart';
+import 'single-order.dart';
 
 class OrdersView extends StatefulWidget {
   const OrdersView({Key? key}) : super(key: key);
@@ -95,15 +97,7 @@ class _OrdersViewState extends State<OrdersView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Theme.of(context).backgroundColor,
-        title: Text(
-          "My Orders",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-        centerTitle: true,
-      ),
+      appBar: mainAppBar(context: context, title: "My Orders"),
       body: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20,
@@ -111,43 +105,6 @@ class _OrdersViewState extends State<OrdersView> {
         ),
         child: Column(
           children: [
-            SingleChildScrollView(
-              child: Row(
-                children: [
-                  Chip(
-                    elevation: 2,
-                    labelPadding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 4,
-                    ),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    label: Text(
-                      "Pending",
-                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                            color: kTextLight,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Chip(
-                    elevation: 2,
-                    labelPadding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 4,
-                    ),
-                    label: Text(
-                      "completed",
-                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                            color: kTextLight,
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
             orders.isEmpty
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -172,84 +129,125 @@ class _OrdersViewState extends State<OrdersView> {
                     itemCount: orders.length,
                     itemBuilder: (BuildContext context, index) {
                       final orderItem = orders[index];
-                      return Card(
-                        elevation: 5,
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 18,
+                        ),
+                        margin: const EdgeInsets.only(
+                          bottom: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          gradient: const LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Colors.blue,
+                              Color.fromRGBO(195, 14, 250, 1),
+                            ],
+                          ),
+                        ),
                         child: InkWell(
-                          onTap: () {},
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 18,
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      orderItem['alias'],
-                                      style:
-                                          Theme.of(context).textTheme.headline6,
+                          onTap: () {
+                            print('tapped');
+                            Navigator.of(context).push(CupertinoPageRoute(
+                                builder: (_) => SingleClientOrderView(
+                                      order: orderItem,
+                                    )));
+                          },
+                          child: Column(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    orderItem['alias'],
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6!
+                                        .copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                  ),
+                                  Chip(
+                                    label: Text(
+                                      orderItem['status'],
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle1!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
                                     ),
-                                    Chip(
-                                      label: Text(
-                                        orderItem['status'],
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        "LaunderMart",
                                         style: Theme.of(context)
                                             .textTheme
-                                            .subtitle1,
+                                            .bodySmall!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Text(
-                                          "LaunderMart",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ),
-                                        Text(
-                                          orderItem['storeId']['name'],
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle2,
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          "Expected Date",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        ),
-                                        Text(
-                                          DateTime.parse(
-                                                  orderItem['expectedPickUp'])
-                                              .toMoment()
-                                              .toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle2,
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
+                                      Text(
+                                        orderItem['storeId']['name'],
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle2!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        "Expected Date",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
+                                      ),
+                                      Text(
+                                        Moment.parse(
+                                                orderItem['expectedPickUp'])
+                                            .calendar(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle2!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       );

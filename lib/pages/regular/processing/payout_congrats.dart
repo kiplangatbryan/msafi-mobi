@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -37,7 +38,6 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
   }
 
   _processOrder(String paymentId) async {
-    final url = Uri.parse('${baseUrl()}/store/createOrder');
     final token = await checkAndValidateAuthToken(context);
     final headers = {
       "Authorization": "Bearer $token",
@@ -58,14 +58,11 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
     final orderData = json.encode(body);
 
     try {
-      final response =
-          await http.post(url, body: orderData, headers: headers).timeout(
-                const Duration(seconds: 10),
-              );
-      final data = json.decode(response.body);
+      Response response = await httHelper().post('/store/createOrder',
+          data: orderData, options: Options(headers: headers));
+      final data = response.data;
 
       if (response.statusCode == 201) {
-        print(data);
         setState(() {
           loading = false;
           processing = 0;
@@ -75,9 +72,10 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
       } else {
         processing = 2;
         loading = false;
+        stkInit = false;
         confirmed = false;
       }
-    } catch (err) {
+    } on DioError catch (err) {
       customSnackBar(
           context: context,
           message: "could not create order",
@@ -88,26 +86,19 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
   _verifyTransaction({required String CheckoutRequestID, int? count}) async {
     const retries = 5;
     var counter = count ?? 0;
-    final url = Uri.parse('${baseUrl()}/store/stk-push/query');
     final token = await checkAndValidateAuthToken(context);
     final headers = {"Authorization": "Bearer $token"};
 
     try {
       // send data to server
-      final response = await http
-          .post(url,
-              body: {
-                "CheckoutRequestID": CheckoutRequestID,
-              },
-              headers: headers)
-          .timeout(
-            const Duration(seconds: 10),
-          );
-
-      final data = json.decode(response.body);
+      Response response = await httHelper().post("/store/stk-push/query",
+          data: {
+            "CheckoutRequestID": CheckoutRequestID,
+          },
+          options: Options(headers: headers));
+      final data = response.data;
 
       if (response.statusCode == 200) {
-        print(data);
         setState(() {
           confirmed = true;
         });
@@ -130,7 +121,11 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
         }
       }
     } catch (err) {
-      rethrow;
+      setState(() {
+        loading = false;
+        processing = 2;
+        stkInit = false;
+      });
     }
   }
 
@@ -138,7 +133,6 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
     setState(() {
       loading = true;
     });
-    final url = Uri.parse('${baseUrl()}/store/stk-push/simulate');
     final token = await checkAndValidateAuthToken(context);
     final headers = {"Authorization": "Bearer $token"};
     final amount = context.read<Order>().getAmount;
@@ -148,18 +142,16 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
 
     try {
       // send data to server
-      final response =
-          await http.post(url, body: body, headers: headers).timeout(
-                const Duration(seconds: 10),
-              );
+      Response response = await httHelper().post('/store/stk-push/simulate',
+          data: body, options: Options(headers: headers));
 
-      final data = json.decode(response.body);
+      final data = response.data;
 
       if (response.statusCode == 200) {
         setState(() {
           stkInit = true;
         });
-        await _verifyTransaction(CheckoutRequestID: data['CheckoutRequestID']);
+        return _verifyTransaction(CheckoutRequestID: data['CheckoutRequestID']);
       } else {
         customSnackBar(
             context: context, message: 'Invalid statuscode', onPressed: () {});
@@ -168,30 +160,16 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
           processing = 2;
         });
       }
-    } on SocketException {
+    } on DioError catch (ex) {
       setState(() {
         loading = false;
         processing = 2;
       });
       customSnackBar(
-          context: context,
-          message: 'Could not connect to server',
-          onPressed: () {});
-    } on TimeoutException catch (e) {
-      setState(() {
-        loading = false;
-        processing = 2;
-      });
-      // customSnackBar("Connection Timeout");
-    } on Error catch (e) {
-      setState(() {
-        loading = false;
-        processing = 2;
-      });
-      customSnackBar(
-          context: context,
-          message: 'Could not connect to server',
-          onPressed: () {});
+        context: context,
+        message: 'Could not connect to server',
+        onPressed: () {},
+      );
     }
   }
 
@@ -243,8 +221,8 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
             Text(
               "Order Success",
               style: Theme.of(context).textTheme.headline4!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary),
             ),
             const SizedBox(
               height: 20,
@@ -253,8 +231,7 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
               textAlign: TextAlign.center,
               "We have sent you a notification\nvia sms containing your basket code. use $code to trade.",
               style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                    fontSize: 18,
-                  ),
+                  fontSize: 18, color: Theme.of(context).colorScheme.primary),
             ),
           ],
         ),
@@ -269,7 +246,10 @@ class _ProcessingOrderState extends State<ProcessingOrder> {
                     color: kTextLight,
                   ),
             ),
-            onPressed: () {})
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/default-home', (route) => false);
+            })
       ],
     );
   }

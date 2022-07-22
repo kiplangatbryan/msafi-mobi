@@ -42,7 +42,9 @@ class LaundryBox extends StatelessWidget {
           Column(children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.headline6!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
             ),
             const SizedBox(
               height: 10,
@@ -61,7 +63,9 @@ class LaundryBox extends StatelessWidget {
                 ),
                 Text(
                   value.toString(),
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                 ),
                 const SizedBox(
                   width: 10,
@@ -81,10 +85,14 @@ class LaundryBox extends StatelessWidget {
               children: [
                 TextSpan(
                     text: "KES  ",
-                    style: Theme.of(context).textTheme.subtitle2),
+                    style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
                 TextSpan(
                   text: price,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline6!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                 )
               ],
             ),

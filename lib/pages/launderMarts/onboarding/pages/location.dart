@@ -493,6 +493,7 @@ class _PickUpspotsSelectiontate extends State<PickUpspotsSelection> {
                   overflow: TextOverflow.clip,
                   '${placeItem["place_name"].split(",")[1]} ${placeItem["place_name"].split(",")[2]}',
                   style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
                         height: 0.1,
                       ),
                 )

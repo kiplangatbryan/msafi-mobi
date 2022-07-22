@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
@@ -7,6 +9,7 @@ import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../helpers/custom_shared_pf.dart';
 import '../../../../providers/merchant.provider.dart';
 
 class BasicInformation extends StatefulWidget {
@@ -68,7 +71,8 @@ class _BasicInformationState extends State<BasicInformation> {
           ),
           actions: [
             IconButton(
-              onPressed: () {
+              onPressed: () async {
+                await CustomSharedPreferences().logout();
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/login', (route) => false);
               },

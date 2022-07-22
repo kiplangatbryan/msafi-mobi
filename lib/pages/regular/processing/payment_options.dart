@@ -87,10 +87,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Payment',
-          style: Theme.of(context).textTheme.headline6,
-        ),
+        title: Text('Payment',
+            style: Theme.of(context).textTheme.headline6!.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                )),
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
@@ -136,7 +136,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               ),
               Text(
                 "Enter the account information of the phone number that will be making payment",
-                style: Theme.of(context).textTheme.subtitle1,
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1!
+                    .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               const SizedBox(
                 height: 20,
@@ -172,7 +175,10 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               ),
               Text(
                 "When do you plan to pick up your laundry?",
-                style: Theme.of(context).textTheme.subtitle1,
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1!
+                    .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               const SizedBox(
                 height: 20,
@@ -206,13 +212,14 @@ class _PaymentOptionsState extends State<PaymentOptions> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Icon(Icons.warning),
+                  const Icon(Icons.info_outlined),
                   const SizedBox(
                     width: 5,
                   ),
                   Text(
                     "Total: ksh ${context.watch<Order>().amount}",
                     style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 16,
                         ),
                   ),
@@ -262,6 +269,7 @@ Text sumTitle(BuildContext context, {required String title}) {
     title,
     style: Theme.of(context).textTheme.headline6!.copyWith(
           fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.primary,
         ),
   );
 }

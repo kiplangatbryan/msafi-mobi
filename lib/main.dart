@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       theme: lightThemeData(context),
       darkTheme: darkThemeData(context),
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       title: "Msafi-Mobi",
       initialRoute: "/",
       routes: {

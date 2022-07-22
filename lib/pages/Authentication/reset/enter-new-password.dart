@@ -12,14 +12,15 @@ import 'package:msafi_mobi/helpers/http_services.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'code_verify.dart';
 
-class EmailReset extends StatefulWidget {
-  const EmailReset({Key? key}) : super(key: key);
+class UpdateCode extends StatefulWidget {
+  final String code;
+  const UpdateCode({required this.code, Key? key}) : super(key: key);
 
   @override
-  State<EmailReset> createState() => _EmailResetState();
+  State<UpdateCode> createState() => _EmailResetState();
 }
 
-class _EmailResetState extends State<EmailReset> {
+class _EmailResetState extends State<UpdateCode> {
 // https://aa5a-41-89-160-19.in.ngrok.io
   String errors = "";
   String snackBarMessage = "";
@@ -31,7 +32,7 @@ class _EmailResetState extends State<EmailReset> {
 
 // user map
   final Map<String, String> user = {
-    "email": "",
+    "password": "",
   };
 
   @override
@@ -41,7 +42,7 @@ class _EmailResetState extends State<EmailReset> {
 
   _setEmail(val) {
     setState(() {
-      user['email'] = val;
+      user['password'] = val;
     });
   }
 
@@ -86,9 +87,10 @@ class _EmailResetState extends State<EmailReset> {
       });
 
       try {
+        final data = {"token": widget.code, "password": user['password']};
         Response response =
-            await httHelper().post('/auth/forgot-password', data: user);
-        if (response.statusCode == 204) {
+            await httHelper().post('/auth/reset-password', data: data);
+        if (response.statusCode == 200) {
           final data = response.data;
 
           return _handleUserSignIn(data);
@@ -125,8 +127,7 @@ class _EmailResetState extends State<EmailReset> {
     });
 
     return Future.delayed(const Duration(seconds: 5), () {
-      Navigator.of(context)
-          .push(CupertinoPageRoute(builder: (_) => const CodeVerify()));
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     });
   }
 
@@ -157,14 +158,14 @@ class _EmailResetState extends State<EmailReset> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Lottie.asset(
-                          'assets/lottie/sent-email-animation.json',
+                          'assets/lottie/happy.json',
                           repeat: false,
                         ),
                         const SizedBox(
                           height: 40,
                         ),
                         Text(
-                          "Email Sent",
+                          "Reset Succeeded",
                           style: Theme.of(context)
                               .textTheme
                               .headline4!
@@ -177,7 +178,7 @@ class _EmailResetState extends State<EmailReset> {
                           height: 20,
                         ),
                         Text(
-                          "Check your inbox for reset code",
+                          "Password Reset Successfull",
                           style: Theme.of(context)
                               .textTheme
                               .headline6!
@@ -196,7 +197,7 @@ class _EmailResetState extends State<EmailReset> {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: "\nPassword Reset",
+                                text: "\nEnter new Password",
                                 style: GoogleFonts.notoSans(
                                   fontSize: 28,
                                   fontWeight: FontWeight.w600,
@@ -205,7 +206,7 @@ class _EmailResetState extends State<EmailReset> {
                               ),
                               TextSpan(
                                 text:
-                                    "\n\nPlease enter your email address inorder to which we will send the recovery code\n\n",
+                                    "\n\nEnter a new password that you will use to authenticate yourself\n\n",
                                 style: GoogleFonts.notoSans(
                                     fontSize: 16,
                                     color:
@@ -233,17 +234,22 @@ class _EmailResetState extends State<EmailReset> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              customTextField(
-                                inputType: TextInputType.emailAddress,
+                              customPasswordField(
+                                inputType: TextInputType.text,
                                 icon: const Icon(Icons.mail_outline, size: 18),
-                                hint: "Enter Email Address",
-                                label: "Email",
+                                hint: "Enter New Password",
+                                label: "password",
                                 onChanged: (val) {},
                                 onSubmit: _setEmail,
                                 validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Enter a valid email address';
+                                  final pattern = RegExp(r'^[a-zA-Z0-9]+$');
+
+                                  if (value.length < 8) {
+                                    return "Password must be atleast 8  characters long";
+                                  } else if (!pattern.hasMatch(value)) {
+                                    return "Password must contain at least 1 letter and number";
                                   }
+
                                   return null;
                                 },
                               ),

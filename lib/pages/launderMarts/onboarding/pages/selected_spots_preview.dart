@@ -96,7 +96,8 @@ class _SelectedSpotsState extends State<SelectedSpots> {
                     ),
                     Text(
                       "Tap the button to select pick ups",
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     const SizedBox(
                       height: 10,
@@ -130,19 +131,25 @@ class _SelectedSpotsState extends State<SelectedSpots> {
                     showInput
                         ? Text(
                             "Phew! Congrats, now Lets Customize your pick up",
-                            style:
-                                Theme.of(context).textTheme.headline5!.copyWith(
-                                      height: 1.6,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5!
+                                .copyWith(
+                                  height: 1.6,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           )
                         : Text(
                             "These are your designated spots",
-                            style:
-                                Theme.of(context).textTheme.headline5!.copyWith(
-                                      height: 1.6,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5!
+                                .copyWith(
+                                  height: 1.6,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                           ),
                     const SizedBox(
                       height: 30,
@@ -159,7 +166,6 @@ class _SelectedSpotsState extends State<SelectedSpots> {
                               return Dismissible(
                                 key: Key('key_$index'),
                                 onDismissed: (direction) {
-                                  print(direction);
                                   setState(() {
                                     pickUps.removeAt(index);
                                   });
@@ -207,7 +213,13 @@ class _SelectedSpotsState extends State<SelectedSpots> {
                             ),
                             Text(
                               "Add Location",
-                              style: Theme.of(context).textTheme.headline6,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6!
+                                  .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
                             ),
                           ],
                         ),
@@ -248,7 +260,14 @@ class _SelectedSpotsState extends State<SelectedSpots> {
                                 const SizedBox(width: 10),
                                 Text(
                                   "Save Location",
-                                  style: Theme.of(context).textTheme.headline6,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6!
+                                      .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
                                 ),
                               ],
                             ),
@@ -264,7 +283,8 @@ class _SelectedSpotsState extends State<SelectedSpots> {
                     Text(
                       textAlign: TextAlign.center,
                       "Only press this button after you have added all the locations needed",
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     const SizedBox(
                       height: 25,

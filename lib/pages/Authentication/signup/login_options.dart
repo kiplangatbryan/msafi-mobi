@@ -26,6 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
   String snackBarMessage = "";
   bool showSnack = false;
   bool loading = false;
+  bool checked = false;
 
   // form key
   final _formKey = GlobalKey<FormState>();
@@ -103,6 +104,11 @@ class _SignUpPageState extends State<SignUpPage> {
     // Navigator.of(context).pushNamed('/mart-onboarding');
     if (form!.validate()) {
       // call saved event on every textfield on the form
+
+      if (!checked) {
+        _postErrors("Accept terms and condirions");
+        return;
+      }
       form.save();
       // show loading
       setState(() {
@@ -283,6 +289,45 @@ class _SignUpPageState extends State<SignUpPage> {
                           }
                           return null;
                         },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: checked,
+                            onChanged: (value) {
+                              setState(() {
+                                checked = value!;
+                              });
+                            },
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            "Terms and Conditions",
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle1!
+                                .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          'You are bound the terms and conditions hereby stated for use of the application',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: Theme.of(context).colorScheme.primary),
+                        ),
                       ),
                       const SizedBox(
                         height: 15,

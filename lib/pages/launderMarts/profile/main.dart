@@ -271,14 +271,20 @@ class CustomBtnLink extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6!
+                  .copyWith(color: Theme.of(context).colorScheme.primary),
             ),
             const SizedBox(
               height: 4,
             ),
             Text(
               subtitle,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle1!
+                  .copyWith(color: Theme.of(context).colorScheme.primary),
             ),
           ],
         ),

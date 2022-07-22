@@ -93,7 +93,7 @@ class customPasswordField extends StatelessWidget {
       // ? TextInputType.visiblePassword
       // : TextInputType.emailAddress,
       style: GoogleFonts.notoSans(
-        color: kTextColor,
+        color: Theme.of(context).colorScheme.primary,
         fontWeight: FontWeight.w600,
         fontSize: 17,
       ),
@@ -101,11 +101,11 @@ class customPasswordField extends StatelessWidget {
         hintText: hint,
         labelText: label,
         labelStyle: GoogleFonts.notoSans(
-          color: kTextMediumColor.withOpacity(.4),
+          color: Theme.of(context).colorScheme.primary.withOpacity(.4),
           fontSize: 17,
         ),
         floatingLabelStyle: GoogleFonts.notoSans(
-          color: kTextMediumColor.withOpacity(.4),
+          color: Theme.of(context).colorScheme.primary.withOpacity(.4),
           fontSize: 17,
         ),
         filled: true,
@@ -170,7 +170,7 @@ class customTextField extends StatelessWidget {
       minLines: minLines,
       maxLines: maxLines,
       style: GoogleFonts.notoSans(
-        color: kTextColor,
+        color: Theme.of(context).colorScheme.primary,
         fontWeight: FontWeight.w600,
         fontSize: 17,
       ),
@@ -178,11 +178,11 @@ class customTextField extends StatelessWidget {
         hintText: hint,
         labelText: label,
         labelStyle: GoogleFonts.notoSans(
-          color: kTextMediumColor.withOpacity(.4),
+          color: Theme.of(context).colorScheme.primary.withOpacity(.4),
           fontSize: 17,
         ),
         floatingLabelStyle: GoogleFonts.notoSans(
-          color: kTextMediumColor.withOpacity(.4),
+          color: Theme.of(context).colorScheme.primary.withOpacity(.4),
           fontSize: 17,
         ),
         filled: true,

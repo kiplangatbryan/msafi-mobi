@@ -1,11 +1,18 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
+import 'package:msafi_mobi/components/snackback_component.dart';
+import 'package:msafi_mobi/helpers/http_services.dart';
 import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:provider/provider.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../../../components/form_components.dart';
 import '../../../helpers/custom_shared_pf.dart';
-import '../../../providers/user.provider.dart';
+import '../../../providers/system.provider.dart';
 import '../../../providers/user.provider.dart';
 import '../../../themes/main.dart';
 
@@ -18,11 +25,76 @@ class UserSettings extends StatefulWidget {
 
 class _UserSettingsState extends State<UserSettings> {
   Person? userInfo;
+  XFile? imageFile;
+
+  String imageUrl = "";
+
+  final _picker = ImagePicker();
 
   @override
   void initState() {
     userInfo = context.read<User>().user;
     super.initState();
+  }
+
+  _pickImages() async {
+    try {
+      final pickImage = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickImage != null) {
+        setState(() {
+          imageFile = pickImage;
+        });
+        await _uploadProfilePhoto();
+      }
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  _uploadProfilePhoto() async {
+    FormData formData = FormData();
+    final token = await checkAndValidateAuthToken(context);
+    final mimeTypeData =
+        lookupMimeType(imageFile!.path, headerBytes: [0xFF, 0xD8])?.split('/');
+    formData.files.add(
+      MapEntry(
+        "avatar",
+        await MultipartFile.fromFile(
+          imageFile!.path,
+          contentType: MediaType(
+            mimeTypeData![0],
+            mimeTypeData[1],
+          ),
+        ),
+      ),
+    );
+    try {
+      Response response =
+          await httHelper().post('/users/change-profile-picture',
+              data: formData,
+              options: Options(headers: {
+                "Accept": "application/json",
+                "Content-Type":
+                    "multipart/form-data; boundary=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MmM2NWU0M2FlOWZmNDM5ZjBiZDcxMGIiLCJpYXQiOjE2NTc4MTQxMjksImV4cCI6MTY1NzgxNTkyOSwidHlwZSI6ImFjY2VzcyJ9.IqrkKLUREzNV8JaXabWk3HYweh12PHZ5kpDgoZq_kio",
+                "Authorization": "Bearer $token"
+              }));
+
+      if (response.statusCode == 201) {
+        setState(() {
+          imageUrl = response.data['imgUrl'];
+        });
+      }
+    } on DioError catch (ex) {
+      if (ex.type == DioErrorType.connectTimeout) {
+        customSnackBar(
+            context: context, message: "connection Timedout", onPressed: () {});
+      }
+      if (ex.type == DioErrorType.sendTimeout) {
+        customSnackBar(context: context, message: "Could not reach server");
+      } else {
+        customSnackBar(context: context, message: "Bad Request");
+      }
+    }
   }
 
   @override
@@ -33,17 +105,10 @@ class _UserSettingsState extends State<UserSettings> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           "Settings",
-          style: Theme.of(context).textTheme.headline6,
+          style: Theme.of(context).textTheme.headline6!.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+              ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.dark_mode_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ],
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -54,25 +119,44 @@ class _UserSettingsState extends State<UserSettings> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
+              SizedBox(
+                height: 200,
+                width: double.infinity,
                 child: Stack(
                   alignment: Alignment.center,
-                  children: const [
-                    ClipOval(
-                      child: Image(
-                        image: AssetImage('assets/app/user.png'),
-                        width: 180,
-                      ),
-                    ),
+                  children: [
+                    imageUrl == ""
+                        ? Container(
+                            width: 130,
+                            height: 130,
+                            decoration: BoxDecoration(
+                                image: const DecorationImage(
+                                    image: AssetImage('assets/app/user.png')),
+                                borderRadius: BorderRadius.circular(80)),
+                          )
+                        : Container(
+                            width: 130,
+                            height: 130,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage('${baseUrl()}/$imageUrl'),
+                                ),
+                                borderRadius: BorderRadius.circular(80)),
+                          ),
                     Positioned(
-                      bottom: 0,
-                      right: 0,
+                      bottom: 20,
+                      right: 125,
                       child: CircleAvatar(
                         minRadius: 20,
                         maxRadius: 28,
-                        child: Icon(
-                          Icons.camera_outlined,
-                          size: 35,
+                        child: IconButton(
+                          onPressed: () async {
+                            await _pickImages();
+                          },
+                          icon: const Icon(
+                            Icons.camera_outlined,
+                            size: 22,
+                          ),
                         ),
                       ),
                     )
@@ -80,7 +164,7 @@ class _UserSettingsState extends State<UserSettings> {
                 ),
               ),
               const SizedBox(
-                height: 50,
+                height: 30,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -90,11 +174,19 @@ class _UserSettingsState extends State<UserSettings> {
                   'Account',
                   style: Theme.of(context).textTheme.headline6!.copyWith(
                         fontSize: 16,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                 ),
               ),
               CustomBtnLink(
-                callback: () {},
+                callback: () {
+                  showMaterialModalBottomSheet(
+                    expand: true,
+                    context: context,
+                    useRootNavigator: true,
+                    builder: (context) => ChangeUsername(),
+                  );
+                },
                 title: userInfo!.name,
                 subtitle: "Tap to change username",
               ),
@@ -116,25 +208,6 @@ class _UserSettingsState extends State<UserSettings> {
               ),
               const SizedBox(
                 height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25,
-                ),
-                child: Text(
-                  'Preferences',
-                  style: Theme.of(context).textTheme.headline6!.copyWith(
-                        fontSize: 16,
-                      ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              CustomBtnLink(
-                callback: () {},
-                title: "Dark Mode",
-                subtitle: "Switch to dark theme",
               ),
               const SizedBox(
                 height: 30,
@@ -163,6 +236,59 @@ class _UserSettingsState extends State<UserSettings> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ChangeUsername extends StatelessWidget {
+  const ChangeUsername({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 2,
+      padding: const EdgeInsets.symmetric(
+        vertical: 20,
+        horizontal: 30,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+              textAlign: TextAlign.center,
+              "Edit Your Username",
+              style: Theme.of(context).textTheme.headline6),
+          const SizedBox(
+            height: 100,
+          ),
+          customTextField(
+            hint: "Enter a new name",
+            label: "username",
+            inputType: TextInputType.text,
+            icon: Icon(Icons.person_add_alt_1_outlined),
+            validator: (val) {},
+            onChanged: (val) {},
+            onSubmit: (val) {},
+          ),
+          const SizedBox(height: 30),
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 2,
+            child: customSmallBtn(
+              ctx: context,
+              child: Text(
+                "Change",
+                style: Theme.of(context).textTheme.headline6!.copyWith(
+                      color: kTextLight,
+                    ),
+              ),
+              onPressed: () {},
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -259,7 +385,7 @@ class CustomBtnLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (() => callback),
+      onTap: () => callback(),
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 25,
@@ -271,14 +397,19 @@ class CustomBtnLink extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.headline6!.copyWith(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
             ),
             const SizedBox(
               height: 4,
             ),
             Text(
               subtitle,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
             ),
           ],
         ),

@@ -18,7 +18,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
   List<Widget> routes = const [
     HomePageView(),
     OrdersView(),
-    AppNotifications(),
+    UserNotifications(),
     UserSettings(),
   ];
   Widget _currentPage = Container();

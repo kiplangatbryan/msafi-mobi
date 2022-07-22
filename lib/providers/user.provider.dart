@@ -30,6 +30,7 @@ class User extends ChangeNotifier {
         name: body['user']['name'],
         status: body['user']['status'],
         role: body['user']['role'],
+        imgUrl: body['user']['imgUrl'] ?? "",
       );
       isLoggedIn = true;
       notifyListeners();
@@ -49,11 +50,13 @@ class Person {
   String email;
   String status;
   String id;
+  String imgUrl;
   Person({
     required this.email,
     required this.id,
     required this.status,
     required this.role,
     required this.name,
+    required this.imgUrl,
   });
 }

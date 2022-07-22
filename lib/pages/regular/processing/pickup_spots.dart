@@ -62,7 +62,10 @@ class _PickUpSpotsState extends State<PickUpSpots> {
               textAlign: TextAlign.center,
               "Select a location where you can easily drop off your laundry",
               style: Theme.of(context).textTheme.headline5!.copyWith(
-                  fontWeight: FontWeight.bold, height: 1.4, fontSize: 25),
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  height: 1.4,
+                  fontSize: 25),
             ),
             const SizedBox(
               height: 40,
@@ -123,7 +126,9 @@ class _PickUpSpotsState extends State<PickUpSpots> {
                     const SizedBox(width: 18),
                     Text(
                       address['name'],
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                     ),
                   ],
                 ),
@@ -141,9 +146,7 @@ class _PickUpSpotsState extends State<PickUpSpots> {
                       Text(
                         "Tap to view on map",
                         style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     ],
                   ),

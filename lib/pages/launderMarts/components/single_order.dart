@@ -92,17 +92,22 @@ class SingleOrderComponent extends StatelessWidget {
                       children: [
                         Text(
                           "$customerName\n",
-                          style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
-                                    height: 0.8,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(
+                                  height: 0.8,
+                                  color: Theme.of(context).colorScheme.primary),
                         ),
                         Text(
                           "$stationName\n",
-                          style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
-                                    height: 0.2,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                height: 0.2,
+                              ),
                         ),
                       ],
                     ),
@@ -118,7 +123,8 @@ class SingleOrderComponent extends StatelessWidget {
                     ),
                     child: Text(
                       status,
-                      style: Theme.of(context).textTheme.headline6,
+                      style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 )
@@ -137,8 +143,7 @@ class SingleOrderComponent extends StatelessWidget {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text:
-                              '${DateTime.parse(expectedDate).toMoment().toString()}\n',
+                          text: '${Moment.parse(expectedDate).calendar()}\n',
                           style:
                               Theme.of(context).textTheme.headline6!.copyWith(
                                     fontSize: 16,
@@ -146,10 +151,13 @@ class SingleOrderComponent extends StatelessWidget {
                         ),
                         TextSpan(
                           text: "Expected pickup date",
-                          style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
-                                    height: 1.3,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                height: 1.3,
+                              ),
                         ),
                       ],
                     ),
@@ -162,17 +170,22 @@ class SingleOrderComponent extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: "$orderId\n",
-                          style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
-                                    fontSize: 16,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline6!
+                              .copyWith(
+                                  fontSize: 16,
+                                  color: Theme.of(context).colorScheme.primary),
                         ),
                         TextSpan(
                           text: "Order Number",
-                          style:
-                              Theme.of(context).textTheme.subtitle1!.copyWith(
-                                    height: 1.3,
-                                  ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                height: 1.3,
+                              ),
                         ),
                       ],
                     ),

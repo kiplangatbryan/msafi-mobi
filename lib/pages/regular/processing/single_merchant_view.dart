@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -116,7 +117,9 @@ class _LaunderMartViewState extends State<LaunderMartView> {
         title: Text(
           "Details",
           style: Theme.of(context).textTheme.headline6!.copyWith(
-              // fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+
+                // fontWeight: FontWeight.bold,
               ),
         ),
       ),
@@ -137,14 +140,14 @@ class _LaunderMartViewState extends State<LaunderMartView> {
                     TextSpan(
                       text: "${store['name']}\n",
                       style: Theme.of(context).textTheme.headline6!.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
                     TextSpan(
                       text: store['address'],
                       style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                            height: 1.4,
-                          ),
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ],
                 ),
@@ -292,13 +295,21 @@ class StoreInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RichText(
+      textAlign: TextAlign.left,
       text: TextSpan(
         children: [
           TextSpan(
               text: "Information\n\n",
-              style: Theme.of(context).textTheme.headline6),
+              style: Theme.of(context).textTheme.headline6!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  )),
           TextSpan(
-              text: description, style: Theme.of(context).textTheme.subtitle1),
+            text: description,
+            style: Theme.of(context)
+                .textTheme
+                .subtitle1!
+                .copyWith(color: Theme.of(context).colorScheme.primary),
+          ),
         ],
       ),
     );
@@ -378,14 +389,16 @@ class Description extends StatelessWidget {
           TextSpan(
             text: "$name\n",
             style: Theme.of(context).textTheme.headline6!.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: 17,
                 ),
           ),
           TextSpan(
             text: "Tap to view on map",
-            style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                  height: 1.4,
-                ),
+            style: Theme.of(context)
+                .textTheme
+                .subtitle1!
+                .copyWith(color: Theme.of(context).colorScheme.primary),
           )
         ],
       ),
@@ -402,6 +415,12 @@ class ContactInfo extends StatelessWidget {
     required this.phoneNumber,
     Key? key,
   }) : super(key: key);
+  _launchUrl() async {
+    launchUrl(Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -425,14 +444,16 @@ class ContactInfo extends StatelessWidget {
                   TextSpan(
                     text: "$name\n",
                     style: Theme.of(context).textTheme.headline6!.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 18,
                         ),
                   ),
                   TextSpan(
                     text: "Owner",
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                          height: 1.4,
-                        ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(color: Theme.of(context).colorScheme.primary),
                   ),
                 ],
               ),
@@ -450,7 +471,7 @@ class ContactInfo extends StatelessWidget {
             primary: Theme.of(context).primaryColor,
             shape: const CircleBorder(),
           ),
-          onPressed: () {},
+          onPressed: _launchUrl,
           child: const Icon(
             Icons.phone_outlined,
             size: 25,

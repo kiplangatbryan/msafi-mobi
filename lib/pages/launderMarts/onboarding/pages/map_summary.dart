@@ -57,22 +57,24 @@ class MapIntro extends StatelessWidget {
                     children: [
                       TextSpan(
                         text:
-                            "Make it easy for clients to find you\n\n\n\n\n\n\n\n\n",
+                            "Make it easy for clients to find you\n\n\n\n\n\n\n\n\n\n\n",
                         style: Theme.of(context).textTheme.headline3!.copyWith(
                               fontWeight: FontWeight.bold,
                               height: 1.2,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                       ),
                       TextSpan(
                         text:
                             "Choose a location on the map,\nthat best describes the exact location your drop off point will be",
-                        style: Theme.of(context).textTheme.subtitle1,
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Theme.of(context).colorScheme.primary),
                       )
                     ],
                   ),
                 ),
                 const SizedBox(
-                  height: 50,
+                  height: 60,
                 ),
                 Align(
                   alignment: Alignment.bottomLeft,

@@ -13,7 +13,7 @@ import 'package:msafi_mobi/providers/user.provider.dart';
 import 'package:msafi_mobi/themes/main.dart';
 import 'package:provider/provider.dart';
 
-import '../reset/forgot_password.dart';
+import '../reset/password_reset.dart';
 
 class LoginPageOptions extends StatefulWidget {
   const LoginPageOptions({Key? key}) : super(key: key);
@@ -120,8 +120,7 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
       });
 
       try {
-        Response response =
-            await httHelper().post('${baseUrl()}/auth/login', data: user);
+        Response response = await httHelper().post('/auth/login', data: user);
         if (response.statusCode == 200) {
           final data = response.data;
 
@@ -131,12 +130,18 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
         }
       } on DioError catch (ex) {
         if (ex.type == DioErrorType.connectTimeout) {
-          customSnackBar("Connection  Timeout Exception");
+          customSnackBar("Connection Timeout Exception");
         }
         if (ex.type == DioErrorType.sendTimeout) {
           customSnackBar("Unable to reach server");
+        } else {
+          final msg = ex.response?.data['message'];
+          if (msg != null) {
+            _postErrors(ex.response?.data['message']);
+          } else {
+            customSnackBar("An Error occurred");
+          }
         }
-        _postErrors(ex.response?.data['message']);
       }
       setState(() {
         loading = false;
@@ -256,13 +261,14 @@ class _LoginPageOptionsState extends State<LoginPageOptions> {
                         onChanged: (val) {},
                         onSubmit: _setPassword,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "password is required";
-                          } else if (RegExp(r'/[a-zA-Z]/').firstMatch(value) !=
-                                  null ||
-                              RegExp(r'/\d/').firstMatch(value) != null) {
-                            return "Password must contain at least one letter and one number";
+                          final pattern = RegExp(r'^[a-zA-Z0-9]+$');
+
+                          if (value.length < 8) {
+                            return "Password must be atleast 8  characters long";
+                          } else if (!pattern.hasMatch(value)) {
+                            return "Password must contain at least 1 letter and number";
                           }
+
                           return null;
                         },
                       ),

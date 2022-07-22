@@ -117,7 +117,7 @@ class _BucketState extends State<Bucket> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Icon(Icons.warning),
+                  const Icon(Icons.info),
                   const SizedBox(
                     width: 5,
                   ),

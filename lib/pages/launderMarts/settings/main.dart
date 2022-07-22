@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../../../components/form_components.dart';
 import '../../../helpers/custom_shared_pf.dart';
 import '../../../providers/user.provider.dart';
+import '../../../providers/system.provider.dart';
+
 import '../../../themes/main.dart';
 
 class MerchantSettings extends StatefulWidget {
@@ -32,7 +34,7 @@ class _MerchantSettingsState extends State<MerchantSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        elevation: 0,
+        elevation: 1,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           "Settings",
@@ -40,15 +42,6 @@ class _MerchantSettingsState extends State<MerchantSettings> {
                 fontSize: 14,
               ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.dark_mode_outlined,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ],
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -240,7 +233,10 @@ class CustomBtnLink extends StatelessWidget {
             ),
             Text(
               subtitle,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle1!
+                  .copyWith(color: Theme.of(context).colorScheme.primary),
             ),
           ],
         ),

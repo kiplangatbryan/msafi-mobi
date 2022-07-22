@@ -154,13 +154,24 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                       Chip(
                         label: Text(
                           "Pending",
-                          style: Theme.of(context).textTheme.subtitle1,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(
+                                  color: Theme.of(context).colorScheme.primary),
                         ),
+                      ),
+                      const SizedBox(
+                        width: 15,
                       ),
                       Chip(
                         label: Text(
                           "completed",
-                          style: Theme.of(context).textTheme.subtitle1,
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(
+                                  color: Theme.of(context).colorScheme.primary),
                         ),
                       ),
                       const SizedBox(
@@ -196,7 +207,13 @@ class _MerchantOrdersState extends State<MerchantOrders> {
                             ),
                             Text(
                               "You have no orders right now ):",
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
                             ),
                           ],
                         )

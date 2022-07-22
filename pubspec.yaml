@@ -55,6 +55,7 @@ dependencies:
   modal_bottom_sheet: ^2.1.0
   omni_datetime_picker: ^0.1.0
   mime: ^1.0.2
+  url_launcher:
   # mapbox_gl: ^0.16.0
   dio: ^4.0.6
   flutter_awesome_select: ^6.4.0

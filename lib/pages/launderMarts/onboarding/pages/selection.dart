@@ -97,7 +97,8 @@ class _ProductSelectionState extends State<ProductSelection> {
                       TextSpan(
                         text:
                             "\n\n' ✨ 'Tap on clothing items that you wash, you can choose more than one",
-                        style: Theme.of(context).textTheme.subtitle1,
+                        style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     ],
                   ),

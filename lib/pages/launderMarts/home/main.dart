@@ -434,7 +434,8 @@ class _RecentOrdersState extends State<RecentOrders> {
                     ),
                     Text(
                       "You don't have any orders yet",
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ],
                 ),
@@ -451,7 +452,7 @@ class _RecentOrdersState extends State<RecentOrders> {
                         order: order,
                         customerName: order['userId']['name'],
                         status: order['status'],
-                        orderId: order['id'],
+                        orderId: order['alias'],
                         stationName: order['stationId']['name'],
                         expectedDate: order['expectedPickUp'],
                       );
@@ -497,7 +498,7 @@ class StatsBadges extends StatelessWidget {
               Text(
                 value,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.tertiary,
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 14,
                     ),
               ),

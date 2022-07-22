@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moment_dart/moment_dart.dart';
-import 'package:msafi_mobi/components/form_components.dart';
 import 'package:msafi_mobi/helpers/size_calculator.dart';
 import 'package:msafi_mobi/themes/main.dart';
 
-class SingleOrderView extends StatefulWidget {
+class SingleClientOrderView extends StatefulWidget {
   final Map order;
-  const SingleOrderView({required this.order, Key? key}) : super(key: key);
+  const SingleClientOrderView({required this.order, Key? key})
+      : super(key: key);
 
   @override
-  State<SingleOrderView> createState() => _SingleOrderViewState();
+  State<SingleClientOrderView> createState() => _SingleOrderViewState();
 }
 
-class _SingleOrderViewState extends State<SingleOrderView> {
+class _SingleOrderViewState extends State<SingleClientOrderView> {
   int _counter = 0;
 
   String? statusLabel;
@@ -64,10 +64,10 @@ class _SingleOrderViewState extends State<SingleOrderView> {
           "Details",
           style: Theme.of(context).textTheme.headline6!.copyWith(
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
               ),
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 230, 230, 230),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
@@ -76,7 +76,7 @@ class _SingleOrderViewState extends State<SingleOrderView> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: kTextLight,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -87,45 +87,27 @@ class _SingleOrderViewState extends State<SingleOrderView> {
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CircleAvatar(
-                          minRadius: 18,
-                          maxRadius: 20,
-                          child: Text(
-                            "${widget.order['userId']['name'][0].toUpperCase()}",
-                            style:
-                                Theme.of(context).textTheme.headline5!.copyWith(
-                                      color: kTextLight,
-                                    ),
-                          ),
+                        Text(
+                          widget.order['storeId']['name'],
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline5!
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "${widget.order['userId']['name']}\n",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6!
-                                    .copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                              ),
-                              TextSpan(
-                                text: "${widget.order['userId']['email']}\n",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .subtitle1!
-                                    .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
-                              ),
-                            ],
+                        Chip(
+                          label: Text(
+                            widget.order['status'],
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                         ),
                       ],
@@ -240,42 +222,6 @@ class _SingleOrderViewState extends State<SingleOrderView> {
                     totalsRow(
                       title: "Total",
                       total: orderSum.toStringAsFixed(2),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: kBackgroundColor,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 30,
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      textAlign: TextAlign.center,
-                      "This will allow the client to know that the service is complete",
-                      style: Theme.of(context).textTheme.subtitle1!.copyWith(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    customExtendButton(
-                      ctx: context,
-                      child: Text(
-                        "Mark as Complete",
-                        style: Theme.of(context).textTheme.headline6!.copyWith(
-                              color: kTextLight,
-                            ),
-                      ),
-                      onPressed: () {},
                     ),
                   ],
                 ),

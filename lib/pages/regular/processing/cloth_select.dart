@@ -90,7 +90,9 @@ class _LaundrySelectionState extends State<LaundrySelection> {
           ),
         ],
         title: Text("Select clothes",
-            style: Theme.of(context).textTheme.headline6),
+            style: Theme.of(context).textTheme.headline6!.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                )),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -103,10 +105,9 @@ class _LaundrySelectionState extends State<LaundrySelection> {
           ),
           child: ListView.builder(
               shrinkWrap: true,
-              physics: const ScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               itemCount: storeClothes.length,
               itemBuilder: (context, index) {
-                print(storeClothes);
                 return LaundryBox(
                     decreament: () {
                       context.read<Basket>().decreament(index: index);
@@ -132,7 +133,7 @@ class _LaundrySelectionState extends State<LaundrySelection> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Icon(Icons.warning),
+                  const Icon(Icons.info),
                   const SizedBox(
                     width: 5,
                   ),
@@ -140,6 +141,7 @@ class _LaundrySelectionState extends State<LaundrySelection> {
                     "${context.watch<Basket>().getCount} items",
                     style: Theme.of(context).textTheme.headline6!.copyWith(
                           fontSize: 18,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
                 ],

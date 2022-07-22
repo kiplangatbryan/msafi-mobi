@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:io';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:msafi_mobi/components/form_components.dart';
-import 'package:msafi_mobi/helpers/http_services.dart';
 import 'package:msafi_mobi/themes/main.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
-import '../../../providers/user.provider.dart';
+import 'enter-new-password.dart';
 
 class CodeVerify extends StatefulWidget {
   const CodeVerify({Key? key}) : super(key: key);
@@ -22,7 +18,7 @@ class _CodeVerifyState extends State<CodeVerify> {
 // https://aa5a-41-89-160-19.in.ngrok.io
   String errors = "";
   String snackBarMessage = "";
-  bool showSnack = false;
+  bool success = false;
   bool loading = false;
 
 // form key
@@ -50,17 +46,6 @@ class _CodeVerifyState extends State<CodeVerify> {
     setState(() {
       errors = msg;
     });
-  }
-
-  _nextPage() {
-    // create a user object and check type
-    final role = context.read<User>().role;
-    if (role == "merchant") {
-      Navigator.popAndPushNamed(context, "/mart-onboarding");
-    } else if (role == "user") {
-    } else {
-      // do nothing
-    }
   }
 
   // snack bar
@@ -94,57 +79,14 @@ class _CodeVerifyState extends State<CodeVerify> {
       setState(() {
         loading = true;
       });
-      var url = Uri.parse('${baseUrl()}/auth/forgot-password');
-
-      try {
-        // send data to server
-        final response = await http
-            .post(
-              url,
-              body: user,
-            )
-            .timeout(
-              const Duration(seconds: 5),
-            );
-
-        // final data = json.decode(response.body);
-
-        if (response.statusCode == 200) {
-        } else {
-          _postErrors("Email or password is Incorrect");
-        }
-      } on SocketException {
-        customSnackBar('Could not connect to server');
-      } on TimeoutException catch (e) {
-        customSnackBar("Connection Timeout");
-      } on Error catch (e) {
-        customSnackBar("An error ocurred");
-      }
-      setState(() {
-        loading = false;
+      Future.delayed(const Duration(seconds: 5), () {
+        Navigator.of(context).push(CupertinoPageRoute(
+            builder: (_) => UpdateCode(code: user['code']!)));
       });
     }
   }
 
   // handleErrors() {}
-  _handleUserSignIn(dynamic data) async {
-    // call to User<> provider
-    final res = await context.read<User>().createUser(data);
-    if (res) {
-      customSnackBar("Success");
-      _nextPage();
-    } else {
-      customSnackBar("Error occurred whilst saving");
-    }
-
-    setState(() {
-      loading = false;
-    });
-  }
-
-  _navigateToRegister() {
-    Navigator.of(context).pushNamed('/register');
-  }
 
   @override
   Widget build(BuildContext context) {
