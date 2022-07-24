@@ -6,3 +6,4 @@ module.exports.stationService = require('./stations.service');
 module.exports.launderService = require('./store.service');
 module.exports.paymentService = require('./payment.service');
 module.exports.smsService = require('./sms.service');
+module.exports.notifyService = require('./notify.service');

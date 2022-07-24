@@ -12,9 +12,8 @@ yarn-error.log
 coverage
 
 # static files
-uploads/profileImgs/*
-uploads/stores/*
 
+uploads
 
 .vscode/settings.json
 .http

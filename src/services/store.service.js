@@ -88,7 +88,7 @@ const search = async (storeId) => {
   //     $match: { _id: { $eq: storeId } },
   //   },
   // ];
-  const response = await Orders.find({ storeId }).aggregate().populate('userId').populate('stationId');
+  const response = await Orders.find({ storeId }).populate('userId').populate('stationId');
 
   return response;
 };
@@ -115,7 +115,7 @@ const fetchUserOrders = async (userId) => {
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
   }
-  return Orders.find({ userId }).populate({ path: 'storeId', select: 'name expectedPickUp' }).populate('stationId').exec();
+  return Orders.find({ userId }).populate('storeId').populate('userId').populate('stationId').exec();
 };
 module.exports = {
   create,

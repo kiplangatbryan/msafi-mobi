@@ -19,8 +19,8 @@ if (config.env !== 'test') {
  * @param {string} text
  * @returns {Promise}
  */
-const sendEmail = async (to, subject, text) => {
-  const msg = { from: config.email.from, to, subject, text };
+const sendEmail = async (to, subject, html) => {
+  const msg = { from: config.email.from, to, subject, html };
   return transport.sendMail(msg);
 };
 
@@ -34,9 +34,9 @@ const sendResetPasswordEmail = async (to, token) => {
   const subject = 'Reset password';
   // replace this url with the link to the reset password page of your front-end app
   // const resetPasswordUrl = `http://link-to-app/reset-password?token=${token}`;
-  const text = `Dear user,
-To reset your password, Enter the following code to reset your password: ${token}
-If you did not request any password resets, then ignore this email.`;
+  const text = `<h1>Dear user </h1>
+<p>To reset your password, Enter the following code to reset your password use the following: code: ${token}</p>
+<small>If you did not request any password resets, then ignore this email.</small>`;
   return sendEmail(to, subject, text);
 };
 
