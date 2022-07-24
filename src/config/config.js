@@ -31,6 +31,7 @@ const envVarsSchema = Joi.object()
     shortcode: Joi.string().description('safaricom sandbox shortcode'),
     CLICKSEND_MAIL: Joi.string().description('clicksend user mail'),
     CLICKSEND_KEY: Joi.string().description('clicksend api key'),
+    CALLBACK_SAF_URL: Joi.string().description('endpoint that will recieve payment confirmation'),
   })
   .unknown();
 
@@ -75,6 +76,7 @@ module.exports = {
     consumerSecret: envVars.CONSUMER_SECRET,
     simulateMpesaUri: envVars.ONLINE_PROCESS_URL,
     passkey: envVars.passkey,
+    uri_callback: envVars.CALLBACK_SAF_URL,
     shortcode: envVars.shortcode,
   },
   clicksend: {
