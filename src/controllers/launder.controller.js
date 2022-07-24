@@ -1,13 +1,14 @@
 const httpStatus = require('http-status');
 const shortId = require('shortid32');
 const catchAsync = require('../utils/catchAsync');
-const { stationService, launderService, smsService, authService } = require('../services');
+const { orderPlaced } = require('../config/data');
+const { stationService, launderService, smsService, notifyService, authService } = require('../services');
 
 const createStore = catchAsync(async (req, res) => {
   const { locations } = req.body;
   const launderStore = await launderService.create(req.user.id, req.body, req.files);
   await stationService.create(req.user.id, launderStore.id, locations);
-  const response = 'sucess';
+  const response = 'success';
   res.status(httpStatus.CREATED).send(response);
 });
 
@@ -28,8 +29,10 @@ const createOrder = catchAsync(async (req, res) => {
   // create  a short id
   // send a confirmation message
   const user = await authService.fetchUser(req.user.id);
+  const noteBody = orderPlaced(user.name, order.alias);
+  await notifyService.create(noteBody, body.storeId, req.user.id);
   await smsService.createAndSendNotification(body.phone, alias, body.amount, user.name);
-  res.status(httpStatus.CREATED).send(order);
+  await res.status(httpStatus.CREATED).send(order);
 });
 
 const fetchOrders = catchAsync(async (req, res) => {

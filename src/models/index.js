@@ -5,3 +5,4 @@ module.exports.Payments = require('./payments.model');
 module.exports.Stations = require('./stations.model');
 module.exports.Token = require('./token.model');
 module.exports.Meta = require('./meta.model');
+module.exports.Notify = require('./notification.model');

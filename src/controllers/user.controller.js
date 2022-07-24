@@ -34,10 +34,16 @@ const deleteUser = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const uploadImg = catchAsync(async (req, res) => {
+  const url = await userService.uploadImg(req.user.id, req.files);
+  res.status(httpStatus.CREATED).send({ imgUrl: url });
+});
+
 module.exports = {
   createUser,
   getUsers,
   getUser,
   updateUser,
   deleteUser,
+  uploadImg,
 };

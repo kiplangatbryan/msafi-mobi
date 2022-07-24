@@ -18,7 +18,7 @@ const mpesaQuery = catchAsync(async (req, res) => {
   if (response.ResultCode === 0) {
     return res.status(httpStatus.OK).send(response);
   }
-  res.status(httpStatus.EXPECTATION_FAILED).send(response);
+  res.status(httpStatus.NO_CONTENT).send();
 });
 
 module.exports = {
